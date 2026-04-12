@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Side‑by‑Side: Continuous & Batch</title>
+  <style>
+    :root{
+      --bg:#0f172a; --panel:#111827; --muted:#6b7280; --fg:#e5e7eb;
+      --accent:#60a5fa; --belt-height:24px; --speed-pps:90; --processing-time:2.4;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;color:var(--fg);background:radial-gradient(1200px 800px at 20% 0%, #0b1226 0%, var(--bg) 40%, #0b1226 100%)}
+    .wrap{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;gap:16px;padding:24px}
+
+    h1{margin:0 0 8px;font-weight:700;letter-spacing:.2px}
+
+    .scene{position:relative;border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));box-shadow:0 8px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05);overflow:hidden;display:grid;place-items:center;min-height:240px}
+
+    /* Top controls (buttons sit inside the overlay row) */
+    .scene .overlay-row{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
+    .scene .btn{padding:6px 12px;background:#0b1220;color:var(--fg);border:1px solid #223;border-radius:8px;cursor:pointer}
+    .scene .btn:hover{background:#1a1f2a}
+    .scene .btn.active{background:#1f2a3a;border-color:#3a6ea5;box-shadow:0 0 0 3px rgba(56,189,248,0.35) inset;color:#fff}
+
+    .hud{display:flex;gap:12px;align-items:center;flex-wrap:wrap;opacity:.9;font-size:14px}
+    .hud label{opacity:.9}
+    .hud input{width:140px;background:#0b1220;color:var(--fg);border:1px solid #223;border-radius:8px;padding:6px 8px}
+
+    /* Scoreboard between canvases */
+    .scoreboard{display:flex;justify-content:center;align-items:center;margin:8px 0}
+    .score-panel{background:#0b1220;border:1px solid #223;border-radius:12px;padding:10px 18px;box-shadow:0 6px 18px rgba(0,0,0,.25);text-align:center}
+    .score{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-variant-numeric:tabular-nums;letter-spacing:6px;font-weight:800;line-height:1}
+    .score.top{color:#ef4444;font-size:28px}
+    .score.bottom{color:#3b82f6;font-size:28px;margin-top:6px}
+
+    /* Labels left of scoreboard */
+    .score-labels{margin-right:14px;text-align:right}
+    .score-labels .lbl{font-weight:700;font-size:16px;line-height:1}
+    .score-labels .top{color:#ef4444}
+    .score-labels .bottom{color:#3b82f6;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Side by side comparison</h1>
+
+    <!-- ===== Top: Continuous process ===== -->
+    <div class="scene">
+      <svg id="vizCont" viewBox="0 0 1000 240" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="glowCont" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <marker id="arrowHeadCont" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#e2e8f0"/>
+          </marker>
+        </defs>
+        <!-- Process phase 1 (purely visual) -->
+        <g id="stationP">
+          <rect id="stationPGlass" x="16" y="60" width="160" height="110" rx="14" ry="14" fill="rgba(148,163,184,.12)" stroke="#a855f7" stroke-width="2" filter="url(#glowCont)" />
+          <rect id="stationPInner" x="26" y="70" width="140" height="90" rx="10" ry="10" fill="transparent" stroke="#a855f7" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+          <text id="stationPLabel" x="16" y="56" fill="#e2e8f0" opacity="0.75" font-size="12" font-weight="600">Process phase 1</text>
+        </g>
+        <!-- Process phase 2 (A) -->
+        <g id="stationA">
+          <rect id="stationAGlass" x="210" y="60" width="220" height="110" rx="14" ry="14" fill="rgba(148,163,184,.12)" stroke="#38bdf8" stroke-width="2" filter="url(#glowCont)" />
+          <rect id="stationAInner" x="220" y="70" width="200" height="90" rx="10" ry="10" fill="transparent" stroke="#38bdf8" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+          <text id="stationALabel" x="216" y="56" fill="#e2e8f0" opacity="0.75" font-size="12" font-weight="600">Process phase 2</text>
+        </g>
+        <!-- Process phase 3 (B) -->
+        <g id="stationB">
+          <rect id="stationBGlass" x="510" y="60" width="220" height="110" rx="14" ry="14" fill="rgba(148,163,184,.12)" stroke="#22c55e" stroke-width="2" filter="url(#glowCont)" />
+          <rect id="stationBInner" x="520" y="70" width="200" height="90" rx="10" ry="10" fill="transparent" stroke="#22c55e" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+          <text id="stationBLabel" x="516" y="56" fill="#e2e8f0" opacity="0.75" font-size="12" font-weight="600">Process phase 3</text>
+        </g>
+        <g id="packagesCont"></g>
+        <text id="discardLabel" x="750" y="28" fill="#e2e8f0" opacity="0.85" font-size="12" font-weight="700">Rejects</text>
+      </svg>
+      <div class="overlay-row">
+        <button id="pauseBtn" class="btn">Downstream stop</button>
+        <button id="failBtn" class="btn">Section/Station failure</button>
+      </div>
+    </div>
+
+    <!-- Scoreboard (centered between canvases) -->
+    <div class="scoreboard">
+      <div class="score-labels">
+        <div class="lbl top">continuous process</div>
+        <div class="lbl bottom">batch process</div>
+      </div>
+      <div class="score-panel">
+        <div id="scoreCont" class="score top">000</div>
+        <div id="scoreBatch" class="score bottom">000</div>
+      </div>
+    </div>
+
+    <!-- ===== Bottom: Batch (horizontal) ===== -->
+    <div class="scene">
+      <svg id="vizBatchH" viewBox="0 0 1000 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <filter id="glowBatchH" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <marker id="arrowHeadBatch" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#e2e8f0"/>
+          </marker>
+        </defs>
+        <g id="batchStationsH"></g>
+        <g id="batchPackagesH"></g>
+      </svg>
+    </div>
+
+    <!-- Controls -->
+    <div class="hud">
+      <label>Chambers length <input id="ptimeInput" type="number" step="0.1" min="0.3" max="10" value="2.4" /></label>
+      <label>Speed (px/s) <input id="speedInput" type="number" step="10" min="20" max="600" value="45" /></label>
+      <label>Takt time (s) <input id="taktInput" type="number" step="0.1" min="0.2" max="10" value="2.0" /></label>
+      <label>Min stay (s) <input id="minStayInput" type="number" step="0.1" min="0" max="60" value="8" /></label>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------
+    // SCOREBOARD
+    // -------------------------
+    const scoreContEl = document.getElementById('scoreCont');
+    const scoreBatchEl = document.getElementById('scoreBatch');
+    let scoreCont = 0, scoreBatch = 0; const fmt3 = n => String(n).padStart(3,'0');
+    function incCont(){ scoreCont++; scoreContEl.textContent = fmt3(scoreCont); }
+    function incBatch(){ scoreBatch++; scoreBatchEl.textContent = fmt3(scoreBatch); }
+
+    // -------------------------
+    // SHARED CONTROLS
+    // -------------------------
+    const pauseBtn = document.getElementById('pauseBtn');
+    const failBtn  = document.getElementById('failBtn');
+    let paused = false; // shared pause for both animations
+    let failed = false; // failure mode
+    const ptimeInput = document.getElementById('ptimeInput');
+    const speedInput = document.getElementById('speedInput');
+    const taktInput  = document.getElementById('taktInput');
+    const minStayInput = document.getElementById('minStayInput');
+
+    // -------------------------
+    // CONTINUOUS (TOP)
+    // -------------------------
+    (function initContinuous(){
+      const svgCont = document.getElementById('vizCont');
+      const stationAGlass = document.getElementById('stationAGlass');
+      const stationAInner = document.getElementById('stationAInner');
+      const stationALabel = document.getElementById('stationALabel');
+      const stationBGlass = document.getElementById('stationBGlass');
+      const stationBInner = document.getElementById('stationBInner');
+      const stationBLabel = document.getElementById('stationBLabel');
+      const packagesG = document.getElementById('packagesCont');
+      const discardLabel = document.getElementById('discardLabel');
+
+      const VIEW_W = 1000, PKG_W = 60, PKG_H = 70, FLOW_Y = 120;
+      const RED=[239,68,68], YELLOW=[245,158,11], GREEN=[34,197,94], BLUE=[59,130,246], PURPLE=[168,85,247];
+      const mix=(a,b,t)=>{t=Math.max(0,Math.min(1,t)); return [
+        Math.round(a[0]+(b[0]-a[0])*t),
+        Math.round(a[1]+(b[1]-a[1])*t),
+        Math.round(a[2]+(b[2]-a[2])*t)
+      ];};
+
+      let speed = Math.max(20, Math.min(600, Number(speedInput.value) || 45));
+      let processingTime = Math.max(0.3, Math.min(10, Number(ptimeInput.value) || 2.4));
+      const DESIGN_PPS = 90; // baseline pixels/s used ONLY to size chambers
+
+      const stationAX = 210; let stationBX = 510; const stationGap = 80; // B.x gets recomputed if length changes
+      const stationBounds = glass => { const x=+glass.getAttribute('x'); const w=+glass.getAttribute('width'); return {left:x,right:x+w,width:w}; };
+
+      // Visuals for Decontamination (A) during failure
+      const A_BLUE = '#38bdf8', A_GRAY = '#9ca3af';
+      const A_FILL_NORMAL = 'rgba(148,163,184,.12)';
+      const A_FILL_FAIL   = 'rgba(156,163,175,0.3)';
+      function setFailedVisual(on){
+        stationAGlass.setAttribute('stroke', on? A_GRAY : A_BLUE);
+        stationAInner.setAttribute('stroke', on? A_GRAY : A_BLUE);
+        stationAGlass.setAttribute('fill', on? A_FILL_FAIL : A_FILL_NORMAL);
+      }
+
+      // build dynamic arrows/labels and update chamber widths/positions
+      function updateStationsGeometry(){
+        const len = Math.max(120, DESIGN_PPS * processingTime);
+        // A
+        stationAGlass.setAttribute('x', stationAX); stationAGlass.setAttribute('width', len);
+        stationAInner.setAttribute('x', stationAX + 10); stationAInner.setAttribute('width', Math.max(0, len - 20)); stationALabel.setAttribute('x', stationAX + 6);
+        // apply visual stroke/fill depending on failure state
+        stationAGlass.setAttribute('stroke', failed? A_GRAY : A_BLUE);
+        stationAInner.setAttribute('stroke', failed? A_GRAY : A_BLUE);
+        stationAGlass.setAttribute('fill', failed? A_FILL_FAIL : A_FILL_NORMAL);
+        // B
+        stationBX = Math.min(900, stationAX + len + stationGap);
+        stationBGlass.setAttribute('x', stationBX); stationBGlass.setAttribute('width', len);
+        stationBInner.setAttribute('x', stationBX + 10); stationBInner.setAttribute('width', Math.max(0, len - 20)); stationBLabel.setAttribute('x', stationBX + 6);
+
+        // Up arrow next to discard label
+        if(discardLabel){
+          const labelX = stationBX + len + 8;
+          const labelY = 28;
+          discardLabel.setAttribute('x', labelX);
+          discardLabel.setAttribute('y', labelY);
+          let upArrow = document.getElementById('discardArrowUp');
+          if(!upArrow){
+            upArrow = document.createElementNS('http://www.w3.org/2000/svg','line');
+            upArrow.setAttribute('id','discardArrowUp');
+            upArrow.setAttribute('stroke','#e2e8f0');
+            upArrow.setAttribute('stroke-width','2');
+            upArrow.setAttribute('marker-end','url(#arrowHeadCont)');
+            svgCont.appendChild(upArrow);
+          }
+          upArrow.setAttribute('x1', labelX - 12); upArrow.setAttribute('x2', labelX - 12);
+          upArrow.setAttribute('y1', labelY + 10); upArrow.setAttribute('y2', 10);
+        }
+        // rightward arrow + label for goods (continuous)
+        let deconArrow = document.getElementById('deconArrowRight');
+        if(!deconArrow){
+          deconArrow = document.createElementNS('http://www.w3.org/2000/svg','line');
+          deconArrow.setAttribute('id','deconArrowRight');
+          deconArrow.setAttribute('stroke','#e2e8f0');
+          deconArrow.setAttribute('stroke-width','2');
+          deconArrow.setAttribute('marker-end','url(#arrowHeadCont)');
+          svgCont.appendChild(deconArrow);
+        }
+        const yR = FLOW_Y + PKG_H/2 + 28;
+        const xR1 = VIEW_W - 180; const xR2 = VIEW_W - 30;
+        deconArrow.setAttribute('x1', xR1); deconArrow.setAttribute('y1', yR);
+        deconArrow.setAttribute('x2', xR2); deconArrow.setAttribute('y2', yR);
+        let deconLab = document.getElementById('deconLabelCont');
+        if(!deconLab){
+          deconLab = document.createElementNS('http://www.w3.org/2000/svg','text');
+          deconLab.setAttribute('id','deconLabelCont');
+          deconLab.setAttribute('fill','#e2e8f0'); deconLab.setAttribute('opacity','0.85');
+          deconLab.setAttribute('font-size','12'); deconLab.setAttribute('font-weight','700');
+          deconLab.setAttribute('text-anchor','start'); svgCont.appendChild(deconLab);
+        }
+        deconLab.setAttribute('x', xR1); deconLab.setAttribute('y', yR - 4);
+        // multiline label aligned with LEFT arrow begin
+        while (deconLab.firstChild) deconLab.removeChild(deconLab.firstChild);
+        const sp1 = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+        sp1.setAttribute('x', xR1); sp1.setAttribute('y', yR - 4); sp1.textContent = 'good'; deconLab.appendChild(sp1);
+        const sp2 = document.createElementNS('http://www.w3.org/2000/svg','tspan');
+        sp2.setAttribute('x', xR1); sp2.setAttribute('dy', '14'); sp2.textContent = 'items'; deconLab.appendChild(sp2);
+      }
+
+      // package factory (with visible clock)
+      const SPACING = PKG_W * 1.5; const packages=[];
+      const setFill=(pkg,rgb)=>pkg.rect.setAttribute('fill',`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`);
+      const getFill=(pkg)=>{ const v=pkg.rect.getAttribute('fill'); if(v&&v.startsWith('rgb(')){ const parts=v.slice(4,-1).split(','); return [parseInt(parts[0]),parseInt(parts[1]),parseInt(parts[2])]; } return RED; };
+      function makeClockText(){ const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x', PKG_W/2); t.setAttribute('y', PKG_H/2 + 16); t.setAttribute('fill','#000'); t.setAttribute('font-size','12'); t.setAttribute('font-weight','600'); t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle'); t.textContent='0'; return t; }
+      function createPackage(x){
+        const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+        const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',0); r.setAttribute('y',0); r.setAttribute('width',PKG_W); r.setAttribute('height',PKG_H); r.setAttribute('rx',10); r.setAttribute('ry',10); r.setAttribute('fill',`rgb(${RED[0]},${RED[1]},${RED[2]})`); r.setAttribute('stroke','#00000022');
+        const txt = makeClockText();
+        g.appendChild(r); g.appendChild(txt); g.setAttribute('transform',`translate(${x}, ${FLOW_Y - PKG_H/2})`); packagesG.appendChild(g);
+        return { x, g, rect:r, clock:txt,
+          inA:false, timeInA:0, nominalA:processingTime, hadStopsInA:false,
+          inB:false, timeInB:0, nominalB:processingTime, bStart:RED, bTarget:GREEN,
+          timeReal:0, clockStarted:false, colB_Tcol:0, wasInB:false, scoredThisCycle:false,
+          purpleProgress:0, discard:false, discardT:0, discardDur:0.5, yOffset:0 };
+      }
+      function initPackages(){
+        packages.length=0; packagesG.innerHTML='';
+        const Aleft = +stationAGlass.getAttribute('x');
+        const anchor = Aleft - PKG_W - 8; // start just to the left of Decontamination
+        const count = Math.ceil(VIEW_W / SPACING) + 3;
+        for(let i=count-1;i>=0;i--){ const x = anchor - i*SPACING; packages.push(createPackage(x)); }
+      }
+
+      // Animation loop
+      let rafId=null; let last=performance.now();
+      function tick(now){
+        const dt=(now-last)/1000; last=now;
+        const A=stationBounds(stationAGlass); const B=stationBounds(stationBGlass);
+        for(const pkg of packages){
+          const centerX=pkg.x + PKG_W/2;
+          const nowInA = centerX>=A.left && centerX<=A.right;
+          if(!pkg.inA && nowInA){ pkg.inA=true; pkg.timeInA=0; pkg.nominalA=processingTime; pkg.timeReal=0; pkg.clockStarted=true; pkg.clock.textContent='0'; }
+          if(pkg.inA && !nowInA){ pkg.inA=false; const tcolA = A.width / Math.max(1, speed); const blueFrac = Math.max(0, Math.min(1, (pkg.timeInA - tcolA) / tcolA)); pkg.hadStopsInA = blueFrac >= 0.2; }
+
+          const nowInB = centerX>=B.left && centerX<=B.right;
+          if(!pkg.inB && nowInB){ pkg.inB=true; pkg.wasInB=true; pkg.timeInB=0; pkg.colB_Tcol = B.width / Math.max(1, speed); pkg.bStart=getFill(pkg); pkg.bTarget=(pkg.hadStopsInA?PURPLE:GREEN); }
+          if(pkg.inB && !nowInB){ pkg.inB=false; }
+          // Count/Discard when fully out of B: left edge past B.right
+          if(!nowInB && pkg.wasInB && !pkg.scoredThisCycle && pkg.x >= B.right){
+            if(pkg.purpleProgress >= 0.10){ pkg.discard = true; pkg.discardT = 0; pkg.scoredThisCycle = true; }
+            else { incCont(); pkg.scoredThisCycle = true; }
+          }
+
+          // Color & clocks
+          if(pkg.clockStarted){ pkg.timeReal += dt; pkg.clock.textContent = String(Math.floor(pkg.timeReal)); }
+          if(nowInA){
+            pkg.timeInA += dt; // non-pausing inside A
+            const tcolA = A.width / Math.max(1, speed);
+            if(pkg.timeInA <= tcolA){ setFill(pkg, mix(RED, YELLOW, pkg.timeInA / tcolA)); }
+            else if(pkg.timeInA <= 2*tcolA){ setFill(pkg, mix(YELLOW, BLUE, (pkg.timeInA - tcolA) / tcolA)); }
+            else { setFill(pkg, BLUE); }
+          } else if(centerX < A.left){ setFill(pkg, RED); }
+          if(pkg.inB){
+            if(!(paused||failed)){ pkg.timeInB += dt; }
+            const denom = Math.max(0.0001, pkg.colB_Tcol || 1);
+            const t = Math.min(1, pkg.timeInB / denom);
+            setFill(pkg, mix(pkg.bStart, pkg.bTarget, t));
+            pkg.purpleProgress = (pkg.bTarget === PURPLE) ? t : 0;
+          }
+
+          // Motion & Discard path
+          if(!(paused||failed)){
+            if(pkg.discard){
+              pkg.discardT += dt;
+              const baseY = FLOW_Y - PKG_H/2;
+              const targetY = -PKG_H - 10; // off the top
+              const f = Math.min(1, pkg.discardT / (pkg.discardDur||0.5));
+              pkg.yOffset = (targetY - baseY) * f;
+            } else { pkg.x += speed * dt; pkg.yOffset = 0; }
+          }
+        }
+
+        // Recycle (continuous recycles at canvas right or discard completion)
+        let minX=Infinity; for(const p of packages){ if(p.x<minX) minX=p.x; }
+        for(const pkg of packages){
+          const topTarget = - (FLOW_Y - PKG_H/2) - PKG_H - 10;
+          if(pkg.discard && pkg.yOffset <= topTarget){
+            // recycle after discard completes
+            pkg.discard=false; pkg.yOffset=0; pkg.purpleProgress=0; pkg.wasInB=false; pkg.scoredThisCycle=false;
+            pkg.inA=false; pkg.timeInA=0; pkg.hadStopsInA=false; pkg.inB=false; pkg.timeInB=0; pkg.colB_Tcol=0; pkg.bStart=RED; pkg.bTarget=GREEN; pkg.timeReal=0; pkg.clockStarted=false; pkg.clock.textContent='0';
+            pkg.x = minX - SPACING; setFill(pkg, RED);
+          } else if(pkg.x > VIEW_W + 20){
+            pkg.x = minX - SPACING; pkg.inA=false; pkg.timeInA=0; pkg.hadStopsInA=false; pkg.inB=false; pkg.timeInB=0; pkg.colB_Tcol=0; pkg.bStart=RED; pkg.bTarget=GREEN; pkg.timeReal=0; pkg.clockStarted=false; pkg.clock.textContent='0'; pkg.wasInB=false; pkg.scoredThisCycle=false; pkg.discard=false; pkg.yOffset=0; pkg.purpleProgress=0; setFill(pkg, RED);
+          }
+        }
+        // Draw transforms
+        for(const pkg of packages){ pkg.g.setAttribute('transform',`translate(${pkg.x}, ${FLOW_Y - PKG_H/2 + (pkg.yOffset||0)})`); }
+
+        requestAnimationFrame(tick);
+      }
+
+      // Wire controls
+      function onTime(){ processingTime = Math.max(0.3, Math.min(10, Number(ptimeInput.value)||processingTime)); updateStationsGeometry(); }
+      function onSpeed(){ speed = Math.max(20, Math.min(600, Number(speedInput.value)||speed)); }
+      ptimeInput.addEventListener('input', onTime);
+      speedInput.addEventListener('input', onSpeed);
+      pauseBtn.addEventListener('click', ()=>{ paused = !paused; pauseBtn.classList.toggle('active', paused); pauseBtn.textContent = paused? 'Resume':'Downstream stop'; });
+
+      // expose continuous failure visual control
+      window.contCtrl = { setFailedVisual };
+
+      // Init
+      updateStationsGeometry(); initPackages();
+      requestAnimationFrame((t)=>{ requestAnimationFrame(tick); });
+    })();
+
+    // -------------------------
+    // BATCH (BOTTOM, HORIZONTAL)
+    // -------------------------
+    (function initBatchHorizontal(){
+      const svg = document.getElementById('vizBatchH');
+      const stationsG = document.getElementById('batchStationsH');
+      const packagesG = document.getElementById('batchPackagesH');
+
+      const VIEW_W = 1000, VIEW_H = 320; const PKG_W = 60, PKG_H = 70;
+      const PAD = PKG_W/3; const INNER_W = PKG_W + 2*PAD; const GLASS_PAD = 10; const GLASS_W = INNER_W + 2*GLASS_PAD; const GLASS_H = 110;
+      const centerY = VIEW_H/2; const slotY = centerY - PKG_H/2;
+      const NUM = 5; const GAP_X = 35; const rowW = NUM*GLASS_W + (NUM-1)*GAP_X; const rowLeft = (VIEW_W - rowW)/2; const rowRight = rowLeft + rowW;
+
+      // Build stations horizontally
+      stationsG.innerHTML='';
+      const stations=[];
+      for(let i=0;i<NUM;i++){
+        const gx = rowLeft + i*(GLASS_W + GAP_X); const gy = centerY - GLASS_H/2;
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+        const glass = document.createElementNS('http://www.w3.org/2000/svg','rect'); glass.setAttribute('x', gx); glass.setAttribute('y', gy); glass.setAttribute('width', GLASS_W); glass.setAttribute('height', GLASS_H); glass.setAttribute('rx',14); glass.setAttribute('ry',14); glass.setAttribute('fill','rgba(148,163,184,.12)'); glass.setAttribute('stroke','#ffffff'); glass.setAttribute('stroke-width','2'); glass.setAttribute('filter','url(#glowBatchH)'); g.appendChild(glass);
+        const inner = document.createElementNS('http://www.w3.org/2000/svg','rect'); inner.setAttribute('x', gx+GLASS_PAD); inner.setAttribute('y', gy+10); inner.setAttribute('width', INNER_W); inner.setAttribute('height', 90); inner.setAttribute('rx',10); inner.setAttribute('ry',10); inner.setAttribute('fill','transparent'); inner.setAttribute('stroke','#ffffff'); inner.setAttribute('stroke-width','1'); inner.setAttribute('stroke-dasharray','6 6'); inner.setAttribute('opacity','0.5'); g.appendChild(inner);
+        const overlay = document.createElementNS('http://www.w3.org/2000/svg','rect'); overlay.setAttribute('x', gx); overlay.setAttribute('y', gy); overlay.setAttribute('width', GLASS_W); overlay.setAttribute('height', GLASS_H); overlay.setAttribute('rx',14); overlay.setAttribute('ry',14); overlay.setAttribute('fill','rgba(107,114,128,0.8)'); overlay.setAttribute('opacity','0'); overlay.setAttribute('pointer-events','none'); g.appendChild(overlay);
+        const label = document.createElementNS('http://www.w3.org/2000/svg','text'); label.setAttribute('x', gx + 6); label.setAttribute('y', gy - 6); label.setAttribute('fill','#e2e8f0'); label.setAttribute('opacity','0.75'); label.setAttribute('font-size','12'); label.setAttribute('font-weight','600'); label.textContent = `Station ${i+1}`; g.appendChild(label);
+        stationsG.appendChild(g);
+        stations.push({index:i, gx, gy, slotX: gx+GLASS_PAD + (INNER_W - PKG_W)/2, slotY, glass, inner, failOverlay: overlay, failed:false, occupant:null, reserved:false});
+      }
+
+      // Pre-treatment graphic (left of Station 1)
+      (function(){
+        const PT_W = GLASS_W / 2;
+        const PT_H = GLASS_H * 2 - 16; // slightly shorter bottom
+        const x = rowLeft - GAP_X - PT_W;
+        const y = centerY - GLASS_H/2;
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+        const glass = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        glass.setAttribute('x', x); glass.setAttribute('y', y);
+        glass.setAttribute('width', PT_W); glass.setAttribute('height', PT_H);
+        glass.setAttribute('rx', 14); glass.setAttribute('ry', 14);
+        glass.setAttribute('fill', 'rgba(148,163,184,.12)');
+        glass.setAttribute('stroke', '#a855f7'); glass.setAttribute('stroke-width','2');
+        glass.setAttribute('filter','url(#glowBatchH)');
+        g.appendChild(glass);
+        const inner = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        inner.setAttribute('x', x + 10); inner.setAttribute('y', y + 10);
+        inner.setAttribute('width', PT_W - 20); inner.setAttribute('height', PT_H - 20);
+        inner.setAttribute('rx', 10); inner.setAttribute('ry', 10);
+        inner.setAttribute('fill', 'transparent'); inner.setAttribute('stroke', '#a855f7');
+        inner.setAttribute('stroke-width','1'); inner.setAttribute('stroke-dasharray','6 6'); inner.setAttribute('opacity','0.5');
+        g.appendChild(inner);
+        const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+        label.setAttribute('x', x); label.setAttribute('y', y - 6);
+        label.setAttribute('fill','#e2e8f0'); label.setAttribute('opacity','0.75');
+        label.setAttribute('font-size','12'); label.setAttribute('font-weight','600');
+        label.textContent = 'Process phase 1';
+        svg.appendChild(g); svg.appendChild(label);
+      })();
+
+      // Labels & arrows for batch
+      (function(){
+        // Geometry helpers
+        const midX = (rowLeft + rowRight) / 2;
+        const discardY = centerY + GLASS_H/2 + 26;
+        const arrowLeftX = midX - 12; // left of label
+
+        // Discard label (to the RIGHT of the arrow) + down arrow
+        const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+        t.setAttribute('id','batchDiscardLabel');
+        t.setAttribute('fill','#e2e8f0'); t.setAttribute('opacity','0.85');
+        t.setAttribute('font-size','12'); t.setAttribute('font-weight','700');
+        t.setAttribute('text-anchor','start'); // left aligned
+        svg.appendChild(t);
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('id','batchDiscardArrowDown');
+        line.setAttribute('x1', String(arrowLeftX)); line.setAttribute('y1', String(discardY - 18));
+        line.setAttribute('x2', String(arrowLeftX)); line.setAttribute('y2', String(discardY + 8));
+        line.setAttribute('stroke','#e2e8f0'); line.setAttribute('stroke-width','2');
+        line.setAttribute('marker-end','url(#arrowHeadBatch)');
+        svg.appendChild(line);
+
+        // place label to the RIGHT of arrow
+        t.setAttribute('x', String(arrowLeftX + 16));
+        t.setAttribute('y', String(discardY));
+        t.textContent = 'rejects';
+
+        // Rightward arrow + label for good (batch)
+        const ar = document.createElementNS('http://www.w3.org/2000/svg','line');
+        ar.setAttribute('id','batchDeconArrowRight');
+        const x1 = rowRight + 10; const x2 = rowRight + GLASS_W - 10;
+        ar.setAttribute('x1', String(x1)); ar.setAttribute('y1', String(centerY));
+        ar.setAttribute('x2', String(x2)); ar.setAttribute('y2', String(centerY));
+        ar.setAttribute('stroke','#e2e8f0'); ar.setAttribute('stroke-width','2'); ar.setAttribute('marker-end','url(#arrowHeadBatch)');
+        svg.appendChild(ar);
+
+        const lab = document.createElementNS('http://www.w3.org/2000/svg','text');
+        lab.setAttribute('id','batchDeconLabel');
+        lab.setAttribute('x', String(x1)); lab.setAttribute('y', String(centerY - 4));
+        lab.setAttribute('fill','#e2e8f0'); lab.setAttribute('opacity','0.85');
+        lab.setAttribute('font-size','12'); lab.setAttribute('font-weight','700'); lab.setAttribute('text-anchor','start');
+        // multiline: 'good' / 'items', left aligned with arrow start
+        const tsp1 = document.createElementNS('http://www.w3.org/2000/svg','tspan'); tsp1.setAttribute('x', String(x1)); tsp1.setAttribute('y', String(centerY - 4)); tsp1.textContent='good';
+        const tsp2 = document.createElementNS('http://www.w3.org/2000/svg','tspan'); tsp2.setAttribute('x', String(x1)); tsp2.setAttribute('dy','14'); tsp2.textContent='items';
+        lab.appendChild(tsp1); lab.appendChild(tsp2); svg.appendChild(lab);
+      })();
+
+      let takt = Math.max(0.2, Math.min(10, Number(taktInput.value)||2.0));
+      let minStay = Math.max(0, Number(minStayInput.value)||8.0);
+      let sinceCreation = 0, sinceExit = 0;
+      const RED=[239,68,68], YELLOW=[245,158,11], GREEN=[34,197,94];
+      const mix=(a,b,t)=>{t=Math.max(0,Math.min(1,t)); return [ Math.round(a[0]+(b[0]-a[0])*t), Math.round(a[1]+(b[1]-a[1])*t), Math.round(a[2]+(b[2]-a[2])*t) ];};
+      const setFill=(p,rgb)=> p.rect.setAttribute('fill',`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`);
+      const applyColor=(p)=>{ const t=p.timeReal; if(t<=4){ setFill(p, mix(RED, YELLOW, t/4)); } else if(t<=8){ setFill(p, mix(YELLOW, GREEN, (t-4)/4)); } else { setFill(p, GREEN); } };
+
+      function makeRect(){ const r=document.createElementNS('http://www.w3.org/2000/svg','rect'); r.setAttribute('x',0); r.setAttribute('y',0); r.setAttribute('width',PKG_W); r.setAttribute('height',PKG_H); r.setAttribute('rx',10); r.setAttribute('ry',10); r.setAttribute('fill',`rgb(${RED[0]},${RED[1]},${RED[2]})`); r.setAttribute('stroke','#00000022'); return r; }
+      function makeClock(){ const t=document.createElementNS('http://www.w3.org/2000/svg','text'); t.setAttribute('x', PKG_W/2); t.setAttribute('y', PKG_H/2 + 16); t.setAttribute('fill','#000'); t.setAttribute('font-size','12'); t.setAttribute('font-weight','600'); t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle'); t.textContent='0'; return t; }
+
+      const pkgs=[];
+      function createPkgForStation(st){
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g'); const rect = makeRect(); const tReal = makeClock();
+        g.appendChild(rect); g.appendChild(tReal); packagesG.appendChild(g);
+        const p={ g, rect, textReal:tReal, x:rowLeft - 2*GLASS_W, y:centerY + GLASS_H/2 + 20,
+          state:'enter_horiz', t:0, H_DUR:0.5, V_DUR:0.2,
+          startX:rowLeft - 2*GLASS_W, startY:centerY + GLASS_H/2 + 20,
+          targetX:st.slotX, targetY:st.slotY, station:st, timeIn:0, timeReal:0 };
+        st.reserved=true; pkgs.push(p); g.setAttribute('transform',`translate(${p.x},${p.y})`); return p;
+      }
+
+      function tryCreate(){ const idx=stations.findIndex(s=>!s.occupant && !s.reserved && !s.failed); if(idx===-1) return false; if(sinceCreation < takt) return false; createPkgForStation(stations[idx]); sinceCreation=0; return true; }
+      function tryExit(){ if(sinceExit < takt) return false; for(const st of stations){ const occ=st.occupant; if(occ && !st.failed && occ.state==='processing' && occ.timeIn>minStay){ occ.state='exit_up'; occ.t=0; occ.startX=occ.x; occ.startY=occ.y; sinceExit=0; return true; } } return false; }
+
+      function updateStationOutlines(){
+        const blue = '#38bdf8'; const green = '#22c55e'; const white = '#ffffff'; const gray = '#9ca3af';
+        for(const st of stations){
+          let col = white;
+          if(st.failed){ col = gray; }
+          else if(st.occupant){ const t = st.occupant.timeReal || 0; col = (t < (minStay/2)) ? blue : green; }
+          st.glass.setAttribute('stroke', col);
+        }
+      }
+
+      // Failure toggler for station #2
+      function setFailureMode(on){
+        const st2 = stations[1]; if(!st2) return;
+        st2.failed = !!on; st2.failOverlay.setAttribute('opacity', on? '0.8' : '0');
+        if(on && st2.occupant && st2.occupant.state==='processing'){ const p = st2.occupant; p.failedGrey = true; p.rect.setAttribute('fill','#9ca3af'); }
+        if(!on && st2.occupant && st2.occupant.failedGrey && st2.occupant.state==='processing'){
+          const p = st2.occupant; p.state='exit_down'; p.t=0; p.startX=p.x; p.startY=p.y;
+        }
+        updateStationOutlines();
+      }
+      window.batchCtrl = { setFailed: setFailureMode };
+
+      // Path references
+      const entryStartX = rowLeft - 2*GLASS_W;            // far left
+      const entryY      = centerY + GLASS_H/2 + 20;       // BELOW stations
+      const gyTop = centerY - GLASS_H/2;                  // top of stations
+      const LABEL_OFFSET = 6; const EXIT_CLEARANCE = 8;
+      const exitUpY   = gyTop - LABEL_OFFSET - PKG_H - EXIT_CLEARANCE; // up path height (above labels)
+      const exitDownY = VIEW_H + 30;                      // below canvas for discard
+      const exitTargetX = rowRight + 2*GLASS_W;           // far right
+
+      // Decontaminated right-arrow + label already created above in IIFE
+
+      // Controls
+      function onTakt(){ takt = Math.max(0.2, Math.min(10, Number(taktInput.value)||takt)); }
+      taktInput.addEventListener('input', onTakt);
+      function onMinStay(){ minStay = Math.max(0, Number(minStayInput.value)||minStay); }
+      minStayInput.addEventListener('input', onMinStay);
+
+      // Loop (pause affects exit + logic clock; visible clock never pauses)
+      let last=performance.now();
+      function tick(now){ const dt=(now-last)/1000; last=now; const enteringDt=dt; const logicDt= paused?0:dt; const realDt=dt; const exitDt= paused?0:dt;
+        for(const p of pkgs){
+          if(p.state==='enter_horiz'){
+            const eDt = p.station.failed ? 0 : enteringDt; p.t+=eDt; const f=Math.min(1,p.t/p.H_DUR); p.x = p.startX + (p.targetX - p.startX)*f; p.y = entryY; p.g.setAttribute('transform',`translate(${p.x},${p.y})`);
+            if(f>=1){ p.state='enter_up'; p.t=0; p.startX=p.x; p.startY=entryY; }
+          } else if(p.state==='enter_up'){
+            const eDt = p.station.failed ? 0 : enteringDt; p.t+=eDt; const f=Math.min(1,p.t/p.V_DUR); p.x = p.targetX; p.y = p.startY + (p.targetY - p.startY)*f; p.g.setAttribute('transform',`translate(${p.x},${p.y})`);
+            if(f>=1){ p.state='processing'; p.t=0; p.x=p.targetX; p.y=p.targetY; p.g.setAttribute('transform',`translate(${p.x},${p.y})`); p.station.occupant=p; p.station.reserved=false; p.timeIn=0; p.timeReal=0; p.textReal.textContent='0'; applyColor(p);} }
+          else if(p.state==='processing'){
+            p.timeIn  += (p.station.failed ? 0 : logicDt);
+            p.timeReal+= (p.station.failed ? 0 : realDt);
+            p.textReal.textContent = String(Math.floor(p.timeReal));
+            if((p.station.failed && p.station.index===1) || p.failedGrey){ p.rect.setAttribute('fill','#9ca3af'); }
+            else { applyColor(p); }
+          } else if(p.state==='exit_up'){
+            p.t+=exitDt; const f=Math.min(1,p.t/p.V_DUR); p.x = p.startX; p.y = p.startY + (exitUpY - p.startY)*f; p.g.setAttribute('transform',`translate(${p.x},${p.y})`);
+            if(f>=1){ if(p.station && p.station.occupant===p) p.station.occupant=null; p.state='exit_horiz'; p.t=0; p.startX=p.x; p.startY=p.y; }
+          } else if(p.state==='exit_down'){
+            p.t+=exitDt; const f=Math.min(1,p.t/p.V_DUR); p.x = p.startX; p.y = p.startY + (exitDownY - p.startY)*f; p.g.setAttribute('transform',`translate(${p.x},${p.y})`);
+            if(f>=1){ if(p.station && p.station.occupant===p) p.station.occupant=null; if(p.g&&p.g.parentNode) p.g.parentNode.removeChild(p.g); const idx=pkgs.indexOf(p); if(idx>=0) pkgs.splice(idx,1); }
+          } else if(p.state==='exit_horiz'){
+            p.t+=exitDt; const f=Math.min(1,p.t/p.H_DUR); p.x = p.startX + (exitTargetX - p.startX)*f; p.y = exitUpY; p.g.setAttribute('transform',`translate(${p.x},${p.y})`);
+            if(f>=1 || p.x>=VIEW_W){ if(p.g&&p.g.parentNode) p.g.parentNode.removeChild(p.g); const idx=pkgs.indexOf(p); if(idx>=0) pkgs.splice(idx,1); incBatch(); }
+          }
+        }
+        sinceCreation += dt; sinceExit += exitDt; tryCreate(); tryExit(); updateStationOutlines();
+        requestAnimationFrame(tick);
+      }
+
+      // Start
+      requestAnimationFrame(tick);
+
+      // Expose failure control to top-level button
+      window.batchCtrl = { setFailed: setFailureMode };
+    })();
+
+    // -------------------------
+    // TOP-LEVEL BUTTONS
+    // -------------------------
+    failBtn.addEventListener('click', ()=>{ failed = !failed; failBtn.classList.toggle('active', failed); if(window.batchCtrl && window.batchCtrl.setFailed) window.batchCtrl.setFailed(failed); if(window.contCtrl && window.contCtrl.setFailedVisual) window.contCtrl.setFailedVisual(failed); });
+
+    // -------------------------
+    // MINIMAL SELF-TESTS (console)
+    // -------------------------
+    (function selfTests(){
+      try{
+        console.assert(document.getElementById('taktInput'), 'taktInput missing');
+        console.assert(document.getElementById('minStayInput'), 'minStayInput missing');
+        const wA1 = +document.getElementById('stationAGlass').getAttribute('width');
+        const speedEl = document.getElementById('speedInput');
+        const evt = new Event('input');
+        const oldSpeed = speedEl.value; speedEl.value = String((+oldSpeed||45)+60); speedEl.dispatchEvent(evt);
+        const wA2 = +document.getElementById('stationAGlass').getAttribute('width');
+        speedEl.value = oldSpeed; speedEl.dispatchEvent(evt);
+        console.assert(wA1 === wA2, 'Chamber width changed after speed tweak (should not).');
+        console.assert(document.getElementById('scoreCont').textContent==='000', 'Continuous score not 000 on load');
+        console.assert(document.getElementById('scoreBatch').textContent==='000', 'Batch score not 000 on load');
+        (function(){ const tcolA=2; const blueEnough=(t)=> Math.max(0, Math.min(1, (t - tcolA)/tcolA)) >= 0.2; console.assert(!blueEnough(2.1), 'Tiny extra time should NOT be blue enough'); console.assert(blueEnough(2.4), '20% into blue phase SHOULD be blue enough'); })();
+      } catch(e){ console.warn('Self-tests error:', e); }
+    })();
+  </script>
+</body>
+</html>
