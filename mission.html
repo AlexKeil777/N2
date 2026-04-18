@@ -52,8 +52,10 @@
 
     <section class="section">
       <div class="container">
-        <div class="grid-3">
-          <div class="card pad" style="grid-column: 1 / -1;">
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 24px;">
+          
+          <div class="card pad">
             <h2>Part 1 — Rethinking the process architecture</h2>
             <p>
               We aim to move away from large continuous tunnel sections toward a modular, decoupled concept that can
@@ -67,9 +69,15 @@
               <li>Independent modules that decouple cycles and reduce reliance on interconnected containment flows. </li>
               <li>Improved reliability and scalability by design (configure throughput by adding/removing modules). </li>
             </ul>
+
+            <div class="cta-row" style="margin-top: 24px;">
+              <a class="btn primary" href="v4_continuous_vs_batch_animation.html">
+                <span class="icon" aria-hidden="true">📊</span> Launch Simulation
+              </a>
+            </div>
           </div>
 
-          <div class="card pad" style="grid-column: 1 / -1;">
+          <div class="card pad">
             <h2>Part 2 — Improving aeration (speed + depth)</h2>
             <p>
               The second objective focuses on aerodynamic and thermodynamic optimization of aeration, because it is often the
@@ -83,25 +91,31 @@
               <li>Airflow, temperature, and moisture control to accelerate peroxide desorption. </li>
               <li>Cycle design to achieve fast clearance while maintaining process repeatability. </li>
             </ul>
-          </div>
 
-          <div class="card pad" style="grid-column: 1 / -1;">
-            <h2>Where this is heading</h2>
-            <p>
-              The outcome we’re aiming for is a modular VHP approach that improves scalability and reliability, paired with a
-              faster aeration method to reach low residual targets efficiently. 
-            </p>
-
-            <div class="cta-row">
-              <a class="btn primary" href="team.html">
-                <span class="icon" aria-hidden="true">👥</span> Meet the team
-              </a>
-              <a class="btn" href="index.html">
-                <span class="icon" aria-hidden="true">←</span> Back to Home
+            <div class="cta-row" style="margin-top: 24px;">
+              <a class="btn secondary" href="assets/images/video_30sec.mp4" target="_blank" rel="noopener">
+                <span class="icon" aria-hidden="true">▶️</span> Watch 30s Video
               </a>
             </div>
           </div>
+
+        </div> <div class="card pad">
+          <h2>Where this is heading</h2>
+          <p>
+            The outcome we’re aiming for is a modular VHP approach that improves scalability and reliability, paired with a
+            faster aeration method to reach low residual targets efficiently. 
+          </p>
+
+          <div class="cta-row" style="margin-top: 24px; flex-wrap: wrap;">
+            <a class="btn secondary" href="team.html">
+              <span class="icon" aria-hidden="true">👥</span> Meet the team
+            </a>
+            <a class="btn" href="index.html">
+              <span class="icon" aria-hidden="true">←</span> Back to Home
+            </a>
+          </div>
         </div>
+        
       </div>
     </section>
   </main>
@@ -110,7 +124,6 @@
     <div class="container">
       <div class="tiny">© <span id="y"></span> VHP Decontamination Project</div>
 
-      <!-- Optional footer navigation -->
       <div class="tiny">
         <a href="index.html">Home</a> ·
         <a href="mission.html">Our Mission</a> ·
@@ -126,4 +139,3 @@
   <script src="assets/js/main.js"></script>
 </body>
 </html>
-``
