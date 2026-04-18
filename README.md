@@ -1,1 +1,1 @@
-N2 Team official website!
+This is the repository of our website.

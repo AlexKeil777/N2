@@ -1,156 +1,78 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>VHP Tubs Decontamination — Project Overview</title>
-  <meta name="description" content="An innovative approach to VHP decontamination of RTU tubs: modular batch architecture + faster, deeper H2O2 removal." />
-  <link rel="stylesheet" href="assets/css/styles.css" />
-</head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced VHP Decontamination</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container">
-      <nav class="nav" aria-label="Main navigation">
-        <a class="brand" href="index.html">
-          <img src="assets/images/N2.jpg" alt="N2 Team Logo" class="nav-logo">
-          <span>
-            VHP Decontamination
-            <small>Decontamination technologies</small>
-          </span>
-        </a>
-
-        <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
-          Menu
-        </button>
-
+<header id="nav">
+    <div class="nav-container">
+        <div class="logo">VHP Decon</div>
         <div class="nav-links" id="navLinks" data-nav-links>
-          <a href="index.html">Home</a>
-          <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
-          <a href="mission.html">Our Mission</a>
-          <a href="team.html">Meet the Team</a>
+            <a href="index.html">Home</a>
+            <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
+            <a href="mission.html">Our Mission</a>
+            <a href="team.html">Meet the Team</a>
         </div>
-      </nav>
+        <div class="nav-toggle" id="navToggle">
+            <span class="icon" aria-hidden="true">&#9776;</span>
+        </div>
     </div>
-  </header>
+</header>
 
-  <main id="main">
-    <section class="hero">
-      <div class="container">
-        <div class="hero-grid">
-          <div class="card pad-lg">
-            <div class="kicker">Project overview</div>
-            <h1>VHP tubs decontamination machine &amp; fast, deep H₂O₂ removal</h1>
+<main id="main">
+    <section class="hero" style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 0;">
+        <div class="container">
 
-            <p>
-              This project proposes an innovative approach to the decontamination of medical
-              tubs using <strong>vaporous hydrogen peroxide (VHP)</strong>, addressing key
-              technical and operational challenges in pharma/biotech settings where RTU tubs
-              enter aseptic processing.
-            </p>
-
-            <p>
-              The core idea is twofold: <strong>rethink the process architecture</strong> (moving
-              from continuous tunnels to a modular batch concept) and <strong>optimize aeration</strong>
-              to ensure thorough H₂O₂ removal before sterile transfer.
-            </p>
-
-            <div class="badge-row" role="list">
-              <span class="badge brand" role="listitem">Batch / modular process</span>
-              <span class="badge" role="listitem">Operational reliability</span>
-              <span class="badge" role="listitem">Flexible recipes</span>
-              <span class="badge red" role="listitem">Deep residual reduction</span>
+            <div class="hero-image-container" style="margin-bottom: 30px; display: flex; justify-content: center;">
+                <img src="assets/images/N2 icon.jpg" alt="VHP Decontamination Visual"
+                     style="max-width: 500px; width: 100%; height: auto; display: block;
+                            /* CSS Mask applied to create blurred/faded edges into the blue background */
+                            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
+                            mask-image: radial-gradient(circle, rgba(0,0,0,1) 30%, rgba(0,0,0,0) 80%);
+                            ">
             </div>
 
-            <div class="cta-row">
-              <a class="btn primary" href="mission.html">
-                <span class="icon" aria-hidden="true">➜</span> Read our mission
-              </a>
-              <a class="btn secondary" href="team.html">
-                <span class="icon" aria-hidden="true">👥</span> Meet the team
-              </a>
+            <h1 style="font-size: clamp(40px, 6vw, 64px); margin-bottom: 20px; font-weight: 800;">
+                Advanced VHP decontamination
+            </h1>
+
+            <div class="cta-row" style="justify-content: center; gap: 24px; margin-top: 40px; flex-wrap: wrap;">
+                
+                <a class="btn primary" href="v4_continuous_vs_batch_animation.html" style="font-size: 22px; padding: 20px 36px; border-radius: 16px;">
+                    <span aria-hidden="true" style="font-size: 28px; margin-right: 10px;">⚙️</span> Simulation
+                </a>
+                
+                <a class="btn secondary" href="mission.html" style="font-size: 22px; padding: 20px 36px; border-radius: 16px;">
+                    <span aria-hidden="true" style="font-size: 28px; margin-right: 10px;">🎯</span> The Mission
+                </a>
+                
+                <a class="btn" href="team.html" style="font-size: 22px; padding: 20px 36px; border-radius: 16px; background: rgba(255,255,255,0.1); color: #fff;">
+                    <span aria-hidden="true" style="font-size: 28px; margin-right: 10px;">👋</span> The Team
+                </a>
+
             </div>
-
-            <div class="hr"></div>
-
-            <div class="callout">
-              <strong>Problem statement (why this matters):</strong>
-              The adoption of ready-to-use tubs is expanding, and existing options (e-beam,
-              No-Touch Transfer, and continuous tunnel solutions) each show limitations in
-              complexity, repeatability, flexibility, or proprietary constraints.
-            </div>
-
-          <aside class="card pad" aria-label="Quick navigation">
-            <div class="kicker">Explore</div>
-            <h2>Site sections</h2>
-            <p>Use these pages as a simple, clear structure for GitHub Pages hosting.</p>
-
-            <div class="grid-3" style="grid-template-columns:1fr; gap:12px;">
-              <a class="card pad" href="mission.html" style="text-decoration:none;">
-                <h3>Our Mission</h3>
-                <p>Two-part plan: architecture redesign + aeration improvement.</p>
-              </a>
-
-              <a class="card pad" href="team.html" style="text-decoration:none;">
-                <h3>Meet the Team</h3>
-                <p>Three-member team with diverse expertise and a unique perspective.</p>
-              </a>
-            </div>
-
-            <div class="hr"></div>
-
-            <p class="tiny">
-            </p>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div class="grid-3">
-          <div class="card pad">
-            <h3>Solution #1: Rethinking architecture</h3>
-            <p>
-              Transition from continuous tunnels (e.g., Nebula-style) to a modular
-              batch concept designed for reliability and scalability.
-            </p>
-          </div>
-
-          <div class="card pad">
-            <h3>Solution #2: Faster aeration</h3>
-            <p>
-              Improve H₂O₂ removal by leveraging evaporation dynamics through airflow
-              and dew-point management.
-            </p>
-          </div>
 
         </div>
-      </div>
     </section>
-  </main>
+</main>
 
-  <footer class="footer">
-    <div class="container">
-      <div class="tiny">
-        © <span id="y"></span> VHP Decontamination Project • Built for GitHub Pages
-      </div>
-
-      <!-- Optional footer navigation (human-readable, NOT file names) -->
-      <div class="tiny">
-        <a href="index.html">Home</a> ·
-        <a href="mission.html">Our Mission</a> ·
-        <a href="team.html">Meet the Team</a>
-      </div>
+<footer>
+    <div class="container tiny" style="text-align: center;">
+        <p>&copy; 2024 VHP Decontamination Project.</p>
+        <div>
+            <a href="index.html">Home</a> ·
+            <a href="v4_continuous_vs_batch_animation.html">Simulation</a> ·
+            <a href="mission.html">Our Mission</a> ·
+            <a href="team.html">Meet the Team</a>
+        </div>
     </div>
-  </footer>
+</footer>
 
-  <script>
-    const y = document.getElementById('y');
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
-  <script src="assets/js/main.js"></script>
+<script src="assets/js/main.js"></script>
+
 </body>
 </html>
