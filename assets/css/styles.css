@@ -279,3 +279,19 @@ code.inline{
   border: 1px solid var(--border);
   background: rgba(255,255,255,.04);
 }
+
+/* Add this to your styles.css */
+.nav-logo {
+  height: 40px;      /* Adjust height to fit your nav bar */
+  width: auto;       /* Maintains aspect ratio */
+  border-radius: 4px; /* Optional: gives the logo slightly rounded corners */
+  margin-right: 12px; /* Adds space between the logo and the text */
+  display: block;
+}
+
+/* Ensure the brand container aligns the logo and text horizontally */
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
