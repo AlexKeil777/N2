@@ -1,74 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced VHP Decontamination</title>
-    <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>N2 Team — VHP Decontamination</title>
+  <meta name="description" content="Advanced VHP decontamination — modular batch process and accelerated H₂O₂ aeration." />
+  <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
-<header class="site-header" style="border: none; background: transparent;">
-    <div class="container">
-      <nav class="nav" aria-label="Main navigation" style="justify-content: center;">
-        <div class="brand" style="cursor: default;">
-          <span>
-            VHP Decontamination experts
-          </span>
-        </div>
-      </nav>
-    </div>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">
+        <img src="assets/images/N2_icon.jpg" alt="" class="nav-logo">
+        <span>
+          N2 Team
+          <small>VHP decontamination</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
+        Menu
+      </button>
+
+      <div class="nav-links" id="navLinks" data-nav-links>
+        <a href="index.html">Home</a>
+        <a href="mission.html">Our Mission</a>
+        <a href="team.html">Meet the Team</a>
+      </div>
+    </nav>
+  </div>
 </header>
 
 <main id="main">
-    <section class="hero" style="min-height: 80vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px;">
-        <div class="container" style="display: flex; flex-direction: column; align-items: center;">
+  <section class="home-hero">
+    <div class="container">
+      <div class="home-hero-inner">
 
-            <div class="hero-image-container" style="margin-bottom: 40px; display: flex; justify-content: center; align-items: center; width: 100%; max-width: 600px;">
-                <img src="assets/images/N2.jpg" alt="N2 Team Icon"
-                     style="width: 100%; height: auto; display: block; object-fit: cover;
-                            /* Linear gradients to create fade on X (left/right) and Y (top/bottom) axes */
-                            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), 
-                                                linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-                            -webkit-mask-composite: source-in;
-                            mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), 
-                                        linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-                            mask-composite: intersect;
-                            ">
-            </div>
-
-            <h1 style="font-size: clamp(40px, 6vw, 64px); margin-bottom: 20px; font-weight: 800;">
-                N2 Team
-            </h1>
-
-            <div class="cta-row" style="justify-content: center; gap: 24px; margin-top: 40px; flex-wrap: wrap; width: 100%;">
-                
-                <a class="btn secondary" href="mission.html" style="font-size: 22px; padding: 20px 36px; border-radius: 16px;">
-                    <span aria-hidden="true" style="font-size: 28px; margin-right: 10px;">🎯</span> The Mission
-                </a>
-                
-                <a class="btn" href="team.html" style="font-size: 22px; padding: 20px 36px; border-radius: 16px; background: rgba(255,255,255,0.1); color: #fff;">
-                    <span aria-hidden="true" style="font-size: 28px; margin-right: 10px;">👋</span> The Team
-                </a>
-
-            </div>
-
+        <div class="home-logo-frame" aria-hidden="true">
+          <img src="assets/images/N2.jpg" alt="">
         </div>
-    </section>
+
+        <div class="kicker">VHP decontamination · pharma-grade</div>
+
+        <h1 class="home-title">N2 Team</h1>
+
+        <p class="home-tag">
+          A modular approach to vaporized hydrogen peroxide decontamination —
+          rethinking process architecture and accelerating H₂O₂ aeration.
+        </p>
+
+        <div class="cta-row home-ctas">
+          <a class="btn primary home-cta" href="mission.html">
+            <span class="icon" aria-hidden="true">◎</span>
+            The Mission
+          </a>
+          <a class="btn secondary home-cta" href="team.html">
+            <span class="icon" aria-hidden="true">◇</span>
+            The Team
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-    <div class="container tiny" style="text-align: center;">
-        <p>&copy; 2024 VHP Decontamination Project.</p>
-        <div>
-            <a href="index.html">Home</a> ·
-            <a href="mission.html">Our Mission</a> ·
-            <a href="team.html">Meet the Team</a>
-        </div>
+  <div class="container">
+    <div class="tiny">© <span data-year></span> VHP Decontamination Project</div>
+    <div class="tiny">
+      <a href="index.html">Home</a> ·
+      <a href="mission.html">Our Mission</a> ·
+      <a href="team.html">Meet the Team</a>
     </div>
+  </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
+<style>
+  /* page-specific home layout */
+  .home-hero{
+    min-height: calc(100vh - 76px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 0 80px;
+    text-align: center;
+  }
+  .home-hero-inner{
+    display:flex; flex-direction: column; align-items: center;
+    max-width: 720px; margin: 0 auto;
+  }
+  .home-logo-frame{
+    width: clamp(180px, 26vw, 260px);
+    aspect-ratio: 1 / 1;
+    border-radius: 24px;
+    overflow: hidden;
+    margin-bottom: 36px;
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(95,168,255,.12);
+    position: relative;
+    background: linear-gradient(135deg, rgba(95,168,255,.10), rgba(93,214,197,.04));
+  }
+  .home-logo-frame img{
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .home-title{
+    font-size: clamp(48px, 7vw, 84px);
+    font-weight: 800;
+    letter-spacing: -.035em;
+    line-height: 1;
+    margin: 14px 0 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #b6cbe8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .home-tag{
+    font-size: clamp(15px, 1.5vw, 17.5px);
+    line-height: 1.65;
+    max-width: 560px;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .home-ctas{
+    margin-top: 36px;
+    justify-content: center;
+    gap: 14px;
+  }
+  .home-cta{
+    padding: 14px 22px;
+    font-size: 15px;
+    border-radius: 12px;
+  }
+</style>
 
+<script src="assets/js/main.js"></script>
 </body>
 </html>

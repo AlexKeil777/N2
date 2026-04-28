@@ -15,7 +15,7 @@
     <div class="container">
       <nav class="nav" aria-label="Main navigation">
         <a class="brand" href="index.html">
-          <img src="assets/images/N2.jpg" alt="N2 Team Logo" class="nav-logo">
+          <img src="assets/images/N2_icon.jpg" alt="" class="nav-logo">
           <span>
             N2 Team
             <small>VHP decontamination</small>
@@ -39,10 +39,12 @@
     <section class="hero">
       <div class="container">
         <div class="card pad-lg">
-          <div class="kicker">What do we do?</div>
-          <h1>Build robust VHP decontamination H₂O₂ removal</h1>
+          <div class="kicker">What we do</div>
+          <h1>Robust VHP decontamination &amp; accelerated H₂O₂ removal</h1>
           <p>
-            The project objective is to address VHP decontamination challenges through two complementary angles: Shift from continuous tunnel approaches to a batch approach, and optimize the aeration phase, often the bottleneck
+            Our project addresses VHP decontamination through two complementary angles:
+            shifting from continuous tunnel architectures to a modular batch approach,
+            and optimizing the aeration phase — typically the cycle bottleneck.
           </p>
         </div>
       </div>
@@ -50,79 +52,83 @@
 
     <section class="section">
       <div class="container">
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 24px;">
-          
+
+        <div class="focus-grid">
+
           <div class="card pad">
-            <h2>Focus 1 — Rethinking the process architecture</h2>
+            <div class="kicker">Focus 01</div>
+            <h2>Rethinking the process architecture</h2>
             <p>
-              We aim to move away from large continuous tunnel sections toward a modular, decoupled concept that can
-              maintain sterility assurance while improving operational robustness and handling interruptions more gracefully. 
+              Move away from large continuous tunnel sections toward a modular, decoupled concept that
+              maintains sterility assurance while improving operational robustness and gracefully handling interruptions.
             </p>
 
             <div class="hr"></div>
 
             <h3>What this enables</h3>
             <ul class="list">
-              <li>Independent modules that decouple cycles and reduce reliance on interconnected containment flows. </li>
-              <li>Improved reliability and scalability by design (configure throughput by adding/removing modules). </li>
-              <li>Look at our simulation to get a visual idea! </li>
+              <li>Independent modules that decouple cycles and reduce reliance on interconnected containment flows.</li>
+              <li>Reliability and scalability by design — configure throughput by adding or removing modules.</li>
+              <li>Take a look at our simulation to get a visual idea.</li>
             </ul>
 
-            <div class="cta-row" style="margin-top: 24px;">
+            <div class="cta-row">
               <a class="btn primary" href="v4_continuous_vs_batch_animation.html">
-                <span class="icon" aria-hidden="true">📊</span> Launch Simulation
+                <span class="icon" aria-hidden="true">▦</span> Launch simulation
               </a>
             </div>
           </div>
 
           <div class="card pad">
-            <h2>Focus 2 — Improving aeration (speed + depth)</h2>
+            <div class="kicker">Focus 02</div>
+            <h2>Improving aeration — speed and depth</h2>
             <p>
-              We focus on aerodynamic and thermodynamic optimization of aeration, often the
-              bottleneck in VHP-based cycles. 
+              Aerodynamic and thermodynamic optimization of aeration, often the bottleneck in VHP cycles,
+              to reach low residual H₂O₂ targets faster and more reliably.
             </p>
 
             <div class="hr"></div>
 
             <h3>What we optimize</h3>
             <ul class="list">
-              <li>Airflow, temperature, and moisture control to accelerate peroxide desorption. </li>
-              <li>Chamber design to achieve optimal aeration, ensuring safety and repeatability. </li>
+              <li>Airflow, temperature, and moisture control to accelerate peroxide desorption.</li>
+              <li>Chamber design tuned for optimal aeration, ensuring safety and repeatability.</li>
             </ul>
 
-            <div class="cta-row" style="margin-top: 24px;">
+            <div class="cta-row">
               <a class="btn secondary" href="assets/images/video_30sec.mp4" target="_blank" rel="noopener">
-                <span class="icon" aria-hidden="true">▶️</span> Watch 30s Video
+                <span class="icon" aria-hidden="true">▷</span> Watch 30s video
               </a>
             </div>
           </div>
 
-        </div> <div class="card pad">
+        </div>
+
+        <div class="card pad" style="margin-top: 18px;">
+          <div class="kicker">Direction</div>
           <h2>Where this is heading</h2>
           <p>
-            The outcome we’re aiming for is a modular VHP approach that improves scalability and reliability, paired with a
-            faster aeration method to reach low residual targets efficiently. 
+            A modular VHP approach that improves scalability and reliability, paired with a faster aeration
+            method to reach low residual targets efficiently — ready for pharma-grade environments.
           </p>
 
-          <div class="cta-row" style="margin-top: 24px; flex-wrap: wrap;">
-            <a class="btn secondary" href="team.html">
-              <span class="icon" aria-hidden="true">👥</span> Meet the team
+          <div class="cta-row">
+            <a class="btn primary" href="team.html">
+              <span class="icon" aria-hidden="true">◇</span> Meet the team
             </a>
             <a class="btn" href="index.html">
-              <span class="icon" aria-hidden="true">←</span> Back to Home
+              <span class="icon" aria-hidden="true">←</span> Back to home
             </a>
           </div>
         </div>
-        
+
       </div>
     </section>
   </main>
 
   <footer class="footer">
     <div class="container">
-      <div class="tiny">© <span id="y"></span> VHP Decontamination Project</div>
-
+      <div class="tiny">© <span data-year></span> VHP Decontamination Project</div>
       <div class="tiny">
         <a href="index.html">Home</a> ·
         <a href="mission.html">Our Mission</a> ·
@@ -131,10 +137,15 @@
     </div>
   </footer>
 
-  <script>
-    const y = document.getElementById('y');
-    if (y) y.textContent = new Date().getFullYear();
-  </script>
+  <style>
+    .focus-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+  </style>
+
   <script src="assets/js/main.js"></script>
 </body>
 </html>
