@@ -156,11 +156,10 @@ a:hover{ text-decoration: none; }
 }
 
 .nav-logo{
-  height: 38px; width: 38px;
-  border-radius: 9px;
+  height: 30px;
+  width: auto;
   display: block;
-  object-fit: cover;
-  box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  color: var(--text);   /* SVG inherits this via stroke="currentColor" */
 }
 
 .nav-links{
