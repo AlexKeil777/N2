@@ -33,9 +33,64 @@
 })();
 
 /* ============================================================
-   Animated H2O2 molecule background
-   Generates a fixed layer of drifting molecules behind page content.
+   Page transitions — evaporate-out before navigating
+   Pairs with the CSS condense-in animation that runs on load.
    ============================================================ */
+(() => {
+  let transitioning = false;
+
+  function isInternalNav(a, e) {
+    // Skip modifier/middle clicks, target=_blank, etc.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
+    if (e.button !== undefined && e.button !== 0) return false;
+    if (a.target && a.target !== '' && a.target !== '_self') return false;
+    if (a.hasAttribute('download')) return false;
+
+    const href = a.getAttribute('href');
+    if (!href) return false;
+    if (href.startsWith('#'))      return false;
+    if (href.startsWith('mailto:'))return false;
+    if (href.startsWith('tel:'))   return false;
+
+    let url;
+    try { url = new URL(href, location.href); } catch { return false; }
+    if (url.origin !== location.origin) return false;
+
+    // Same-page link — don't animate, let browser handle
+    if (url.pathname === location.pathname) return false;
+
+    // Skip non-HTML assets (mp4 video link on mission page, etc.)
+    if (!/\.html?$/.test(url.pathname) && url.pathname !== '/' && !url.pathname.endsWith('/')) {
+      return false;
+    }
+
+    return true;
+  }
+
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    if (transitioning) { e.preventDefault(); return; }
+    if (!isInternalNav(a, e)) return;
+
+    e.preventDefault();
+    transitioning = true;
+    document.body.classList.add('page-leave');
+
+    // Match CSS leave duration (.46s) — give a tiny buffer
+    setTimeout(() => { window.location.href = a.href; }, 460);
+  });
+
+  // Reset state when returning via back/forward (bfcache restore)
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      document.body.classList.remove('page-leave');
+      transitioning = false;
+    }
+  });
+})();
+
+ 
 (() => {
   // Don't double-inject
   if (document.querySelector('.molecule-bg')) return;
@@ -86,6 +141,32 @@
         }
         @media (prefers-reduced-motion: reduce){
           .molecule{animation:molFadeIn 1s ease-out forwards}
+        }
+
+        /* Page transition leave-state (entry animation lives in styles.css
+           and applies when present; this fallback ensures every page that
+           loads main.js can play the leave animation). */
+        body.page-leave main,
+        body.page-leave footer,
+        body.page-leave .wrap{
+          animation:none !important;
+          opacity:0;
+          filter:blur(20px);
+          transform:translateY(-32px) scale(1.05);
+          transition:opacity .46s cubic-bezier(.55,.06,.68,.19),
+                     filter .46s cubic-bezier(.55,.06,.68,.19),
+                     transform .46s cubic-bezier(.55,.06,.68,.19);
+        }
+        body.page-leave .molecule svg{
+          filter:drop-shadow(0 0 22px rgba(95,168,255,.42));
+          transition:filter .4s ease;
+        }
+        @media (prefers-reduced-motion: reduce){
+          body.page-leave main,
+          body.page-leave footer,
+          body.page-leave .wrap{
+            filter:none;transform:none;transition:opacity .25s ease;
+          }
         }
       `;
       const style = document.createElement('style');
