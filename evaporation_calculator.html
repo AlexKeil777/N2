@@ -34,13 +34,14 @@
     }
     .row{
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 10px 18px;
     }
     .field{
       display: flex;
       flex-direction: column;
       gap: 4px;
+      min-width: 0; /* let the grid track actually shrink to 1fr */
     }
     .field label{
       font-size: 12.5px;
@@ -50,9 +51,11 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      min-width: 0;
     }
     .field input[type="number"]{
-      flex: 1 1 auto;
+      flex: 1 1 0;
+      width: 100%;
       min-width: 0;
       background: rgba(255,255,255,.05);
       border: 1px solid var(--border-strong);
@@ -68,9 +71,10 @@
     }
     .field input[disabled]{ opacity: .5; }
     .field .unit{
+      flex: 0 0 auto;
       font-size: 12px;
       color: var(--subtle);
-      min-width: 44px;
+      white-space: nowrap;
     }
     .radio-list{
       display: flex;
