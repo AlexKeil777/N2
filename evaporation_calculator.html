@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>H₂O₂ Evaporation Calculator — VHP Decontamination</title>
+  <meta name="description" content="Interactive H2O2/H2O evaporation rate calculator — Hertz-Knudsen and boundary-layer flux models with time-stepping simulation." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    /* page-specific layout for the calculator */
+    .calc-grid{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 980px){
+      .calc-grid{ grid-template-columns: 1fr; }
+    }
+    .calc-panel{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 18px 16px;
+    }
+    .calc-panel + .calc-panel{ margin-top: 16px; }
+    .calc-panel h3{
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--brand);
+    }
+    .row{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 18px;
+    }
+    .field{
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .field label{
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .field .input-wrap{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .field input[type="number"]{
+      flex: 1 1 auto;
+      min-width: 0;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border-strong);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+    }
+    .field input[type="number"]:focus{
+      outline: 2px solid var(--brand);
+      outline-offset: 1px;
+    }
+    .field input[disabled]{ opacity: .5; }
+    .field .unit{
+      font-size: 12px;
+      color: var(--subtle);
+      min-width: 44px;
+    }
+    .radio-list{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+    }
+    .radio-list label{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      background: rgba(255,255,255,.02);
+    }
+    .radio-list input{ accent-color: var(--brand); }
+    .radio-list label:has(input:checked){
+      border-color: var(--brand);
+      background: rgba(95,168,255,.10);
+      color: var(--text);
+    }
+    .check-row{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .check-row input{ accent-color: var(--brand); }
+    .btn-row{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .results-box{
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #d6e4f7;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow: auto;
+    }
+    .chart-wrap{
+      background: rgba(0,0,0,.25);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+    }
+    canvas{ display: block; width: 100%; height: auto; }
+    .legend{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 6px 4px 2px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .legend .swatch{
+      display: inline-block;
+      width: 12px; height: 12px;
+      vertical-align: middle;
+      border-radius: 3px;
+      margin-right: 6px;
+    }
+    .note{
+      font-size: 12.5px;
+      color: var(--subtle);
+      margin-top: 8px;
+    }
+    .kpi-grid{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .kpi{
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .kpi .label{
+      font-size: 11.5px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .kpi .value{
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .kpi .sub{
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--subtle);
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav" aria-label="Main navigation">
+        <a class="brand" href="index.html">
+          <img src="assets/images/N2 icon.jpg" alt="" class="nav-logo">
+          <span>
+            N2 Team
+            <small>VHP decontamination</small>
+          </span>
+        </a>
+
+        <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
+          Menu
+        </button>
+
+        <div class="nav-links" id="navLinks" data-nav-links>
+          <a href="index.html">Home</a>
+          <a href="mission.html">Our Mission</a>
+          <a href="team.html">Meet the Team</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container">
+        <div class="card pad-lg">
+          <div class="kicker">Tools</div>
+          <h1>H₂O₂ / H₂O Evaporation Rate Calculator</h1>
+          <p>
+            Free-film evaporation of binary H₂O₂/H₂O liquid into a humid air boundary.
+            Pure-component vapor pressures from Giguère &amp; Maass (H₂O₂) and Tetens
+            (H₂O); non-ideality via a Margules model. Choose between Hertz-Knudsen
+            (perfectly stirred gas) and three boundary-layer flux modes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="calc-grid">
+
+          <!-- ============ LEFT: INPUTS ============ -->
+          <div>
+            <div class="calc-panel">
+              <h3>Calculation Mode</h3>
+              <div class="radio-list" role="radiogroup" aria-label="Calculation mode">
+                <label><input type="radio" name="mode" value="A" checked> A · Hertz-Knudsen</label>
+                <label><input type="radio" name="mode" value="B"> B · Stefan / Fick</label>
+                <label><input type="radio" name="mode" value="C"> C · Wilke D<sub>eff</sub></label>
+                <label><input type="radio" name="mode" value="D"> D · Krishna-Standart</label>
+              </div>
+            </div>
+
+            <div class="calc-panel">
+              <h3>Common Inputs</h3>
+              <div class="row">
+                <div class="field">
+                  <label for="T_liq">Liquid temperature T<sub>liq</sub></label>
+                  <div class="input-wrap">
+                    <input id="T_liq" type="number" step="0.1" value="25">
+                    <span class="unit">°C</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="P_ref">Reference pressure P<sub>ref</sub></label>
+                  <div class="input-wrap">
+                    <input id="P_ref" type="number" step="100" value="101325">
+                    <span class="unit">Pa</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="T_air">Air temperature T<sub>air</sub></label>
+                  <div class="input-wrap">
+                    <input id="T_air" type="number" step="0.1" value="25">
+                    <span class="unit">°C</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="RH">Initial relative humidity</label>
+                  <div class="input-wrap">
+                    <input id="RH" type="number" step="1" min="0" max="100" value="50">
+                    <span class="unit">%</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="wt_H2O2">H₂O₂ weight fraction</label>
+                  <div class="input-wrap">
+                    <input id="wt_H2O2" type="number" step="0.5" min="0" max="100" value="30">
+                    <span class="unit">wt %</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="f_N2">N₂ volume fraction</label>
+                  <div class="input-wrap">
+                    <input id="f_N2" type="number" step="0.01" min="0" max="1" value="0">
+                    <span class="unit">vol fr</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="calc-panel">
+              <h3>N₂ Injection Method</h3>
+              <div class="radio-list" role="radiogroup" aria-label="N2 injection method">
+                <label><input type="radio" name="n2mode" value="I" checked> I · Isobaric replacement (P fixed)</label>
+                <label><input type="radio" name="n2mode" value="II"> II · Pressurisation (P rises)</label>
+              </div>
+            </div>
+
+            <div class="calc-panel">
+              <h3>Boundary Layer <small style="text-transform:none;color:var(--subtle);font-weight:500">(modes B/C/D)</small></h3>
+              <div class="row">
+                <div class="field">
+                  <label for="U_air">Air velocity U</label>
+                  <div class="input-wrap">
+                    <input id="U_air" type="number" step="0.1" min="0" value="0.5">
+                    <span class="unit">m/s</span>
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="delta_man">Manual δ override</label>
+                  <div class="input-wrap">
+                    <input id="delta_man" type="number" step="0.1" min="0" value="5.0" disabled>
+                    <span class="unit">mm</span>
+                  </div>
+                </div>
+              </div>
+              <div class="check-row">
+                <input id="delta_override" type="checkbox">
+                <label for="delta_override">Manually override boundary-layer thickness δ<sub>eff</sub></label>
+              </div>
+              <div class="note">U = 0 selects natural convection (δ<sub>eff</sub> ≈ 5 mm fallback).</div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn primary" id="btn-calc">Calculate t = 0</button>
+              <button class="btn primary" id="btn-run">Run simulation</button>
+              <button class="btn secondary" id="btn-csv">Export CSV</button>
+            </div>
+          </div>
+
+          <!-- ============ RIGHT: RESULTS ============ -->
+          <div>
+            <div class="calc-panel">
+              <h3>Instantaneous flux (t = 0)</h3>
+              <div class="kpi-grid">
+                <div class="kpi">
+                  <div class="label">H₂O₂ flux</div>
+                  <div class="value" id="kpi-flux1">— mol/m²·s</div>
+                  <div class="sub" id="kpi-gmin1">— g/min</div>
+                </div>
+                <div class="kpi">
+                  <div class="label">H₂O flux</div>
+                  <div class="value" id="kpi-flux2">— mol/m²·s</div>
+                  <div class="sub" id="kpi-gmin2">— g/min</div>
+                </div>
+              </div>
+              <div class="results-box" id="static-out" style="margin-top:12px">Awaiting inputs — click “Calculate t = 0”.</div>
+            </div>
+
+            <div class="calc-panel">
+              <h3>Dynamic simulation (0 – 3600 s)</h3>
+              <div class="chart-wrap">
+                <canvas id="chart-mass" width="640" height="280"></canvas>
+              </div>
+              <div class="legend">
+                <span><span class="swatch" style="background:#f59e7b"></span>H₂O₂ mass (g)</span>
+                <span><span class="swatch" style="background:#5fa8ff"></span>H₂O mass (g)</span>
+                <span><span class="swatch" style="background:#cbd5e1"></span>Total (g)</span>
+              </div>
+              <div class="chart-wrap" style="margin-top:10px">
+                <canvas id="chart-wt" width="640" height="220"></canvas>
+              </div>
+              <div class="legend">
+                <span><span class="swatch" style="background:#5dd6c5"></span>Liquid H₂O₂ wt %</span>
+              </div>
+              <div class="note">
+                Initial film: 1 mm depth × 100 cm² (≈ 11 g of 30 wt % solution).
+                Integration: explicit RK4, 300 steps over 1 h.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="tiny">© <span data-year></span> VHP Decontamination Project</div>
+      <div class="tiny">
+        <a href="index.html">Home</a> ·
+        <a href="mission.html">Our Mission</a> ·
+        <a href="team.html">Meet the Team</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+  /* ================================================================
+     EvapCalculator — JS port of EvapCalculatorAp_v15.py
+     Physics: Giguere-Maass H2O2 vp, Tetens H2O vp, Margules activity,
+     Hertz-Knudsen or boundary-layer flux; RK4 mass-balance over 1 h.
+     ================================================================ */
+  (function(){
+    // ---- shared physical constants (mirrors Python) ----
+    const R_gas      = 8.314;
+    const A_surf     = 100e-4;          // m² (10×10 cm)
+    const M1         = 34.015e-3;       // kg/mol H2O2
+    const M2         = 18.015e-3;       // kg/mol H2O
+    const A12m       = -0.40;           // Margules
+    const A21m       = -0.22;
+    const H2O2_pref  = 5.0 * 133.322;   // Pa (5 mmHg @ 30 °C)
+    const H2O2_Tref  = 303.15;          // K
+    const H2O2_HvR   = 11590;           // K (ΔHvap / R)
+
+    // ---- DOM helpers ----
+    const $ = id => document.getElementById(id);
+    const getNum = id => parseFloat($(id).value);
+    const radioVal = name => document.querySelector(`input[name="${name}"]:checked`).value;
+
+    // override checkbox enables manual delta entry
+    $('delta_override').addEventListener('change', e => {
+      $('delta_man').disabled = !e.target.checked;
+    });
+
+    // ---- read all inputs into a state object ----
+    function readState(){
+      return {
+        T_liq    : getNum('T_liq') + 273.15,
+        T_air    : getNum('T_air') + 273.15,
+        wt_H2O2  : getNum('wt_H2O2') / 100.0,
+        P_ref    : getNum('P_ref'),
+        RH       : getNum('RH') / 100.0,
+        f_N2     : getNum('f_N2'),
+        mode     : radioVal('mode'),
+        n2_mode  : radioVal('n2mode'),
+        U_air    : getNum('U_air'),
+        d_over   : $('delta_override').checked,
+        delta_m  : getNum('delta_man') / 1000.0
+      };
+    }
+
+    // ---- thermodynamics (given liquid wt% and T) ----
+    function thermo(T_liq, T_air, wt, RH){
+      // mole fractions in liquid
+      let x1;
+      if (wt <= 0)      x1 = 0.0;
+      else if (wt >= 1) x1 = 1.0;
+      else {
+        const n1 = wt / M1;
+        const n2 = (1 - wt) / M2;
+        x1 = n1 / (n1 + n2);
+      }
+      const x2 = 1 - x1;
+
+      // pure-component vapor pressures
+      const p1_pure = H2O2_pref * Math.exp(-H2O2_HvR * (1/T_liq - 1/H2O2_Tref));
+      const Tc      = T_liq - 273.15;
+      const p2_pure = 610.78 * Math.exp(17.27 * Tc / (Tc + 237.3));
+
+      // Margules activity coefficients
+      const gamma1 = Math.exp(x2*x2 * (A12m + 2*(A21m - A12m)*x1));
+      const gamma2 = Math.exp(x1*x1 * (A21m + 2*(A12m - A21m)*x2));
+
+      // surface partial pressures (modified Raoult)
+      const p1_surf = x1 * gamma1 * p1_pure;
+      const p2_surf = x2 * gamma2 * p2_pure;
+
+      // bulk gas
+      const Tac = T_air - 273.15;
+      const p2_pure_air = 610.78 * Math.exp(17.27 * Tac / (Tac + 237.3));
+      const p2_bulk = RH * p2_pure_air;
+      const p1_bulk = 0.0;
+
+      return { x1, x2, p1_pure, p2_pure, gamma1, gamma2, p1_surf, p2_surf, p1_bulk, p2_bulk };
+    }
+
+    // ---- flux kernel: returns [flux1, flux2] in mol/m²/s ----
+    function fluxes(state, th){
+      const { mode, T_liq, T_air, U_air, d_over, delta_m } = state;
+      const { p1_surf, p2_surf, p1_bulk, p2_bulk } = th;
+      let f1 = 0, f2 = 0;
+
+      if (mode === 'A'){
+        // Hertz-Knudsen, alpha = 1
+        const d1 = Math.sqrt(2 * Math.PI * M1 * R_gas * T_liq);
+        const d2 = Math.sqrt(2 * Math.PI * M2 * R_gas * T_liq);
+        f1 = (p1_surf - p1_bulk) / d1;
+        f2 = (p2_surf - p2_bulk) / d2;
+      } else {
+        // B/C/D: simple boundary-layer film
+        let delta_eff;
+        if (d_over){
+          delta_eff = delta_m;
+        } else {
+          const L = 0.1, nu = 1.5e-5;
+          const Re = U_air * L / nu;
+          delta_eff = (Re > 0) ? (4.64 * L / Math.sqrt(Re)) : 0.005;
+        }
+        const D1_air = 1.3e-5;
+        const D2_air = 2.4e-5;
+        const kg1 = D1_air / delta_eff;
+        const kg2 = D2_air / delta_eff;
+        f1 = (kg1 / (R_gas * T_air)) * (p1_surf - p1_bulk);
+        f2 = (kg2 / (R_gas * T_air)) * (p2_surf - p2_bulk);
+      }
+      return [f1, f2];
+    }
+
+    // ===============================================================
+    // STATIC CALCULATION (t = 0)
+    // ===============================================================
+    function doCalculate(){
+      const s = readState();
+      const th = thermo(s.T_liq, s.T_air, s.wt_H2O2, s.RH);
+      const [f1, f2] = fluxes(s, th);
+
+      // mol/m²/s → g/min over A_surf (100 cm²)
+      const g1 = f1 * M1 * 1000 * 60 * A_surf;
+      const g2 = f2 * M2 * 1000 * 60 * A_surf;
+
+      $('kpi-flux1').textContent = `${f1.toExponential(3)} mol/m²·s`;
+      $('kpi-flux2').textContent = `${f2.toExponential(3)} mol/m²·s`;
+      $('kpi-gmin1').textContent = `${g1.toFixed(5)} g/min`;
+      $('kpi-gmin2').textContent = `${g2.toFixed(5)} g/min`;
+
+      const lines = [
+        `Thermodynamic state`,
+        `  x_H2O2 = ${th.x1.toFixed(4)},  x_H2O = ${th.x2.toFixed(4)}`,
+        `  γ_H2O2 = ${th.gamma1.toFixed(3)},  γ_H2O = ${th.gamma2.toFixed(3)}`,
+        `  p_H2O2,sat = ${th.p1_pure.toFixed(2)} Pa`,
+        `  p_H2O,sat  = ${th.p2_pure.toFixed(2)} Pa`,
+        ``,
+        `Surface partial pressures`,
+        `  p_H2O2 = ${th.p1_surf.toFixed(2)} Pa`,
+        `  p_H2O  = ${th.p2_surf.toFixed(2)} Pa`,
+        ``,
+        `Bulk gas partial pressures`,
+        `  p_H2O2 = ${th.p1_bulk.toFixed(2)} Pa`,
+        `  p_H2O  = ${th.p2_bulk.toFixed(2)} Pa`,
+        ``,
+        `Stage-1 fluxes (mode ${s.mode})`,
+        `  H2O2 : ${f1.toExponential(4)} mol/m²·s   |  ${g1.toFixed(6)} g/min`,
+        `  H2O  : ${f2.toExponential(4)} mol/m²·s   |  ${g2.toFixed(6)} g/min`
+      ];
+      $('static-out').textContent = lines.join('\n');
+    }
+
+    // ===============================================================
+    // DYNAMIC SIMULATION (0 → 3600 s, RK4)
+    // ===============================================================
+    let simResult = null;
+
+    function dYdt(t, Y, s){
+      let [m1, m2] = Y;
+      m1 = Math.max(0, m1);
+      m2 = Math.max(0, m2);
+      if (m1 + m2 <= 1e-9) return [0, 0];
+
+      // local mole fractions → effective wt%
+      const n1 = m1 / M1, n2 = m2 / M2;
+      const x1 = n1 / (n1 + n2);
+      const wt_eff = (m1) / (m1 + m2);
+
+      // build thermo with current liquid composition
+      const th = thermo(s.T_liq, s.T_air, wt_eff, s.RH);
+      const [f1, f2] = fluxes(s, th);
+
+      // dm/dt = -flux · M · A
+      return [-f1 * M1 * A_surf, -f2 * M2 * A_surf];
+    }
+
+    function rk4(f, t0, t1, Y0, nSteps, s){
+      const dt = (t1 - t0) / nSteps;
+      const ts = new Array(nSteps + 1);
+      const ys = new Array(nSteps + 1);
+      ts[0] = t0;
+      ys[0] = Y0.slice();
+
+      for (let i = 0; i < nSteps; i++){
+        const t = ts[i];
+        const Y = ys[i];
+        const k1 = f(t,         Y,                                       s);
+        const k2 = f(t + dt/2, [Y[0] + dt/2 * k1[0], Y[1] + dt/2 * k1[1]], s);
+        const k3 = f(t + dt/2, [Y[0] + dt/2 * k2[0], Y[1] + dt/2 * k2[1]], s);
+        const k4 = f(t + dt,   [Y[0] + dt   * k3[0], Y[1] + dt   * k3[1]], s);
+        const Yn = [
+          Y[0] + dt/6 * (k1[0] + 2*k2[0] + 2*k3[0] + k4[0]),
+          Y[1] + dt/6 * (k1[1] + 2*k2[1] + 2*k3[1] + k4[1])
+        ];
+        ts[i+1] = t + dt;
+        ys[i+1] = [Math.max(0, Yn[0]), Math.max(0, Yn[1])];
+      }
+      return { ts, ys };
+    }
+
+    function runSimulation(){
+      const s = readState();
+
+      // initial film: 1 mm × A_surf, ρ ≈ 1100 kg/m³ for 30 wt%
+      const rho   = 1100.0;
+      const V0    = 1e-3 * A_surf;        // m³
+      const m_tot = rho * V0;             // kg
+      const m1_0  = m_tot * s.wt_H2O2;
+      const m2_0  = m_tot * (1 - s.wt_H2O2);
+
+      const sol = rk4(dYdt, 0, 3600, [m1_0, m2_0], 300, s);
+      simResult = sol;
+
+      drawCharts(sol);
+    }
+
+    // ===============================================================
+    // CSV EXPORT
+    // ===============================================================
+    function exportCSV(){
+      if (!simResult){
+        alert('No simulation data — click "Run simulation" first.');
+        return;
+      }
+      const { ts, ys } = simResult;
+      const rows = [['Time (s)', 'Time (min)', 'H2O2 Mass (g)', 'H2O Mass (g)', 'Total Mass (g)', 'H2O2 wt%']];
+      for (let i = 0; i < ts.length; i++){
+        const tSec = ts[i];
+        const m1g = ys[i][0] * 1000;
+        const m2g = ys[i][1] * 1000;
+        const mt  = m1g + m2g;
+        const wp  = mt > 1e-6 ? (m1g / mt) * 100 : 0;
+        rows.push([
+          tSec.toFixed(2),
+          (tSec/60).toFixed(4),
+          m1g.toFixed(6),
+          m2g.toFixed(6),
+          mt.toFixed(6),
+          wp.toFixed(4)
+        ]);
+      }
+      const csv = rows.map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `evap_simulation_${Date.now()}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ===============================================================
+    // CANVAS PLOTTING
+    // ===============================================================
+    function fitCanvas(canvas){
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.clientWidth;
+      const h = parseInt(canvas.getAttribute('height'), 10);
+      canvas.width  = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx, w, h };
+    }
+
+    function drawAxes(ctx, w, h, pad, xMax, yMax, xLabel, yLabel){
+      ctx.strokeStyle = 'rgba(255,255,255,.15)';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = 'rgba(238,243,251,.55)';
+      ctx.font = '11px ui-monospace, Menlo, Consolas, monospace';
+
+      // box
+      ctx.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
+
+      // gridlines: 5 vertical, 5 horizontal
+      ctx.strokeStyle = 'rgba(255,255,255,.06)';
+      for (let i = 1; i < 5; i++){
+        const x = pad.l + (w - pad.l - pad.r) * i / 5;
+        ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, h - pad.b); ctx.stroke();
+        const y = pad.t + (h - pad.t - pad.b) * i / 5;
+        ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+      }
+
+      // tick labels
+      ctx.fillStyle = 'rgba(238,243,251,.55)';
+      ctx.textAlign = 'center';
+      for (let i = 0; i <= 5; i++){
+        const x = pad.l + (w - pad.l - pad.r) * i / 5;
+        const v = xMax * i / 5;
+        ctx.fillText(v.toFixed(0), x, h - pad.b + 14);
+      }
+      ctx.textAlign = 'right';
+      for (let i = 0; i <= 5; i++){
+        const y = h - pad.b - (h - pad.t - pad.b) * i / 5;
+        const v = yMax * i / 5;
+        ctx.fillText(v.toFixed(2), pad.l - 6, y + 4);
+      }
+
+      // axis labels
+      ctx.fillStyle = 'rgba(238,243,251,.7)';
+      ctx.textAlign = 'center';
+      ctx.fillText(xLabel, pad.l + (w - pad.l - pad.r)/2, h - 4);
+      ctx.save();
+      ctx.translate(12, pad.t + (h - pad.t - pad.b)/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText(yLabel, 0, 0);
+      ctx.restore();
+    }
+
+    function plotSeries(ctx, xs, ys, pad, w, h, xMax, yMax, color){
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const plotW = w - pad.l - pad.r;
+      const plotH = h - pad.t - pad.b;
+      for (let i = 0; i < xs.length; i++){
+        const x = pad.l + (xs[i] / xMax) * plotW;
+        const y = pad.t + (1 - ys[i] / yMax) * plotH;
+        if (i === 0) ctx.moveTo(x, y);
+        else         ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    function drawCharts(sol){
+      const { ts, ys } = sol;
+      const tMin = ts.map(t => t / 60);
+      const m1g  = ys.map(y => y[0] * 1000);
+      const m2g  = ys.map(y => y[1] * 1000);
+      const mt   = m1g.map((v, i) => v + m2g[i]);
+      const wt   = m1g.map((v, i) => mt[i] > 1e-6 ? (v / mt[i]) * 100 : 0);
+
+      const xMax  = 60;                       // minutes
+      const yMaxM = Math.max(...mt) * 1.1 || 1;
+
+      // chart 1: masses
+      const c1 = $('chart-mass');
+      const f1 = fitCanvas(c1);
+      f1.ctx.clearRect(0, 0, f1.w, f1.h);
+      const pad1 = { l: 56, r: 14, t: 12, b: 28 };
+      drawAxes(f1.ctx, f1.w, f1.h, pad1, xMax, yMaxM, 'Time (min)', 'Mass (g)');
+      plotSeries(f1.ctx, tMin, m1g, pad1, f1.w, f1.h, xMax, yMaxM, '#f59e7b');
+      plotSeries(f1.ctx, tMin, m2g, pad1, f1.w, f1.h, xMax, yMaxM, '#5fa8ff');
+      plotSeries(f1.ctx, tMin, mt,  pad1, f1.w, f1.h, xMax, yMaxM, '#cbd5e1');
+
+      // chart 2: wt%
+      const c2 = $('chart-wt');
+      const f2 = fitCanvas(c2);
+      f2.ctx.clearRect(0, 0, f2.w, f2.h);
+      const pad2 = { l: 56, r: 14, t: 12, b: 28 };
+      drawAxes(f2.ctx, f2.w, f2.h, pad2, xMax, 100, 'Time (min)', 'H₂O₂ wt %');
+      plotSeries(f2.ctx, tMin, wt, pad2, f2.w, f2.h, xMax, 100, '#5dd6c5');
+    }
+
+    // redraw existing simulation on window resize (responsive canvas)
+    let resizeRaf = null;
+    window.addEventListener('resize', () => {
+      if (!simResult) return;
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => drawCharts(simResult));
+    });
+
+    // ---- wire up buttons ----
+    $('btn-calc').addEventListener('click', doCalculate);
+    $('btn-run').addEventListener('click', runSimulation);
+    $('btn-csv').addEventListener('click', exportCSV);
+
+    // initial draw so canvases aren't blank
+    doCalculate();
+  })();
+  </script>
+</body>
+</html>

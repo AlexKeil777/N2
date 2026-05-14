@@ -1,6 +1,6 @@
 # N2 Team — VHP Decontamination
 
-A static project website for the **N2 Team**, presenting a research effort on **Vaporized Hydrogen Peroxide (VHP) decontamination**. The site introduces the team's mission, the people behind it, and an interactive simulation comparing continuous vs. batch process architectures.
+A static project website for the **N2 Team**, presenting a research effort on **Vaporized Hydrogen Peroxide (VHP) decontamination**. The site introduces the team's mission, the people behind it, an interactive simulation comparing continuous vs. batch process architectures, and an in-browser H₂O₂/H₂O evaporation rate calculator.
 
 ---
 
@@ -22,13 +22,16 @@ The interactive simulation included in the site visualizes both architectures si
 ├── index.html                              # Landing page
 ├── mission.html                            # Project mission & focus areas
 ├── team.html                               # Team members
-├── v4_continuous_vs_batch_animation.html   # Interactive simulation
+├── v4_continuous_vs_batch_animation.html   # Interactive process simulation
+├── evaporation_calculator.html             # H₂O₂/H₂O evaporation calculator
 ├── README.md
 └── assets/
     ├── css/
     │   └── styles.css                      # Global pharma-clean theme
     ├── js/
     │   └── main.js                         # Nav + animated H₂O₂ background
+    ├── py/
+    │   └── EvapCalculatorAp_v15.py         # Reference Tkinter desktop app
     └── images/
         ├── N2.jpg                          # Hero / brand image
         ├── N2_icon.jpg                     # Nav logo
@@ -79,6 +82,7 @@ Then open <http://localhost:8080> in your browser.
 | `mission.html` | The two focus areas (architecture & aeration) and overall direction |
 | `team.html` | Team member profiles and contact entry points |
 | `v4_continuous_vs_batch_animation.html` | Interactive side-by-side simulation of continuous vs. batch processes |
+| `evaporation_calculator.html` | Interactive H₂O₂/H₂O evaporation rate calculator (static flux + 1 h RK4 simulation, CSV export) |
 
 ---
 
@@ -114,6 +118,15 @@ Lower `count` or `op` for a more subtle effect; raise them for more atmosphere.
 
 ### Simulation parameters
 The simulation page (`v4_continuous_vs_batch_animation.html`) exposes user-facing controls (chamber length, conveyor speed, takt time, minimum dwell). All other timing/visual tuning is in the inline `<script>` at the bottom of that file.
+
+### Evaporation calculator
+`evaporation_calculator.html` is self-contained (inline CSS + JS). It is a JavaScript port of the reference Tkinter app at `assets/py/EvapCalculatorAp_v15.py` — same physics (Giguère–Maass H₂O₂ vapor pressure, Tetens H₂O, Margules activity coefficients, Hertz-Knudsen or boundary-layer flux). The dynamic simulation uses an explicit RK4 integrator (300 steps over 3600 s) in place of SciPy's `solve_ivp`. Charts are drawn directly on `<canvas>` — no plotting library. Physical constants and flux kernels are at the top of the inline `<script>` block; edit there to retune.
+
+The original Tkinter app remains usable as a standalone desktop tool:
+
+```bash
+python assets/py/EvapCalculatorAp_v15.py
+```
 
 ---
 
