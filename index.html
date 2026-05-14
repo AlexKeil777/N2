@@ -70,8 +70,66 @@
             <span class="icon" aria-hidden="true">◇</span>
             The Team
           </a>
+          <a class="btn home-cta" href="#contact">
+            <span class="icon" aria-hidden="true">✉</span>
+            Contact us
+          </a>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="card pad-lg contact-card">
+        <div class="kicker">Get in touch</div>
+        <h2 class="contact-title">Contact the N2 Team</h2>
+        <p class="contact-tag">
+          Questions, collaborations, or partnership inquiries — drop us a message.
+          We typically respond within a few working days.
+        </p>
+
+        <form id="contact-form"
+              class="contact-form"
+              action="https://formsubmit.co/nbmsoffacc@outlook.com"
+              method="POST">
+          <!-- FormSubmit configuration -->
+          <input type="hidden" name="_subject" value="New contact via N2 website">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <!-- Honeypot: bots fill this; real users never see it. -->
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+
+          <div class="contact-row">
+            <div class="contact-field">
+              <label for="cf-name">Name</label>
+              <input id="cf-name" name="name" type="text" required autocomplete="name">
+            </div>
+            <div class="contact-field">
+              <label for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="contact-field">
+            <label for="cf-subject">Subject <span class="optional">(optional)</span></label>
+            <input id="cf-subject" name="subject" type="text" autocomplete="off">
+          </div>
+
+          <div class="contact-field">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" rows="6" required></textarea>
+          </div>
+
+          <div class="contact-actions">
+            <button class="btn primary" type="submit" id="cf-submit">
+              <span class="icon" aria-hidden="true">➤</span>
+              Send message
+            </button>
+            <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
       </div>
     </div>
   </section>
@@ -140,8 +198,158 @@
     font-size: 15px;
     border-radius: 12px;
   }
+
+  /* ---------- contact form ---------- */
+  .contact-card{
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .contact-title{
+    margin: 6px 0 10px;
+  }
+  .contact-tag{
+    color: var(--muted);
+    margin: 0 0 22px;
+  }
+  .contact-form{
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .contact-row{
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 640px){
+    .contact-row{ grid-template-columns: 1fr; }
+  }
+  .contact-field{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .contact-field label{
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .01em;
+  }
+  .contact-field .optional{
+    color: var(--subtle);
+    font-weight: 400;
+  }
+  .contact-field input,
+  .contact-field textarea{
+    width: 100%;
+    min-width: 0;
+    background: rgba(255,255,255,.05);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 11px 13px;
+    font: inherit;
+    line-height: 1.45;
+    transition: border-color var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+  }
+  .contact-field textarea{
+    resize: vertical;
+    min-height: 120px;
+  }
+  .contact-field input::placeholder,
+  .contact-field textarea::placeholder{ color: var(--subtle); }
+  .contact-field input:hover,
+  .contact-field textarea:hover{ border-color: rgba(255,255,255,.22); }
+  .contact-field input:focus-visible,
+  .contact-field textarea:focus-visible{
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(95,168,255,.22);
+    background: rgba(255,255,255,.07);
+  }
+  .contact-field input:invalid:not(:placeholder-shown),
+  .contact-field textarea:invalid:not(:placeholder-shown){
+    border-color: var(--warn);
+  }
+  .contact-actions{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .contact-status{
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+    min-height: 1.4em;
+  }
+  .contact-status.ok    { color: var(--brand-2); }
+  .contact-status.err   { color: var(--warn); }
+  .contact-status.busy  { color: var(--muted); }
+
+  /* honeypot — visually hidden, accessible-but-ignored */
+  .hp{
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
 </style>
 
 <script src="assets/js/main.js"></script>
+<script>
+  /* Contact form — AJAX submit via FormSubmit, with native fallback. */
+  (function(){
+    const form    = document.getElementById('contact-form');
+    if (!form) return;
+    const status  = document.getElementById('cf-status');
+    const submit  = document.getElementById('cf-submit');
+
+    function setStatus(msg, cls){
+      status.textContent = msg;
+      status.classList.remove('ok', 'err', 'busy');
+      if (cls) status.classList.add(cls);
+    }
+
+    form.addEventListener('submit', async (e) => {
+      // honeypot tripped → silently drop
+      if (form._honey && form._honey.value) {
+        e.preventDefault();
+        return;
+      }
+      // Native validation runs before this handler (no `novalidate`),
+      // so we only get here once the form is valid.
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const endpoint = form.action.replace('formsubmit.co/', 'formsubmit.co/ajax/');
+
+      submit.disabled = true;
+      setStatus('Sending…', 'busy');
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: data
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && (json.success === 'true' || json.success === true)){
+          form.reset();
+          setStatus('Thanks — your message has been sent.', 'ok');
+        } else {
+          setStatus('Could not send right now. Please try again or email us directly.', 'err');
+        }
+      } catch (err) {
+        setStatus('Network error. Please try again.', 'err');
+      } finally {
+        submit.disabled = false;
+      }
+    });
+  })();
+</script>
 </body>
 </html>
