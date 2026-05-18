@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m 'Redesign header into fixed side rail with animated N2 mark field *)"
+    ]
+  }
+}

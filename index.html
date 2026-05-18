@@ -44,14 +44,6 @@
     <div class="container">
       <div class="home-hero-inner">
 
-        <div class="home-logo-mark" aria-hidden="true">
-          <svg viewBox="0 0 400 240">
-            <path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
-                  fill="none" stroke="currentColor" stroke-width="36"
-                  stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-
         <div class="kicker">VHP decontamination · pharma-grade</div>
 
         <h1 class="home-title">N2 Team</h1>
@@ -60,21 +52,6 @@
           A modular approach to vaporized hydrogen peroxide decontamination —
           rethinking process architecture and accelerating H₂O₂ aeration.
         </p>
-
-        <div class="cta-row home-ctas">
-          <a class="btn primary home-cta" href="mission.html">
-            <span class="icon" aria-hidden="true">◎</span>
-            The Mission
-          </a>
-          <a class="btn secondary home-cta" href="team.html">
-            <span class="icon" aria-hidden="true">◇</span>
-            The Team
-          </a>
-          <a class="btn home-cta" href="#contact">
-            <span class="icon" aria-hidden="true">✉</span>
-            Contact us
-          </a>
-        </div>
 
       </div>
     </div>
@@ -160,21 +137,11 @@
     display:flex; flex-direction: column; align-items: center;
     max-width: 720px; margin: 0 auto;
   }
-  .home-logo-mark{
-    width: clamp(240px, 36vw, 380px);
-    color: #ffffff;
-    margin-bottom: 28px;
-  }
-  .home-logo-mark svg{
-    width: 100%;
-    height: auto;
-    display: block;
-  }
   .home-title{
     font-size: clamp(48px, 7vw, 84px);
-    font-weight: 800;
-    letter-spacing: -.035em;
-    line-height: 1;
+    font-weight: 300;
+    letter-spacing: -.005em;
+    line-height: 1.05;
     margin: 14px 0 22px;
     background: linear-gradient(180deg, #ffffff 0%, #b6cbe8 100%);
     -webkit-background-clip: text;
@@ -188,17 +155,6 @@
     color: var(--muted);
     margin: 0 0 8px;
   }
-  .home-ctas{
-    margin-top: 36px;
-    justify-content: center;
-    gap: 14px;
-  }
-  .home-cta{
-    padding: 14px 22px;
-    font-size: 15px;
-    border-radius: 12px;
-  }
-
   /* ---------- contact form ---------- */
   .contact-card{
     max-width: 720px;

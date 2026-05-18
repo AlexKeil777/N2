@@ -2,7 +2,7 @@
    VHP Decontamination — pharma-clean dark theme
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap');
 
 :root{
   /* Surfaces */
@@ -58,8 +58,9 @@ body{
     radial-gradient(1100px 800px at 50% 110%, rgba(95,168,255,.06), transparent 60%),
     var(--bg);
   color: var(--text);
-  line-height: 1.6;
-  letter-spacing: -0.005em;
+  font-weight: 300;
+  line-height: 1.7;
+  letter-spacing: 0.012em;
   min-height: 100vh;
 }
 
@@ -193,64 +194,98 @@ body.page-leave .molecule svg,
 }
 
 /* ============================================================
-   Header / navigation
+   Header / navigation — fixed vertical side rail
    ============================================================ */
 .site-header{
-  position: sticky; top: 0; z-index: 50;
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  background: rgba(8,20,40,.62);
-  border-bottom: 1px solid var(--border);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 212px;
+  z-index: 60;
+  background: none;
+  border-bottom: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.site-header > .container{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 30px 0 30px 30px;
 }
 
 .nav{
-  display:flex; align-items:center; justify-content:space-between;
-  padding: 16px 0; gap: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 0;
+  gap: 0;
 }
 
 .brand{
-  display:flex; align-items:center; gap: 12px;
-  font-weight: 700; letter-spacing: -.01em;
+  display:flex; align-items:center; gap: 11px;
+  font-weight: 500; letter-spacing: -.005em;
+  margin-bottom: auto;            /* pin brand to the top of the rail */
   transition: opacity var(--t-fast);
 }
 .brand:hover{ opacity: .85; }
 .brand span{ display:flex; flex-direction:column; line-height:1.15; }
 .brand small{
-  font-weight: 500; font-size: 12px;
+  font-weight: 500; font-size: 11px;
   color: var(--muted);
-  letter-spacing: .04em;
+  letter-spacing: .05em;
   text-transform: uppercase;
   margin-top: 2px;
 }
 
 .nav-logo{
-  height: 30px;
+  height: 28px;
   width: auto;
   display: block;
-  color: var(--text);   /* SVG inherits this via stroke="currentColor" */
+  color: var(--text);   /* inline SVG inherits this via stroke="currentColor" */
+  border-radius: 6px;   /* softens the .jpg mark used on inner pages */
 }
 
+/* Vertical link list, softly centered in the rail */
 .nav-links{
-  display:flex; align-items:center; gap: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  margin: auto 0;                 /* vertically center between brand & bottom */
+  width: 100%;
 }
 .nav-links a{
-  padding: 9px 14px;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  color: var(--muted);
-  font-size: 14.5px;
-  font-weight: 500;
-  transition: color var(--t-fast), background var(--t-fast), border-color var(--t-fast);
+  position: relative;
+  display: block;
+  padding: 15px 24px;
+  color: #ffffff;
+  font-size: 21px;
+  font-weight: 300;
+  letter-spacing: .005em;
+  border-radius: 0 999px 999px 0;
+  isolation: isolate;
+  transition: transform var(--t-med), color var(--t-fast);
 }
-.nav-links a:hover{
-  color: var(--text);
-  background: rgba(255,255,255,.04);
+/* the "soft extend to the right" fill */
+.nav-links a::before{
+  content:"";
+  position:absolute; inset:0;
+  border-radius: 0 999px 999px 0;
+  border-left: 2px solid var(--brand);
+  background: linear-gradient(90deg, rgba(95,168,255,.20), rgba(95,168,255,0) 92%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--t-med);
+  z-index: -1;
 }
-.nav-links a.active{
-  color: var(--text);
-  background: rgba(95,168,255,.10);
-  border-color: rgba(95,168,255,.22);
-}
+.nav-links a:hover,
+.nav-links a:focus-visible{ transform: translateX(7px); }
+.nav-links a:hover::before,
+.nav-links a:focus-visible::before,
+.nav-links a.active::before{ transform: scaleX(1); }
+.nav-links a:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
 
 .nav-toggle{
   display:none;
@@ -266,11 +301,43 @@ body.page-leave .molecule svg,
 }
 .nav-toggle:hover{ background: rgba(255,255,255,.08); }
 
+/* Push page content clear of the fixed rail on wider screens */
+@media (min-width: 761px){
+  body{ padding-left: 212px; }
+}
+
+/* ---------- Mobile: collapse the rail back into a top bar ---------- */
 @media (max-width: 760px){
-  .nav-toggle{ display: inline-flex; }
+  body{ padding-left: 0; }
+  .site-header{
+    position: sticky;
+    top: 0; left: auto; right: auto; bottom: auto;
+    width: auto; height: auto;
+    background: rgba(8,20,40,.62);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid var(--border);
+  }
+  .site-header > .container{
+    width: min(var(--max), calc(100% - 48px));
+    height: auto;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .nav{
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: auto;
+    padding: 16px 0;
+    gap: 16px;
+  }
+  .brand{ margin-bottom: 0; }
+  .nav-toggle{ display:inline-flex; }
   .nav-links{
     position: absolute; top: 100%; left: 0; right: 0;
     flex-direction: column; gap: 0;
+    margin: 0;
     background: rgba(8,20,40,.96);
     backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
@@ -278,7 +345,62 @@ body.page-leave .molecule svg,
     display: none;
   }
   .nav-links.open{ display: flex; }
-  .nav-links a{ width: 100%; padding: 12px 14px; }
+  .nav-links a{
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+  .nav-links a::before{ border-radius: 10px; }
+  .nav-links a:hover,
+  .nav-links a:focus-visible{ transform: none; }
+}
+
+/* ============================================================
+   N2 brand watermark — huge, faded, self-drawing (right side)
+   Injected by main.js on pages that carry the shared header.
+   ============================================================ */
+/* Full-viewport layer; individual marks are scattered + injected
+   by main.js, each with its own --size/--dur/--delay/--peak. */
+.brand-watermark{
+  position: fixed;
+  inset: 0;
+  z-index: 0;                     /* behind content (main/footer are z-index:1) */
+  pointer-events: none;
+  overflow: hidden;
+}
+.n2-mark{
+  position: absolute;
+  width: var(--size, 360px);
+}
+.n2-mark svg{
+  width: 100%; height: auto; display: block;
+  filter: drop-shadow(0 0 28px rgba(95,168,255,.14));
+}
+.n2-mark path{
+  stroke: var(--brand);
+  stroke-dasharray: 1000;         /* path carries pathLength="1000" */
+  stroke-dashoffset: 1000;
+  opacity: 0;
+  will-change: stroke-dashoffset, opacity;
+  animation: n2-draw var(--dur, 8s) var(--ease) var(--delay, 0s) infinite;
+}
+@keyframes n2-draw{
+  0%   { stroke-dashoffset: 1000; opacity: 0; }
+  8%   { opacity: var(--peak, .14); }
+  46%  { stroke-dashoffset: 0;    opacity: var(--peak, .14); }   /* fully drawn */
+  70%  { stroke-dashoffset: 0;    opacity: var(--peak, .14); }   /* hold */
+  88%  { stroke-dashoffset: 0;    opacity: 0; }                  /* fade out */
+  100% { stroke-dashoffset: 1000; opacity: 0; }                  /* reset, loop */
+}
+@media (prefers-reduced-motion: reduce){
+  .n2-mark path{
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: var(--peak, .12);
+  }
+}
+@media (max-width: 760px){
+  .brand-watermark{ display: none; }
 }
 
 /* ============================================================
@@ -314,34 +436,35 @@ body.page-leave .molecule svg,
 .kicker{
   display: inline-block;
   color: var(--brand);
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: .14em;
+  font-family: var(--sans);
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: .22em;
   text-transform: uppercase;
   margin-bottom: 6px;
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 999px;
-  background: rgba(95,168,255,.10);
-  border: 1px solid rgba(95,168,255,.22);
+  background: rgba(95,168,255,.07);
+  border: 1px solid rgba(95,168,255,.16);
 }
 
 h1,h2,h3{
   margin: 12px 0 14px;
-  line-height: 1.18;
-  letter-spacing: -.02em;
-  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.005em;
+  font-weight: 300;
   color: var(--text);
 }
-h1{ font-size: clamp(32px, 3.6vw, 48px); font-weight: 800; }
-h2{ font-size: clamp(22px, 2.4vw, 30px); }
-h3{ font-size: 17px; font-weight: 600; }
+h1{ font-size: clamp(32px, 3.6vw, 48px); font-weight: 300; }
+h2{ font-size: clamp(22px, 2.4vw, 30px); font-weight: 300; }
+h3{ font-size: 17px; font-weight: 400; }
 
 p{
   margin: 12px 0;
   color: var(--muted);
   font-size: 15.5px;
 }
-strong{ color: var(--text); font-weight: 600; }
+strong{ color: var(--text); font-weight: 500; }
 
 /* ============================================================
    Buttons — soft rise on hover
@@ -355,9 +478,9 @@ strong{ color: var(--text); font-weight: 600; }
   background: rgba(255,255,255,.04);
   color: var(--text);
   font-family: var(--sans);
-  font-weight: 600;
+  font-weight: 400;
   font-size: 14.5px;
-  letter-spacing: -.005em;
+  letter-spacing: .02em;
   cursor: pointer;
   text-decoration: none;
   transform: translateY(0);

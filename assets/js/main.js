@@ -220,3 +220,66 @@
     build();
   }
 })();
+
+/* ============================================================
+   N2 brand watermark field — several faded self-drawing N2 marks
+   scattered across the viewport, each drawing in at its own size,
+   place and time so they fill the space. Injected only on pages
+   that carry the shared header (the self-contained simulation
+   page has no .site-header and is intentionally left untouched).
+   Styling + the draw animation live in styles.css.
+   ============================================================ */
+(() => {
+  const markSVG = `
+<svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path pathLength="1000"
+        d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
+        fill="none" stroke-width="36"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+  function build() {
+    if (!document.querySelector('.site-header')) return;   // shared-header pages only
+    if (document.querySelector('.brand-watermark')) return; // don't double-inject
+
+    const layer = document.createElement('div');
+    layer.className = 'brand-watermark';
+    layer.setAttribute('aria-hidden', 'true');
+
+    const w = window.innerWidth || 1200;
+    const count = w < 1100 ? 4 : 6;            // CSS hides the layer < 760px anyway
+    const rand = (min, max) => Math.random() * (max - min) + min;
+
+    for (let i = 0; i < count; i++) {
+      const mark = document.createElement('div');
+      mark.className = 'n2-mark';
+      mark.innerHTML = markSVG;
+
+      const size = rand(220, 520);             // px
+      const x    = rand(-6, 86);               // %  (some bleed off-edge)
+      const y    = rand(-4, 78);               // %
+      const dur  = rand(6.5, 11);              // s
+      const delay= -rand(0, dur);              // negative -> staggered, space filled at load
+      const peak = rand(0.05, 0.13);           // faint, varied
+
+      mark.style.left = x + '%';
+      mark.style.top  = y + '%';
+      mark.style.setProperty('--size',  size + 'px');
+      mark.style.setProperty('--dur',   dur + 's');
+      mark.style.setProperty('--delay', delay + 's');
+      mark.style.setProperty('--peak',  peak.toFixed(3));
+
+      layer.appendChild(mark);
+    }
+
+    // Sits behind page content (z-index handled in CSS); placed first
+    // so it renders behind the drifting molecule layer too.
+    document.body.insertBefore(layer, document.body.firstChild);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', build);
+  } else {
+    build();
+  }
+})();
