@@ -252,7 +252,103 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
 .anim-legend .sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:4px}
 </style>
 </head>
-<body>
+<body class="locked">
+
+<style>
+  /* ---- password gate (self-contained) ---- */
+  body.locked > *:not(#pw-gate){ display: none !important; }
+  body:not(.locked) #pw-gate{ display: none; }
+  #pw-gate{
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; background: #faf6ed;
+    font-family: 'Inter Tight', -apple-system, system-ui, sans-serif;
+  }
+  #pw-gate .pw-card{
+    width: min(380px, 100%); background: #fffdf7;
+    border: 1px solid #e5d9c4; border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(26,22,18,.12);
+    padding: 28px 26px; text-align: center;
+  }
+  #pw-gate h2{ margin: 0 0 6px; font-size: 20px; font-weight: 600; color: #1a1612; }
+  #pw-gate p{ margin: 0 0 18px; font-size: 13.5px; color: #6b5d4f; }
+  #pw-gate form{ display: flex; flex-direction: column; gap: 12px; }
+  #pw-gate input{
+    width: 100%; box-sizing: border-box; background: #fff;
+    border: 1px solid #e5d9c4; color: #1a1612;
+    border-radius: 8px; padding: 11px 13px; font: inherit;
+  }
+  #pw-gate input:focus{
+    outline: none; border-color: #9c4221;
+    box-shadow: 0 0 0 3px rgba(156,66,33,.18);
+  }
+  #pw-gate button{
+    font: inherit; font-weight: 600; cursor: pointer;
+    background: #9c4221; color: #fff; border: none;
+    border-radius: 8px; padding: 11px 13px;
+  }
+  #pw-gate button:hover{ background: #7d3219; }
+  #pw-gate .pw-err{ min-height: 1.2em; margin: 0; font-size: 13px; color: #c1272d; }
+</style>
+
+<div id="pw-gate" role="dialog" aria-modal="true" aria-labelledby="pw-title">
+  <div class="pw-card">
+    <h2 id="pw-title">Protected page</h2>
+    <p>Enter the password to view this page.</p>
+    <form id="pw-form">
+      <input id="pw-input" type="password" autocomplete="current-password"
+             placeholder="Password" aria-label="Password" autofocus>
+      <button type="submit">Unlock</button>
+      <p class="pw-err" id="pw-err" role="alert" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<script>
+  /* Client-side gate. This only deters casual access — the page content
+     is still delivered to the browser and can be reached via dev tools.
+     Only the SHA-256 of the password is stored here, never the plaintext.
+     Shares the evaporation calculator's password and session key, so one
+     unlock covers all protected pages for the session. */
+  (function(){
+    var HASH = 'afd6843f52dc384590a97d144eeca3cfb4b6547b98a138b69b0e9e4fa8b67a0b';
+    var KEY  = 'evapcalc-unlocked';
+    var body = document.body;
+
+    if (sessionStorage.getItem(KEY) === HASH){
+      body.classList.remove('locked');
+      return;
+    }
+
+    async function sha256(str){
+      var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf))
+        .map(function(b){ return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      var form  = document.getElementById('pw-form');
+      var input = document.getElementById('pw-input');
+      var err   = document.getElementById('pw-err');
+
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        err.textContent = '';
+        var h;
+        try { h = await sha256(input.value); }
+        catch(_){ err.textContent = 'Crypto unavailable — use HTTPS or localhost.'; return; }
+        if (h === HASH){
+          sessionStorage.setItem(KEY, HASH);
+          body.classList.remove('locked');
+        } else {
+          err.textContent = 'Incorrect password.';
+          input.select();
+        }
+      });
+    });
+  })();
+</script>
+
 <div class="wrap">
 
 <header class="hero">
