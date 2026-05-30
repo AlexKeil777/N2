@@ -123,6 +123,11 @@
   </div>
 </footer>
 
+<div id="toast" class="toast" role="status" aria-live="polite">
+  <span class="toast-icon" aria-hidden="true">✓</span>
+  <span class="toast-msg"></span>
+</div>
+
 <style>
   /* page-specific home layout */
   .home-hero{
@@ -253,6 +258,40 @@
     opacity: 0 !important;
     pointer-events: none !important;
   }
+
+  /* ---------- success toast ---------- */
+  .toast{
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(12px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--brand-2);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: var(--text);
+    padding: 13px 18px;
+    font-size: 14.5px;
+    font-weight: 500;
+    max-width: calc(100vw - 32px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-fast), transform var(--t-fast);
+  }
+  .toast.show{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast .toast-icon{ color: var(--brand-2); font-weight: 700; }
+  @media (prefers-reduced-motion: reduce){
+    .toast,
+    .toast.show{ transition: none; transform: translateX(-50%); }
+  }
 </style>
 
 <script src="assets/js/main.js"></script>
@@ -263,11 +302,21 @@
     if (!form) return;
     const status  = document.getElementById('cf-status');
     const submit  = document.getElementById('cf-submit');
+    const toast   = document.getElementById('toast');
+    let   toastTimer;
 
     function setStatus(msg, cls){
       status.textContent = msg;
       status.classList.remove('ok', 'err', 'busy');
       if (cls) status.classList.add(cls);
+    }
+
+    function showToast(msg){
+      if (!toast) return;
+      toast.querySelector('.toast-msg').textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3800);
     }
 
     form.addEventListener('submit', async (e) => {
@@ -295,7 +344,8 @@
         const json = await res.json().catch(() => ({}));
         if (res.ok && (json.success === 'true' || json.success === true)){
           form.reset();
-          setStatus('Thanks — your message has been sent.', 'ok');
+          setStatus('');
+          showToast('Thanks for getting in touch!');
         } else {
           setStatus('Could not send right now. Please try again or email us directly.', 'err');
         }
