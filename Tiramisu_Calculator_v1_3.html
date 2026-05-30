@@ -1,0 +1,2436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiramisù Spoilage Calculator · v1.3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ed; --paper:#fffdf7; --text:#1a1612; --muted:#6b5d4f;
+  --accent:#9c4221; --accent-soft:#fdebd6; --border:#e5d9c4; --code-bg:#f1e9d6;
+  --warn-bg:#fef4e6; --warn-bd:#d97706;
+  --tip-bg:#ecfdf5;  --tip-bd:#047857;
+  --pin-bg:#eff6ff;  --pin-bd:#1e40af;
+  --red:#c1272d; --amber:#d97706; --green:#15803d;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter Tight',-apple-system,system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14.5px;line-height:1.55}
+
+.wrap{max-width:1280px;margin:0 auto;padding:32px 24px 80px}
+
+/* Header */
+header.hero{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1{font-family:var(--serif);font-weight:500;font-size:42px;line-height:1.05;margin:0 0 6px;letter-spacing:-0.02em}
+h1 em{font-style:italic;color:var(--accent)}
+.subtitle{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:17px;margin:0;max-width:60ch}
+
+/* Top control bar */
+.controls{
+  background:var(--paper);border:1px solid var(--border);border-radius:8px;
+  padding:14px 18px;margin:18px 0 24px;
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;
+}
+.controls .left{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.mode-toggle{display:flex;align-items:center;gap:8px;font-size:13px}
+.mode-toggle input{accent-color:var(--accent)}
+.mode-tri{display:flex;align-items:center;gap:10px;font-size:13px}
+.mode-tri .mode-label{color:var(--muted);font-size:12px;letter-spacing:0.4px}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:6px;overflow:hidden;background:var(--paper)}
+.seg-opt{display:flex;align-items:center;cursor:pointer}
+.seg-opt input{position:absolute;opacity:0;pointer-events:none}
+.seg-opt span{padding:5px 10px;font-size:12px;color:var(--muted);transition:background 0.15s, color 0.15s;border-right:1px solid var(--border)}
+.seg-opt:last-child span{border-right:none}
+.seg-opt input:checked + span{background:var(--accent);color:#fff;font-weight:500}
+.seg-opt:hover input:not(:checked) + span{background:var(--accent-soft);color:var(--accent)}
+.btn{font-family:var(--sans);font-weight:600;font-size:13.5px;border:none;border-radius:6px;padding:9px 18px;cursor:pointer;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#7d3219}
+.btn-secondary{background:var(--paper);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--accent-soft);border-color:var(--accent)}
+.banner{
+  font-size:13px;background:var(--warn-bg);color:#9a5400;padding:10px 14px;border-radius:6px;
+  border-left:3px solid var(--warn-bd);margin-bottom:18px;
+}
+.banner.be{background:#fef0e6;color:#7c2d12;border-left-color:#c1272d}
+.banner.realistic{background:#fefce8;color:#854d0e;border-left-color:#d97706}
+
+/* Layout: two columns when wide */
+.main-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media(min-width:1100px){.main-grid{grid-template-columns:1fr 460px}}
+
+/* Section panels */
+.panel{
+  background:var(--paper);border:1px solid var(--border);border-radius:10px;
+  padding:18px 20px;margin-bottom:18px;
+}
+.panel h2{
+  font-family:var(--serif);font-weight:500;font-size:20px;margin:0 0 14px;letter-spacing:-0.005em;
+  display:flex;align-items:baseline;gap:10px;
+}
+.panel h2 .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.5px;font-weight:500}
+.panel h3{font-family:var(--serif);font-weight:600;font-size:15px;color:var(--accent);margin:14px 0 6px}
+
+/* Form fields */
+.field-row{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;margin:6px 0;font-size:13px}
+.field-row label{display:flex;align-items:center;gap:6px;color:var(--text)}
+.field-row input[type="number"],.field-row input[type="text"],.field-row select{
+  font-family:var(--mono);font-size:13px;padding:5px 9px;border:1px solid var(--border);
+  border-radius:4px;background:#fff;width:100%;font-variant-numeric:tabular-nums;
+}
+.field-row input:focus,.field-row select:focus{outline:1px solid var(--accent);border-color:var(--accent)}
+.field-row .units{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-left:6px}
+
+/* Compartment table */
+.comp-table{font-size:12.5px;width:100%;border-collapse:collapse;margin-top:6px}
+.comp-table th,.comp-table td{border:1px solid var(--border);padding:5px 7px;text-align:left;vertical-align:middle}
+.comp-table th{background:var(--accent-soft);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent)}
+.comp-table input{
+  font-family:var(--mono);font-size:12px;padding:3px 5px;border:1px solid var(--border);
+  border-radius:3px;background:#fff;width:100%;font-variant-numeric:tabular-nums;
+}
+.comp-table input[type="text"]{font-family:var(--sans)}
+.comp-table .type-cell{font-size:10.5px;color:var(--muted);font-family:var(--mono)}
+.comp-table col.c-name{width:16%}
+.comp-table col.c-type{width:10%}
+.comp-table col.c-mass{width:7%}
+.comp-table col.c-area{width:7%}
+.comp-table col.c-aw  {width:14%}
+.comp-table col.c-ph  {width:8%}
+.comp-table col.c-eth {width:8%}
+.comp-table col.c-nmx {width:8%}
+.comp-table col.c-nut {width:8%}
+
+/* Preservatives grid */
+.presv-grid{display:grid;grid-template-columns:120px repeat(3,1fr);gap:6px;font-size:12px;align-items:center;margin:6px 0}
+.presv-grid .head{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.presv-cell{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--border);border-radius:4px;padding:3px 6px}
+.presv-cell input[type="checkbox"]{accent-color:var(--accent);margin:0}
+.presv-cell input[type="number"]{font-family:var(--mono);font-size:11.5px;border:none;background:transparent;width:100%;font-variant-numeric:tabular-nums;padding:0}
+.presv-cell input[type="number"]:focus{outline:none}
+.presv-cell .ppm{font-size:9.5px;color:var(--muted);font-family:var(--mono)}
+
+/* Ingredient table */
+.ing-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.ing-table th,.ing-table td{border:1px solid var(--border);padding:4px 6px}
+.ing-table th{background:var(--accent-soft);font-size:10.5px;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);font-weight:600}
+.ing-table input{font-family:var(--mono);font-size:11.5px;padding:2px 5px;border:1px solid var(--border);border-radius:3px;background:#fff;width:100%;font-variant-numeric:tabular-nums}
+.mass-warn{background:var(--warn-bg);color:#9a5400;font-size:11px;padding:6px 10px;border-radius:4px;margin-top:8px;border-left:3px solid var(--warn-bd)}
+
+/* Info button (popup trigger) */
+.info-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:16px;height:16px;border-radius:50%;border:1px solid var(--accent);
+  background:transparent;color:var(--accent);font-size:10px;font-weight:600;
+  font-family:var(--mono);cursor:pointer;padding:0;line-height:1;
+  transition:all .12s;
+}
+.info-btn:hover{background:var(--accent);color:#fff}
+
+/* Popover */
+.popover-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(26,22,18,0.35);z-index:90;
+}
+.popover-backdrop.open{display:block}
+.popover{
+  display:none;position:fixed;background:var(--paper);border:1px solid var(--border);
+  border-radius:8px;padding:0;width:380px;max-width:calc(100vw - 24px);
+  box-shadow:0 4px 20px rgba(60,40,20,0.18);
+  z-index:100;font-size:13.5px;line-height:1.55;
+  max-height:calc(100vh - 24px);
+  flex-direction:column;
+}
+.popover.open{display:flex}
+.popover .pop-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px 9px;border-bottom:1px solid var(--border);
+  background:linear-gradient(180deg,var(--accent-soft),var(--paper));
+  border-radius:8px 8px 0 0;
+  flex-shrink:0;
+}
+.popover .pop-head h4{margin:0;font-family:var(--serif);font-weight:600;font-size:15.5px;color:var(--accent);letter-spacing:-0.005em}
+.popover .pop-close{background:transparent;border:none;font-size:18px;color:var(--muted);cursor:pointer;padding:0 4px;line-height:1}
+.popover .pop-close:hover{color:var(--accent)}
+.popover .pop-body{padding:12px 14px 14px;overflow-y:auto;flex:1 1 auto;min-height:0}
+.popover .pop-body p{margin:6px 0}
+.popover .pop-body p+p{margin-top:8px}
+.popover .what::before{content:"What  ";font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:1.2px;margin-right:2px;text-transform:uppercase;font-weight:600}
+.popover .why::before{content:"Why  ";font-family:var(--mono);font-size:9.5px;color:var(--accent);letter-spacing:1.2px;margin-right:2px;text-transform:uppercase;font-weight:600}
+.popover ul{padding-left:18px;margin:6px 0}
+.popover li{margin:3px 0}
+.popover .minicard{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;background:var(--code-bg);padding:8px 12px;border-radius:5px;margin:8px 0;font-size:12px}
+.popover .minicard dt{font-family:var(--mono);color:var(--muted);font-size:10.5px;letter-spacing:0.4px;text-transform:uppercase}
+.popover .minicard dd{margin:0}
+.popover .pitfall{background:var(--warn-bg);border-left:3px solid var(--warn-bd);padding:8px 12px;margin:8px 0;border-radius:0 4px 4px 0;font-size:12.5px}
+.popover .pitfall::before{content:"Pitfall  ";display:block;font-family:var(--mono);font-size:9.5px;color:var(--warn-bd);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.popover .tip{background:var(--tip-bg);border-left:3px solid var(--tip-bd);padding:8px 12px;margin:8px 0;border-radius:0 4px 4px 0;font-size:12.5px}
+.popover .tip::before{content:"Tip  ";display:block;font-family:var(--mono);font-size:9.5px;color:var(--tip-bd);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.popover .pin{background:var(--pin-bg);border-left:3px solid var(--pin-bd);padding:8px 12px;margin:8px 0;border-radius:0 4px 4px 0;font-size:12.5px}
+.popover .pin::before{content:"Pin this  ";display:block;font-family:var(--mono);font-size:9.5px;color:var(--pin-bd);letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-bottom:2px}
+.popover code{font-family:var(--mono);font-size:12px;background:var(--code-bg);padding:0 4px;border-radius:2px;color:var(--accent)}
+
+/* Output area */
+.output{position:sticky;top:24px;align-self:start}
+.headline{
+  background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px;
+}
+.headline .label{font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.headline .days{font-family:var(--serif);font-weight:500;font-size:44px;line-height:1;color:var(--accent);letter-spacing:-0.02em;margin:2px 0}
+.headline .days .unit{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:6px}
+.headline .pred-row{font-size:12.5px;color:var(--muted);margin-top:6px;font-family:var(--mono)}
+.headline .limiter{font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.headline .limiter .key{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;display:block;margin-bottom:2px}
+.headline .limiter strong{color:var(--text)}
+
+.matrix-block{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.matrix-block h3{margin:0 0 10px;font-family:var(--serif);font-weight:600;font-size:14px;color:var(--accent)}
+table.matrix{width:100%;border-collapse:collapse;font-size:12.5px}
+table.matrix th,table.matrix td{border:1px solid var(--border);padding:5px 8px;text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono)}
+table.matrix th{background:var(--accent-soft);font-family:var(--sans);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--accent);font-weight:600;text-align:left}
+table.matrix td:first-child{text-align:left;font-family:var(--sans)}
+.cell-red{background:#fde8e9;color:var(--red);font-weight:600}
+.cell-amber{background:#fef3c7;color:var(--amber)}
+.cell-green{background:#dcfce7;color:var(--green)}
+.cell-na{color:var(--muted)}
+
+.plot-block{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.plot-block h3{margin:0 0 8px;font-family:var(--serif);font-weight:600;font-size:14px;color:var(--accent)}
+.plot-block .ptitle{font-size:11px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.8px;margin:6px 0 2px}
+.plot-svg{width:100%;height:200px;background:#fff;border:1px solid var(--border);border-radius:4px}
+.plot-legend{font-size:11px;font-family:var(--mono);color:var(--muted);margin-top:6px;display:flex;flex-wrap:wrap;gap:10px}
+.plot-legend .swatch{display:inline-block;width:10px;height:2px;vertical-align:middle;margin-right:4px}
+
+/* Collapsible advanced */
+details{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:0;margin-bottom:18px}
+details summary{padding:14px 20px;cursor:pointer;font-family:var(--serif);font-weight:500;font-size:18px;letter-spacing:-0.005em;display:flex;align-items:baseline;gap:10px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"›";font-family:var(--mono);font-size:16px;color:var(--accent);display:inline-block;transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+details summary .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.5px;font-weight:500}
+details .inner{padding:0 20px 18px}
+
+/* Footer note */
+footer{margin-top:32px;padding-top:18px;border-top:1px solid var(--border);font-size:11.5px;font-family:var(--mono);color:var(--muted);line-height:1.5}
+
+/* Auto-compute / greying */
+body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:none;transition:opacity .12s}
+.iconbtn{font-family:var(--mono);font-size:12px;background:var(--paper);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:7px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* Disabled preservative cells */
+.presv-cell.na{background:repeating-linear-gradient(45deg,#efe6d4,#efe6d4 4px,#e5d9c4 4px,#e5d9c4 8px);opacity:.55;cursor:not-allowed}
+.presv-cell.na input{pointer-events:none;color:var(--muted)}
+.presv-cell.na .ppm{color:var(--muted)}
+
+/* Animation panel */
+#anim-panel{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:0 0 18px}
+#anim-panel h2{font-family:var(--serif);font-weight:500;font-size:18px;margin:0 0 10px;display:flex;align-items:baseline;gap:10px;letter-spacing:-0.005em}
+#anim-panel h2 .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.5px;font-weight:500}
+#anim-grid{display:grid;grid-template-columns:1fr;gap:14px;align-items:start}
+@media(min-width:780px){#anim-grid{grid-template-columns:360px 1fr}}
+.anim-cup{background:#fff;border:1px solid var(--border);border-radius:6px;width:100%;height:240px}
+.anim-controls{font-size:13px}
+.anim-controls .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.anim-controls .speed{display:flex;align-items:center;gap:6px}
+.anim-controls .speed input{font-family:var(--mono);width:60px;padding:5px 7px;border:1px solid var(--border);border-radius:4px;background:#fff;font-variant-numeric:tabular-nums}
+.anim-btn{font-family:var(--sans);font-size:12.5px;font-weight:600;border:1px solid var(--border);background:var(--paper);color:var(--text);border-radius:5px;padding:6px 12px;cursor:pointer;letter-spacing:0.3px}
+.anim-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.anim-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.anim-btn.primary:hover:not(:disabled){background:#7d3219}
+.anim-btn:disabled{opacity:.4;cursor:not-allowed}
+.anim-timeline{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:4px}
+.anim-timeline .bar{height:4px;background:var(--border);border-radius:2px;margin-top:4px;overflow:hidden}
+.anim-timeline .bar-fill{height:100%;background:var(--accent);width:0%;transition:width .1s linear}
+.anim-legend{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.anim-legend .sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Tiramisù Spoilage Calculator · v1.3.3</p>
+  <h1>Tiramisù <em>Spoilage</em> Calculator</h1>
+  <p class="subtitle">Predictive screening for refrigerated tiramisù shelf life — yeast (<em>Z. bailii</em>) &amp; mold (<em>P. roqueforti</em>) worst-case model.</p>
+</header>
+
+<div id="banner" class="banner">
+  <strong>Screening tool — not for shelf-life validation.</strong> Spoilage-only; pathogens not modelled. Worst-case bias active. Use challenge testing for commercial decisions.
+</div>
+
+<div class="controls">
+  <div class="left">
+    <div class="mode-tri">
+      <span class="mode-label">Bias mode <button class="info-btn" data-popup="bias_mode">?</button></span>
+      <div class="seg" role="radiogroup" aria-label="Bias mode">
+        <label class="seg-opt"><input type="radio" name="bias-mode" value="worst"><span>worst-case</span></label>
+        <label class="seg-opt"><input type="radio" name="bias-mode" value="realistic"><span>realistic</span></label>
+        <label class="seg-opt"><input type="radio" name="bias-mode" value="best"><span>best-estimate</span></label>
+      </div>
+    </div>
+    <label class="mode-toggle">
+      <input type="checkbox" id="autocompute-toggle">
+      <span>Auto-compute <button class="info-btn" data-popup="autocompute">?</button></span>
+    </label>
+  </div>
+  <div class="right" style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="iconbtn" id="save-btn" title="Download scenario as JSON">↓ Save</button>
+    <button class="iconbtn" id="load-btn" title="Load scenario from JSON">↑ Load</button>
+    <input type="file" id="load-input" accept="application/json,.json" style="display:none">
+    <button class="btn btn-secondary" id="reset-btn">Reset defaults</button>
+    <button class="btn btn-primary" id="compute-btn">Compute</button>
+  </div>
+</div>
+
+<!-- ================== ANIMATION PANEL ================== -->
+<div id="anim-panel">
+  <h2><span class="num">§ 00</span>Animation <button class="info-btn" data-popup="animation">?</button></h2>
+  <div id="anim-grid">
+    <div>
+      <svg id="anim-cup" class="anim-cup" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="anim-legend">
+        <span><span class="sw" style="background:#2d5016"></span>mold colonies — rendered on the compartment where they grow (lid underside, cup rim, cocoa surface, cup wall) — independent populations, no transfer</span>
+        <br>
+        <span>cream layer tint = yeast log<sub>10</sub> N / N<sub>max</sub> · headspace tint = pCO₂</span>
+      </div>
+    </div>
+    <div class="anim-controls">
+      <div class="row">
+        <span class="speed"><label>Speed</label><input type="number" id="anim-speed" step="0.5" min="0.1" max="60" value="5"><span style="font-family:var(--mono);font-size:11px;color:var(--muted)">days / sec</span></span>
+      </div>
+      <div class="row">
+        <button class="anim-btn primary" id="anim-run" disabled>▶ Run</button>
+        <button class="anim-btn" id="anim-pause" disabled>❚❚ Pause</button>
+        <button class="anim-btn" id="anim-stop" disabled>■ Stop</button>
+        <button class="anim-btn" id="anim-reset" disabled>↺ Reset</button>
+      </div>
+      <div class="anim-timeline">
+        <div><span id="anim-t">t = 0.00 d</span> &nbsp;/&nbsp; <span id="anim-max">— d</span> &nbsp;·&nbsp; <span id="anim-state">idle</span></div>
+        <div class="bar"><div class="bar-fill" id="anim-bar"></div></div>
+      </div>
+      <div id="anim-events" style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;min-height:30px"></div>
+    </div>
+  </div>
+</div>
+
+<div class="main-grid">
+
+<!-- ====================== LEFT COLUMN — INPUTS ====================== -->
+<div>
+
+<div class="panel">
+  <h2><span class="num">§ 01</span>Storage</h2>
+  <div class="field-row">
+    <label>Temperature <button class="info-btn" data-popup="temperature">?</button></label>
+    <input type="number" step="0.5" data-path="storage.T_C">
+  </div>
+  <div class="field-row">
+    <label>Simulation horizon <button class="info-btn" data-popup="max_days">?</button></label>
+    <input type="number" step="1" min="1" data-path="storage.max_days">
+  </div>
+  <div class="field-row">
+    <label>Safety factor <button class="info-btn" data-popup="safety_factor">?</button></label>
+    <input type="number" step="0.05" min="0.1" max="1" data-path="storage.safety_factor">
+  </div>
+</div>
+
+<div class="panel">
+  <h2><span class="num">§ 02</span>Compartments <button class="info-btn" data-popup="compartments">?</button> <button class="info-btn" data-popup="nutrient_factor" title="nutrient factor column">N</button> <button class="info-btn" data-popup="logNmax" title="logN_max column">M</button></h2>
+  <p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">Enter <strong>post-equilibration</strong> a<sub>w</sub> and pH. v1 has no cross-compartment transport.</p>
+  <div id="compartment-table"></div>
+</div>
+
+<div class="panel">
+  <h2><span class="num">§ 03</span>Headspace &amp; packaging</h2>
+  <div class="field-row"><label>Headspace volume <button class="info-btn" data-popup="V_hs">?</button></label><input type="number" step="1" data-path="headspace.V_hs"></div>
+  <div class="field-row"><label>Lid area <button class="info-btn" data-popup="A_lid">?</button></label><input type="number" step="0.5" data-path="headspace.A_lid"></div>
+  <div class="field-row"><label>Biscuit pore volume <button class="info-btn" data-popup="V_pore">?</button></label><input type="number" step="0.5" data-path="headspace.V_biscuit_pore"></div>
+  <div class="field-row"><label>Fraction trapped air <button class="info-btn" data-popup="f_trapped">?</button></label><input type="number" step="0.05" min="0" max="1" data-path="headspace.f_trapped_air"></div>
+  <div class="field-row"><label>Initial O₂ flush <button class="info-btn" data-popup="gas_flush">?</button></label><input type="number" step="1" min="0" max="100" data-path="headspace.flush_O2_pct"></div>
+  <div class="field-row"><label>Initial CO₂ flush</label><input type="number" step="1" min="0" max="100" data-path="headspace.flush_CO2_pct"></div>
+  <div class="field-row"><label>Lid material <button class="info-btn" data-popup="lid">?</button></label><select id="lid-select"></select></div>
+  <div class="field-row"><label>OTR (cm³/m²/d)</label><input type="number" step="0.1" data-path="headspace.OTR"></div>
+  <div class="field-row"><label>CO₂TR (cm³/m²/d)</label><input type="number" step="0.5" data-path="headspace.CO2TR"></div>
+</div>
+
+<div class="panel">
+  <h2><span class="num">§ 04</span>Preservatives <button class="info-btn" data-popup="preservatives">?</button> <button class="info-btn" data-popup="presv_na" title="Shaded cells">▦</button></h2>
+  <p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">Per-compartment. Toggle and set ppm; both are needed for the preservative to act.</p>
+  <div id="preservatives-table"></div>
+</div>
+
+<div class="panel">
+  <h2><span class="num">§ 05</span>Bioburden <button class="info-btn" data-popup="bioburden">?</button></h2>
+  <h3>Ingredients (mass into compartment in g; CFU/g)</h3>
+  <div id="ingredients-table"></div>
+  <div id="mass-warning"></div>
+
+  <h3>Cocoa (dosed to cocoa_surface)</h3>
+  <div class="field-row"><label>g per cup</label><input type="number" step="0.1" data-path="cocoa.g_per_cup"></div>
+  <div class="field-row"><label>Surface area (cm²)</label><input type="number" step="0.5" data-path="cocoa.area_cm2"></div>
+  <div class="field-row"><label>Layer thickness (mm) <button class="info-btn" data-popup="cocoa_thickness">?</button></label><input type="number" step="0.1" min="0" data-path="cocoa.layer_thickness_mm"></div>
+  <div class="field-row"><label>Yeast CFU/g <button class="info-btn" data-popup="cocoa">?</button></label><input type="number" step="10" data-path="cocoa.yeast_cfu_per_g"></div>
+  <div class="field-row"><label>Mold spores/g</label><input type="number" step="10" data-path="cocoa.mold_per_g"></div>
+
+  <h3>Container &amp; lid surfaces (CFU/cm²)</h3>
+  <div class="field-row"><label>Container yeast/cm² <button class="info-btn" data-popup="packaging_burden">?</button></label><input type="number" step="0.01" data-path="surfaces.container_yeast_cfu_per_cm2"></div>
+  <div class="field-row"><label>Container mold/cm²</label><input type="number" step="0.01" data-path="surfaces.container_mold_per_cm2"></div>
+  <div class="field-row"><label>Lid yeast/cm²</label><input type="number" step="0.01" data-path="surfaces.lid_yeast_cfu_per_cm2"></div>
+  <div class="field-row"><label>Lid mold/cm²</label><input type="number" step="0.01" data-path="surfaces.lid_mold_per_cm2"></div>
+
+  <h3>Airborne (total CFU per cup during filling)</h3>
+  <div class="field-row"><label>Yeast per cup <button class="info-btn" data-popup="airborne">?</button></label><input type="number" step="1" data-path="air.yeast_cfu_per_cup"></div>
+  <div class="field-row"><label>Mold per cup</label><input type="number" step="1" data-path="air.mold_per_cup"></div>
+</div>
+
+<div class="panel">
+  <h2><span class="num">§ 06</span>Transport between compartments <button class="info-btn" data-popup="transport">?</button></h2>
+  <p style="font-size:12.5px;color:var(--muted);margin:0 0 8px">v1.3 models inter-compartment diffusion of four species. <em>fast</em> ≈ 1 day equilibration; <em>slow</em> ≈ 10 days; <em>off</em> = v1.2 behaviour.</p>
+  <div class="field-row"><label>Water (a<sub>w</sub>) <button class="info-btn" data-popup="transport_water">?</button></label><select data-path="transport.water"><option>off</option><option>slow</option><option>fast</option></select></div>
+  <div class="field-row"><label>Ethanol <button class="info-btn" data-popup="transport_ethanol">?</button></label><select data-path="transport.ethanol"><option>off</option><option>slow</option><option>fast</option></select></div>
+  <div class="field-row"><label>Sorbate <button class="info-btn" data-popup="transport_preservatives">?</button></label><select data-path="transport.sorbate"><option>off</option><option>slow</option><option>fast</option></select></div>
+  <div class="field-row"><label>Benzoate</label><select data-path="transport.benzoate"><option>off</option><option>slow</option><option>fast</option></select></div>
+  <div class="field-row"><label>Cocoa-cream blend length L<sub>0</sub> <button class="info-btn" data-popup="L0_mm">?</button></label><input type="number" step="0.5" min="0.5" data-path="transport.L0_mm"><span class="units">mm</span></div>
+  <div class="field-row"><label>Rim → cocoa drip fraction <button class="info-btn" data-popup="rim_drip">?</button></label><input type="number" step="0.01" min="0" max="1" data-path="transport.rim_drip_fraction"></div>
+</div>
+
+<div class="panel">
+  <h2><span class="num">§ 07</span>Thresholds</h2>
+  <div class="field-row"><label>Yeast spoilage (log CFU/g) <button class="info-btn" data-popup="yeast_threshold">?</button></label><input type="number" step="0.1" data-path="thresholds.yeast_log"></div>
+  <div class="field-row"><label>Visible mold probability <button class="info-btn" data-popup="mold_threshold">?</button></label><input type="number" step="0.005" min="0" max="1" data-path="thresholds.mold_P"></div>
+</div>
+
+<details>
+  <summary><span class="num">§ 08</span>Advanced <button class="info-btn" data-popup="advanced">?</button></summary>
+  <div class="inner">
+    <h3>Yeast (<em>Z. bailii</em>) cardinal parameters <button class="info-btn" data-popup="cardinals">?</button></h3>
+    <div class="field-row"><label>T<sub>min</sub> / T<sub>opt</sub> / T<sub>max</sub> (°C)</label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.5" data-path="advanced.yeast.Tmin"><input type="number" step="0.5" data-path="advanced.yeast.Topt"><input type="number" step="0.5" data-path="advanced.yeast.Tmax"></span></div>
+    <div class="field-row"><label>a<sub>w,min</sub> / a<sub>w,opt</sub></label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.01" data-path="advanced.yeast.awmin"><input type="number" step="0.01" data-path="advanced.yeast.awopt"></span></div>
+    <div class="field-row"><label>pH<sub>min</sub> / pH<sub>opt</sub> / pH<sub>max</sub></label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.1" data-path="advanced.yeast.pHmin"><input type="number" step="0.1" data-path="advanced.yeast.pHopt"><input type="number" step="0.1" data-path="advanced.yeast.pHmax"></span></div>
+    <div class="field-row"><label>μ<sub>opt</sub> (1/day)</label><input type="number" step="0.5" data-path="advanced.yeast.mu_opt"></div>
+    <div class="field-row"><label>IC<sub>50,EtOH</sub> / IC<sub>50,CO₂</sub></label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.5" data-path="advanced.yeast.IC50_EtOH"><input type="number" step="1" data-path="advanced.yeast.IC50_CO2"></span></div>
+    <div class="field-row"><label>MIC sorbate / benzoate (ppm undiss.)</label>
+      <span style="display:flex;gap:4px"><input type="number" step="10" data-path="advanced.yeast.MIC_HA_sorb"><input type="number" step="10" data-path="advanced.yeast.MIC_HA_benz"></span></div>
+    <div class="field-row"><label>h₀ (lag, dimensionless) <button class="info-btn" data-popup="h0">?</button></label><input type="number" step="0.1" data-path="advanced.h0_yeast"></div>
+
+    <h3>Mold (<em>P. roqueforti</em>) cardinal parameters</h3>
+    <div class="field-row"><label>T<sub>min</sub> / T<sub>opt</sub> / T<sub>max</sub> (°C)</label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.5" data-path="advanced.mold.Tmin"><input type="number" step="0.5" data-path="advanced.mold.Topt"><input type="number" step="0.5" data-path="advanced.mold.Tmax"></span></div>
+    <div class="field-row"><label>a<sub>w,min</sub> / a<sub>w,opt</sub></label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.01" data-path="advanced.mold.awmin"><input type="number" step="0.01" data-path="advanced.mold.awopt"></span></div>
+    <div class="field-row"><label>pH<sub>min</sub> / pH<sub>opt</sub> / pH<sub>max</sub></label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.1" data-path="advanced.mold.pHmin"><input type="number" step="0.1" data-path="advanced.mold.pHopt"><input type="number" step="0.1" data-path="advanced.mold.pHmax"></span></div>
+    <div class="field-row"><label>K<sub>r,opt</sub> (mm/d)</label><input type="number" step="0.5" data-path="advanced.mold.Kr_opt"></div>
+    <div class="field-row"><label>K<sub>O₂</sub> (%) <button class="info-btn" data-popup="kO2">?</button></label><input type="number" step="0.05" data-path="advanced.mold.K_O2"></div>
+    <div class="field-row"><label>MIC EtOH (Dantigny, % v/v) / IC50 CO₂</label>
+      <span style="display:flex;gap:4px"><input type="number" step="0.5" data-path="advanced.mold.MIC_EtOH"><input type="number" step="1" data-path="advanced.mold.IC50_CO2"></span></div>
+    <div class="field-row"><label>MIC sorb. / benz. / nat. (ppm)</label>
+      <span style="display:flex;gap:4px"><input type="number" step="1" data-path="advanced.mold.MIC_HA_sorb"><input type="number" step="1" data-path="advanced.mold.MIC_HA_benz"><input type="number" step="0.5" data-path="advanced.mold.MIC_nat"></span></div>
+    <div class="field-row"><label>Lag at optimum (days)</label><input type="number" step="0.1" data-path="advanced.h0_mold_d"></div>
+    <div class="field-row"><label>r<sub>visible</sub> (mm)</label><input type="number" step="0.1" data-path="advanced.mold.r_visible"></div>
+    <div class="field-row"><label>k<sub>steep</sub> (1/d)</label><input type="number" step="0.1" data-path="advanced.mold.k_steep"></div>
+  </div>
+</details>
+
+</div>
+
+<!-- ====================== RIGHT COLUMN — OUTPUT ====================== -->
+<div class="output">
+  <div class="headline" id="headline">
+    <div class="label">Click Compute to run</div>
+    <div class="days">—<span class="unit">days</span></div>
+    <div class="pred-row">Awaiting inputs</div>
+  </div>
+  <div class="matrix-block" id="matrix-block" style="display:none">
+    <h3>Per-compartment fail-time matrix <button class="info-btn" data-popup="matrix">?</button></h3>
+    <div id="matrix-content"></div>
+  </div>
+  <div class="plot-block" id="plot-block" style="display:none">
+    <h3>Population &amp; mold probability curves <button class="info-btn" data-popup="plot">?</button></h3>
+    <div class="ptitle">Panel A · log₁₀ N(t) — yeast in each bulk compartment</div>
+    <svg class="plot-svg" id="plot-yeast" viewBox="0 0 440 200" preserveAspectRatio="none"></svg>
+    <div class="plot-legend" id="legend-yeast"></div>
+    <div class="ptitle" style="margin-top:14px">Panel B · P<sub>visible</sub>(t) — mold on each surface</div>
+    <svg class="plot-svg" id="plot-mold" viewBox="0 0 440 200" preserveAspectRatio="none"></svg>
+    <div class="plot-legend" id="legend-mold"></div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+Tiramisù Spoilage Calculator v1.3.3 · Worst-case / realistic / best-estimate predictive model · For internal R&amp;D screening only · Not a substitute for challenge testing or shelf-life validation.<br>
+v1.3.3 additions: tri-state bias mode (worst-case / realistic / best-estimate). The new "realistic" middle-ground is calibrated to be consistent with industry-reported chilled-dairy shelf life ranges.<br>
+v1.3 additions: inter-compartment transport (water, ethanol, sorbate, benzoate) · ethanol vapour partition to headspace · cocoa nutrient factor · cocoa thin-layer a<sub>w</sub> coupling · Dantigny mold ethanol model · cup_rim compartment + airborne split + rim → cocoa drip-flux.
+</footer>
+
+</div>
+
+<!-- Popover -->
+<div class="popover-backdrop" id="pop-backdrop"></div>
+<div class="popover" id="popover">
+  <div class="pop-head">
+    <h4 id="pop-title">—</h4>
+    <button class="pop-close" id="pop-close">×</button>
+  </div>
+  <div class="pop-body" id="pop-body"></div>
+</div>
+
+<script>
+'use strict';
+
+// =========================================================================
+// DEFAULTS — re-balanced so ingredient masses match compartment masses
+// =========================================================================
+
+const LID_OPTIONS = [
+  { name:'Aluminium peel foil laminate', OTR:0.05, CO2TR:0.2 },
+  { name:'PET / Al / PE laminate',       OTR:0.5,  CO2TR:2   },
+  { name:'PP + EVOH barrier',            OTR:2,    CO2TR:8   },
+  { name:'PET only',                     OTR:30,   CO2TR:120 },
+  { name:'PP only',                      OTR:80,   CO2TR:320 },
+  { name:'PS only',                      OTR:150,  CO2TR:600 },
+  { name:'Custom',                       OTR:null, CO2TR:null },
+];
+
+function makeDefaults() {
+  // Defaults for a single ~100 g serving tiramisù cup.
+  // Ingredient masses sum exactly to compartment masses.
+  const COMPARTMENTS = [
+    { id:'cocoa_surface',     name:'cocoa_surface',     type:'surface_air',     mass_g:0,   area_cm2:10, aw:0.93, pH:6.0, EtOH:0,   Nmax:8, nutrient_factor:0.2 },
+    { id:'cup_rim',           name:'cup_rim',           type:'surface_package', mass_g:0,   area_cm2:8,  aw:0.92, pH:6.0, EtOH:0,   Nmax:8, nutrient_factor:0.5 },
+    { id:'lid_product_facing',name:'lid_product_facing',type:'surface_package', mass_g:0,   area_cm2:10, aw:0.92, pH:6.0, EtOH:0,   Nmax:8, nutrient_factor:0.3 },
+    { id:'top_cream',         name:'top_cream',         type:'bulk',            mass_g:40,  area_cm2:0,  aw:0.93, pH:6.0, EtOH:0.5, Nmax:8, nutrient_factor:1.0 },
+    { id:'biscuit_soaked',    name:'biscuit_soaked',    type:'bulk',            mass_g:20,  area_cm2:0,  aw:0.96, pH:5.5, EtOH:1.5, Nmax:8, nutrient_factor:1.0 },
+    { id:'bottom_cream',      name:'bottom_cream',      type:'bulk',            mass_g:40,  area_cm2:0,  aw:0.93, pH:6.0, EtOH:0.5, Nmax:8, nutrient_factor:1.0 },
+    { id:'cup_wall',          name:'cup_wall',          type:'surface_package', mass_g:0,   area_cm2:50, aw:0.93, pH:6.0, EtOH:0.5, Nmax:8, nutrient_factor:1.0 },
+  ];
+
+  const PRESERVATIVES = {};
+  for (const c of COMPARTMENTS) {
+    PRESERVATIVES[c.id] = {
+      sorbate_added:false,   sorbate_ppm:0,
+      benzoate_added:false,  benzoate_ppm:0,
+      natamycin_added:false, natamycin_ppm:0,
+    };
+  }
+
+  // Per-cup ingredient masses summing to compartment totals
+  // top_cream 40 g  = mascarpone 25 + sugar 5 + yolk 3 + cream 6 + Marsala 1
+  // biscuit_soaked 20 g = savoiardi 6 + coffee 12 + Marsala 2
+  // bottom_cream 40 g = same as top_cream
+  const INGREDIENTS = [
+    { name:'Mascarpone',           into:{top_cream:25,  bottom_cream:25, biscuit_soaked:0},  yeast:10,   mold:1   },
+    { name:'Sugar (sucrose)',      into:{top_cream:5,   bottom_cream:5,  biscuit_soaked:0},  yeast:0,    mold:0   },
+    { name:'Pasteurized egg yolk', into:{top_cream:3,   bottom_cream:3,  biscuit_soaked:0},  yeast:1,    mold:0   },
+    { name:'Cream (UHT)',          into:{top_cream:6,   bottom_cream:6,  biscuit_soaked:0},  yeast:1,    mold:0   },
+    { name:'Marsala / Vin Santo',  into:{top_cream:1,   bottom_cream:1,  biscuit_soaked:2},  yeast:100,  mold:10  },
+    { name:'Coffee infusion',      into:{top_cream:0,   bottom_cream:0,  biscuit_soaked:12}, yeast:50,   mold:5   },
+    { name:'Savoiardi',            into:{top_cream:0,   bottom_cream:0,  biscuit_soaked:6},  yeast:100,  mold:50  },
+  ];
+
+  return {
+    storage: { T_C:4, max_days:60, time_step_days:0.1, safety_factor:0.7 },
+    compartments: COMPARTMENTS,
+    preservatives: PRESERVATIVES,
+    headspace: {
+      V_hs:30, A_lid:10, V_biscuit_pore:2, f_trapped_air:0.5,
+      flush_O2_pct:21, flush_CO2_pct:0,
+      lid_material:'PP only',
+      OTR:80, CO2TR:320,
+    },
+    ingredients: INGREDIENTS,
+    cocoa: { g_per_cup:2, area_cm2:10, layer_thickness_mm:1.5, yeast_cfu_per_g:1000, mold_per_g:100 },
+    surfaces: {
+      container_yeast_cfu_per_cm2:0.1, container_mold_per_cm2:0.05,
+      container_target:'cup_wall',
+      lid_yeast_cfu_per_cm2:0.1, lid_mold_per_cm2:0.05,
+    },
+    air: { yeast_cfu_per_cup:5, mold_per_cup:2, partition_target:'auto' },
+    thresholds: { yeast_log:5.0, mold_P:0.01 },
+    transport: {
+      water:    'fast',
+      ethanol:  'fast',
+      sorbate:  'slow',
+      benzoate: 'slow',
+      L0_mm: 3.0,
+      rim_drip_fraction: 0.05,   // v1.3: fraction of cup_rim spores deposited on cocoa at t=0
+    },
+    advanced: {
+      mode:'worst',           // 'worst' | 'realistic' | 'best'
+      best_estimate:false,    // legacy alias kept for backward compatibility with saved scenarios
+      h0_yeast:1.5,
+      h0_mold_d:0.5,
+      yeast: {
+        Tmin:2, Topt:27, Tmax:38, n_T:2,
+        awmin:0.80, awopt:0.99,
+        pHmin:2.0, pHopt:4.5, pHmax:8.0, n_pH:1,
+        mu_opt:9.6, IC50_EtOH:15, IC50_CO2:40,
+        MIC_HA_sorb:200, MIC_HA_benz:150,
+      },
+      mold: {
+        Tmin:-2, Topt:25, Tmax:35, n_T:2,
+        awmin:0.83, awopt:0.99,
+        pHmin:3.0, pHopt:6.0, pHmax:10.0, n_pH:1,
+        Kr_opt:6, MIC_EtOH:5.0,                // Dantigny 2005: worst-case 5% v/v
+        K_O2:0.2, IC50_CO2:25,
+        MIC_HA_sorb:50, MIC_HA_benz:30, MIC_nat:8,
+        r_visible:1, r_spore:0.005, k_steep:2,
+      },
+    },
+  };
+}
+
+// =========================================================================
+// POPUP CONTENT
+// =========================================================================
+const POPUPS = {
+  temperature: { title:"Temperature (°C)", body:`
+    <p class="what">Single, constant refrigeration temperature for the entire simulation.</p>
+    <p class="why">Temperature is almost always the dominant hurdle for refrigerated dairy. A 4 °C → 8 °C jump roughly doubles mold growth; 4 °C → 12 °C quadruples it.</p>
+    <dl class="minicard"><dt>Typical</dt><dd>4 °C — EU cold-chain target</dd><dt>Range</dt><dd>−2 to 25 °C</dd><dt>Abuse</dt><dd>8–12 °C (worst-case home fridge)</dd></dl>
+    <div class="tip">v1 supports only fixed T. For cold-chain abuse, run two scenarios and estimate consumption per day of abuse.</div>` },
+  max_days: { title:"Simulation horizon (days)", body:`
+    <p class="what">Upper bound for the simulation. Outputs of <code>never</code> mean the threshold was not crossed within this horizon.</p>
+    <dl class="minicard"><dt>Default</dt><dd>60 d</dd><dt>Short-life</dt><dd>30 d</dd><dt>Long-life MAP</dt><dd>90+ d</dd></dl>` },
+  safety_factor: { title:"Safety factor", body:`
+    <p class="what">Final multiplier on predicted shelf life. Reported = factor × predicted.</p>
+    <p class="why">Adds extra cushion for things the model can't see: lot variation, supply-chain handling, outlier cups.</p>
+    <dl class="minicard"><dt>Default</dt><dd>0.70</dd><dt>First launch</dt><dd>0.5</dd><dt>Mature product</dt><dd>0.8–0.85</dd></dl>
+    <div class="pitfall">Don't use factor &gt; 1 — defeats the purpose.</div>` },
+  compartments: { title:"Compartments", body:`
+    <p class="what">User-defined regions of the product treated as homogeneous, each with its own a<sub>w</sub>, pH, EtOH, preservatives, bioburden.</p>
+    <p class="why">Tiramisù is heterogeneous: cocoa surface (dry, air-exposed) vs cream (dairy, neutral) vs biscuit (high-moisture, acid-shifted). Each compartment is solved independently for yeast and mold.</p>
+    <div class="pin">Enter <strong>post-equilibration</strong> a<sub>w</sub> and pH — what the layer settles to after 24–72 h, not recipe day-zero values. v1 has no cross-compartment transport.</div>` },
+  V_hs: { title:"Headspace volume", body:`
+    <p class="what">Gas volume between product top and lid, in mL.</p>
+    <p class="why">Smaller headspace has less gas to buffer against lid permeation — pO₂ refills faster per cm³. Larger gives slower turnover but slower CO₂ saturation if you're trying to MAP.</p>
+    <dl class="minicard"><dt>100-g single-serve cup</dt><dd>25–35 mL</dd><dt>500-g family tray</dt><dd>80–150 mL</dd></dl>` },
+  A_lid: { title:"Lid area", body:`
+    <p class="what">Effective lid surface in cm² through which gas exchanges.</p>
+    <p class="why">Combined with OTR, sets the gas-turnover time constant τ = V<sub>hs</sub> · 10⁴ / (OTR · A<sub>lid</sub>).</p>` },
+  V_pore: { title:"Biscuit pore volume", body:`
+    <p class="what">Volume of air trapped inside the porous biscuit, in mL.</p>
+    <p class="why">An internal O₂ reservoir. Even a perfect CO₂ flush gets immediately diluted by 21 % O₂ from biscuit pores. With air flush this is invisible; with MAP this is the difference between a real anaerobic environment and a partly-aerobic one.</p>
+    <dl class="minicard"><dt>Typical</dt><dd>1–3 mL for 30–50 g biscuit</dd></dl>` },
+  f_trapped: { title:"Fraction of pore air still present", body:`
+    <p class="what">How much of the dry-biscuit pore air survives the coffee soak. The rest of the pore volume inherits the headspace flush composition.</p>
+    <dl class="minicard"><dt>Standard soak</dt><dd>0.5</dd><dt>Vacuum-impregnated</dt><dd>0.1 or less</dd></dl>
+    <div class="tip">If you're investing in MAP, vacuum-impregnating the biscuit nearly eliminates the reservoir effect.</div>` },
+  gas_flush: { title:"Gas flush composition", body:`
+    <p class="what">% O₂ and % CO₂ blown into the cup before sealing.</p>
+    <dl class="minicard"><dt>Air</dt><dd>21 / 0 — no flush</dd><dt>Inert (N₂)</dt><dd>0 / 0</dd><dt>MAP CO₂-rich</dt><dd>0 / 30–70</dd></dl>
+    <div class="pitfall">Values don't need to sum to 100. Remainder is treated as inert N₂. Entering 0 / 0 means pure N₂, not vacuum.</div>` },
+  lid: { title:"Lid material — OTR &amp; CO₂TR", body:`
+    <p class="what">O₂ and CO₂ transmission rates of the lid film, cm³/m²/day.</p>
+    <p class="why">CO₂TR is typically 3–6× OTR for the same film. CO₂-rich headspace leaks out faster than air enters — the more you flush, the more you need a barrier lid to lock it in.</p>
+    <dl class="minicard"><dt>Aluminium peel foil</dt><dd>OTR 0.05 — best</dd><dt>PET/Al/PE</dt><dd>0.5 — excellent</dd><dt>PP + EVOH</dt><dd>2 — moderate</dd><dt>PET only</dt><dd>30 — no barrier</dd><dt>PP only</dt><dd>80 — no barrier</dd></dl>
+    <div class="tip">Spec the lid first, then design the flush. Flushing under a PP lid is wasted spend.</div>` },
+  preservatives: { title:"Preservatives", body:`
+    <p class="what">Three modelled: sorbate, benzoate (weak acids; activity depends on pH via the undissociated fraction), natamycin (direct membrane action; no pH dependence; mold only).</p>
+    <p class="why">Sorbate at pH 6.0 has only 7 % undissociated and is essentially inactive. At pH 5.0, 23 %. At pH 4.5, 50 %. <strong>Lowering pH is more effective than raising the dose.</strong></p>
+    <div class="pin">Both the toggle AND the ppm must be set. Toggle on with 0 ppm has no effect. Toggle off with 1000 ppm also has no effect.</div>` },
+  bioburden: { title:"Bioburden — overall", body:`
+    <p class="what">The total initial microbial load on day zero, summed from ingredients, packaging, air, cocoa.</p>
+    <p class="why">Defines N₀. A 10× higher bioburden cuts ~1 log of growth-time. Bioburden control is cheaper than chemistry control.</p>
+    <div class="tip">Supplier certificates of analysis are the primary source. Steam-treated cocoa drops mold spore counts by two orders of magnitude vs untreated — one of the cheapest interventions if mold-on-cocoa is your limit.</div>` },
+  cocoa: { title:"Cocoa bioburden", body:`
+    <p class="what">Dosed only to <code>cocoa_surface</code>: grams × CFU/g.</p>
+    <p class="why">Cocoa is the dominant mold-spore source in tiramisù. 2 g × 100 spores/g = 200 spores on the surface — enough to render the cup mold-vulnerable.</p>
+    <dl class="minicard"><dt>Untreated cocoa</dt><dd>1000–10000 CFU/g</dd><dt>Steam-treated</dt><dd>10–100 CFU/g</dd></dl>` },
+  packaging_burden: { title:"Container &amp; lid bioburden", body:`
+    <p class="what">CFU/cm² of yeast and mold on inside of container and underside of lid.</p>
+    <dl class="minicard"><dt>Clean-room cups</dt><dd>0.01–0.05 CFU/cm²</dd><dt>Standard line</dt><dd>0.1–0.5</dd><dt>Poorly stored</dt><dd>1–5</dd></dl>` },
+  airborne: { title:"Airborne bioburden", body:`
+    <p class="what">Total CFU deposited per cup during filling (the time the cup is open on the line).</p>
+    <dl class="minicard"><dt>ISO Class 8</dt><dd>&lt; 1 CFU/cup</dd><dt>Standard dairy</dt><dd>5–50</dd><dt>Open / poor air</dt><dd>50–500</dd></dl>
+    <div class="tip">Settle-plate test next to the filling head for 1 minute, count, divide.</div>` },
+  yeast_threshold: { title:"Yeast spoilage threshold", body:`
+    <p class="what">log<sub>10</sub> N at which the product is considered spoiled.</p>
+    <dl class="minicard"><dt>Worst-case</dt><dd>5.0 — Z. bailii cup-deformation onset</dd><dt>Best-estimate</dt><dd>6.0 — generic dairy spoilage</dd></dl>` },
+  mold_threshold: { title:"Visible mold probability", body:`
+    <p class="what">Acceptable fraction of cups with at least one visible colony at end of shelf life.</p>
+    <dl class="minicard"><dt>Worst-case</dt><dd>0.01 (1 %)</dd><dt>Best-estimate</dt><dd>0.05 (5 %)</dd><dt>Tight QA</dt><dd>0.001</dd></dl>
+    <div class="tip">Lowering threshold from 0.01 to 0.001 doesn't usually shrink predicted shelf life much — the curve is sigmoid.</div>` },
+  advanced: { title:"Advanced panel", body:`
+    <p class="what">Cardinal parameters for both organisms, lag parameters, K<sub>O₂</sub>.</p>
+    <p class="why">Three legitimate reasons to touch:</p>
+    <ul><li>Strain-specific challenge data to override defaults.</li><li>Swapping target organism (e.g. <em>Debaryomyces hansenii</em>).</li><li>Sensitivity analysis.</li></ul>
+    <div class="pin">Most users should leave advanced alone. Defaults are worst-case-bias values from validation.</div>` },
+  cardinals: { title:"Cardinal parameters", body:`
+    <p class="what">Each organism has T<sub>min/opt/max</sub>, a<sub>w,min/opt</sub>, pH<sub>min/opt/max</sub>, IC<sub>50</sub> for EtOH and CO₂, MICs for preservatives.</p>
+    <p class="why">Literature gives ranges, not single values, because strains vary. Defaults are the most permissive end (worst-case).</p>
+    <div class="tip">If you edit a cardinal, document why in a comment. Defaults are auditable; custom values need provenance.</div>` },
+  h0: { title:"Lag parameter h₀", body:`
+    <p class="what">Yeast: dimensionless relative lag time (h₀ = μ × λ). Mold: lag time at <em>optimum</em> conditions, in days.</p>
+    <p class="why">Actual lag at suboptimal conditions = h₀<sub>opt</sub> / γ<sub>total</sub>. At γ = 0.1, lag is 10× longer than optimum.</p>
+    <dl class="minicard"><dt>Yeast worst-case</dt><dd>1.5</dd><dt>Yeast best-estimate</dt><dd>4</dd><dt>Mold worst-case (days at opt)</dt><dd>0.5</dd><dt>Mold best-estimate</dt><dd>2</dd></dl>` },
+  kO2: { title:"K<sub>O₂</sub> (mold)", body:`
+    <p class="what">Half-saturation constant for mold O₂ response (Michaelis-Menten).</p>
+    <p class="why"><em>P. roqueforti</em> grows at very low O₂. K<sub>O₂</sub> = 0.2 % means at p<sub>O₂</sub> = 0.2 %, γ = 0.5. Low K means anaerobic conditions don't help much against mold.</p>
+    <dl class="minicard"><dt>Worst-case</dt><dd>0.2 %</dd><dt>Best-estimate</dt><dd>1.0 %</dd></dl>` },
+  bias_mode: { title:"Bias mode — three-way", body:`
+    <p class="what">Selects how conservative the model parameters are. Three positions on a single uncertainty axis.</p>
+    <dl class="minicard">
+      <dt>worst-case (default)</dt>
+      <dd>Lag short (h₀=0.5 mold, 1.5 yeast), K<sub>O₂</sub>=0.2 %, thresholds tight (yeast 5 log, mold 1 %), Le Marc ξ off, safety factor 0.7. Stacks ~5 conservative choices simultaneously. Use for regulatory submissions and label claims.</dd>
+      <dt>realistic (new in v1.3.3)</dt>
+      <dd>Middle ground: h₀=1.0 mold / 2.5 yeast, K<sub>O₂</sub>=0.5 %, thresholds yeast 5.5 log / mold 2 %, Le Marc ξ off, safety factor 0.85. Calibrated to be consistent with industry-reported chilled-dairy shelf life ranges (cf. strategy report § 04 for available reference sources). Use for product-strategy decisions and competitive benchmarking.</dd>
+      <dt>best-estimate</dt>
+      <dd>Lag long (h₀=2.0 mold, 4.0 yeast), K<sub>O₂</sub>=1.0 %, thresholds loose (yeast 6 log, mold 5 %), Le Marc ξ on (interactions allowed to extend shelf life further), safety factor 1.0 (no margin). Use for R&amp;D sensitivity and calibration only — never for external claims.</dd>
+    </dl>
+    <p>The three positions are not equally likely. Worst-case stacks conservative parameter choices for safety; best-estimate stacks the opposite. <strong>Realistic is the most plausible parameter combination given the limited industry-source data available</strong>, but still requires challenge-test confirmation per product.</p>
+    <div class="pitfall">Best-estimate predictions are realistic but have no safety margin. Quoting them externally is a liability. Realistic mode includes a partial safety factor (0.85) — defensible but still preliminary.</div>` },
+  matrix: { title:"Reading the matrix", body:`
+    <p class="what">One row per compartment. Columns: yeast t<sub>fail</sub>, mold t<sub>fail</sub>.</p>
+    <dl class="minicard"><dt>Red</dt><dd>Limiting cell (smallest t<sub>fail</sub>)</dd><dt>Amber</dt><dd>Within 20 % of limiting</dd><dt>Green</dt><dd>Comfortably long</dd><dt>—</dt><dd>Not applicable</dd></dl>
+    <p>If limiting is 3 d and next-worst is 30 d, one fix yields a big jump. If 3 d and 4 d, multiple bottlenecks.</p>` },
+  plot: { title:"Reading the plot", body:`
+    <p class="what">Two panels. <strong>A:</strong> log<sub>10</sub> N(t) yeast in each bulk compartment, dashed line at threshold. <strong>B:</strong> P<sub>visible</sub>(t) mold on each surface, dashed line at threshold.</p>
+    <div class="tip">Curves bunching close together = hurdles balanced. One curve far earlier than the rest = clear single-factor bottleneck.</div>` },
+  autocompute: { title:"Auto-compute", body:`
+    <p class="what">When on, every numeric change triggers a recomputation. The UI dims briefly while the engine runs (typically ~50–200 ms).</p>
+    <p class="why">Useful for live "what-if" sliding — drag pH down, watch shelf life jump. Turn off when entering a long list of inputs to avoid recomputing on every keystroke.</p>
+    <div class="tip">Auto-compute respects the current bias mode (worst-case / realistic / best-estimate) and all other inputs exactly as the manual Compute button does.</div>` },
+  animation: { title:"Animation panel", body:`
+    <p class="what">A stylised cross-section of the cup that plays the predicted spoilage trajectory over time.</p>
+    <p class="why">Visual intuition for the matrix and plots: see where colonies appear first, how the cream darkens as yeast multiplies, when visible mold takes off.</p>
+    <p>Buttons: <strong>Run</strong> starts; <strong>Pause/Resume</strong> toggles; <strong>Stop</strong> ends at the current time; <strong>Reset</strong> returns to t = 0.</p>
+    <dl class="minicard"><dt>Speed</dt><dd>Simulated days per real second. Default 5 → full 60-day shelf life replays in 12 s.</dd></dl>
+    <div class="pin">Each colony is rendered at the position of the surface compartment where it grew — lid underside, cup rim, cocoa surface or cup wall. They are <strong>independent populations</strong>; the v1.3 rim-to-cocoa drip effect is applied at t = 0 as a contribution to the cocoa's initial spore count, not as an animated transfer during simulation. So if you see colonies on the lid, those are the lid's own colonies, not migration from somewhere else.</div>
+    <div class="pin">The animation reflects the most recent Compute result. Edit inputs, recompute, then watch the new trajectory. Buttons disable when no result is available.</div>` },
+  presv_na: { title:"Shaded preservative cells", body:`
+    <p class="what">Cells with a hatched pattern mean the preservative is <strong>not applicable</strong> to that compartment for physical reasons, not a setting choice.</p>
+    <dl class="minicard">
+      <dt>Sorbate / benzoate</dt><dd>Water-soluble. Applied via the aqueous phase of a bulk matrix. Cannot be sprinkled on cocoa powder, deposited on a lid, or on a cup wall.</dd>
+      <dt>Natamycin</dt><dd>Surface antifungal. Applicable to bulk matrices, the cocoa surface (co-dusted with cocoa), and the lid product-facing surface (antimicrobial coating). Not realistic on cup walls.</dd>
+    </dl>
+    <div class="tip">If you want to push preservative into a non-applicable compartment, consider whether your real process can actually deliver it there. Most often the answer is no, and the calculator is reminding you.</div>` },
+  transport: { title:"Inter-compartment transport (v1.3)", body:`
+    <p class="what">v1.3 models how four species redistribute between adjacent compartments over shelf life: <strong>water</strong> (driving a<sub>w</sub> equalisation), <strong>ethanol</strong> (Marsala migrates between layers and into headspace as vapour), <strong>sorbate</strong> and <strong>benzoate</strong> (weak-acid preservatives migrate from where applied to adjacent layers).</p>
+    <p class="why">In v1.2 each compartment was sealed. In reality, a sorbate added to the cream slowly diffuses into the biscuit, sharing its protection. Ethanol from the biscuit reaches the headspace and inhibits surface mold. Cocoa wets up by contact with cream. These are real, literature-documented processes.</p>
+    <dl class="minicard">
+      <dt>fast</dt><dd>k ≈ 1/day → equilibrium in ~1 day. Default for water and ethanol.</dd>
+      <dt>slow</dt><dd>k ≈ 0.1/day → equilibrium in ~10 days. Default for sorbate / benzoate.</dd>
+      <dt>off</dt><dd>k = 0. Compartments stay sealed (v1.2 behaviour).</dd>
+    </dl>
+    <p>What is <strong>not</strong> transported: pH (matrix is buffered), sugar (no γ_sugar), natamycin (insoluble, in-situ), microbial cells (don't actively migrate at refrigeration).</p>
+    <div class="tip">Worst-case bias: fast water/ethanol (matrix equilibrates → cocoa wets up to cream a<sub>w</sub>) + slow preservatives (sorbate stays in cream → doesn't reach surfaces where mold grows). That asymmetry is conservative.</div>` },
+  transport_water: { title:"Water (a<sub>w</sub>) transport", body:`
+    <p class="what">Rate at which water diffuses between compartments to equalise a<sub>w</sub>.</p>
+    <p class="why">A dry cocoa surface and a moist cream below cannot stay at different a<sub>w</sub>. They equilibrate by water diffusion. Speed depends on matrix viscosity and contact area. Worst-case = fast (cocoa wets quickly to cream value → less protection).</p>
+    <div class="tip">The cocoa-cream interface is a special case handled with the L<sub>0</sub> blend (see "Cocoa-cream blend length") rather than pure ODE coupling.</div>` },
+  transport_ethanol: { title:"Ethanol transport", body:`
+    <p class="what">Aqueous ethanol migrates between adjacent bulk compartments, and partitions into the headspace as vapour via Henry's law (K<sub>LV</sub>(4 °C) ≈ 0.05).</p>
+    <p class="why">Dao &amp; Dantigny 2011 established that the substrate absorbs ethanol from the headspace, and vice versa. Cake industry confirms vapour-phase ethanol from in-pack emitters extends mold-free shelf life 10–20× — proof of concept for surface mold inhibition by Marsala vapour from tiramisù biscuit.</p>
+    <div class="pin">v1.3 reads the headspace ethanol partial pressure (computed from cream + biscuit aqueous EtOH, mass-weighted) and applies it to mold γ on surface compartments. At 1–2 % aqueous Marsala the vapour-phase effect is modest; at 4–5 % it becomes significant.</div>` },
+  transport_preservatives: { title:"Preservative transport", body:`
+    <p class="what">Sorbate and benzoate migrate between adjacent bulk compartments at a slow rate (k ≈ 0.1/day → ~10 d to equilibrium). Mass-conserving: cream loses what biscuit gains.</p>
+    <p class="why">Devlieghere and others report sorbate diffusion coefficients in dairy gels around 10⁻¹⁰ m²/s. Over a 30-day shelf life in a 10-mm-thick layer, sorbate equilibrates substantially between cream and biscuit. This shifts protection toward the biscuit (which may help its yeast) but reduces concentration in the cream.</p>
+    <div class="tip">Setting transport to <em>off</em> shows what v1.2 used to predict — preservative stays where applied. Setting to <em>fast</em> shows the full mass-conservation case.</div>` },
+  L0_mm: { title:"Cocoa-cream blend length L<sub>0</sub>", body:`
+    <p class="what">Characteristic length for the thin-layer a<sub>w</sub> blend at the cocoa-cream interface.</p>
+    <p class="why">v1.3 computes the cocoa effective surface a<sub>w</sub> as <code>w × aw_cream + (1−w) × RH_hs</code> with <code>w = exp(−L/L0)</code> where L is the cocoa thickness. With L<sub>0</sub> = 3 mm and L = 1.5 mm: w = 0.61, so the surface a<sub>w</sub> is 61 % weighted toward cream below and 39 % toward headspace humidity (~0.95).</p>
+    <dl class="minicard"><dt>Worst-case (default)</dt><dd>3 mm (moderate cream influence)</dd><dt>Conservative</dt><dd>5 mm (more cream → wetter surface → more growth)</dd><dt>Best-estimate</dt><dd>2 mm (more headspace → drier surface → less growth)</dd></dl>
+    <div class="pin">For cocoa_surface only, the model-derived a<sub>w</sub> overrides whatever you entered in the compartments table. The entered value is informational.</div>` },
+  cocoa_thickness: { title:"Cocoa layer thickness", body:`
+    <p class="what">Physical thickness of the cocoa dusting layer in mm.</p>
+    <p class="why">Thicker cocoa keeps the top surface drier longer because moisture from the cream has further to diffuse. The effective surface a<sub>w</sub> seen by mold is a thickness-weighted blend (see L<sub>0</sub> popup).</p>
+    <dl class="minicard"><dt>Typical industrial dusting</dt><dd>1–2 mm</dd><dt>Heavy "cocoa-rich" variant</dt><dd>2.5–4 mm</dd><dt>Decorative sprinkle only</dt><dd>0.3–0.8 mm</dd></dl>
+    <div class="tip">Reasoning rewarded: a heavier cocoa dusting does extend mold-limited shelf life, consistent with industry observation. The effect is modest (1.5 mm → 3 mm typically buys 10–25 % more days, not multiples).</div>` },
+  cup_rim: { title:"Cup rim (v1.3)", body:`
+    <p class="what">The internal cup-wall ring above the product surface, in direct contact with the headspace. Default 8 cm² for a 100-g single-serve cup.</p>
+    <p class="why">The rim is exposed to the open air during filling — settle-plate-style airborne deposition lands here as much as on the cocoa. Once sealed, mold colonies can grow on the rim (it's a moist environment due to headspace humidity over the cream) and shed spores onto the cocoa via gravity, vibration, and condensation drip.</p>
+    <p>Industrial-QA evidence: lid-underside and cup-rim mold colonies (<em>Cladosporium</em>, <em>Penicillium</em>) are the most common failure modes for refrigerated dairy cups once the bulk hurdles are well controlled. Condensation that runs back into the product carries spores.</p>
+    <dl class="minicard"><dt>Default area</dt><dd>8 cm² for a 100-g cup</dd><dt>Large family-size tray</dt><dd>20–40 cm²</dd></dl>
+    <div class="tip">If you target premium long-life, antimicrobial cup-coating treatments (food-grade silica with natamycin) are a real industrial intervention. The calculator allows natamycin on cup_rim.</div>` },
+  rim_drip: { title:"Rim → cocoa drip-flux fraction", body:`
+    <p class="what">Fraction of the initial cup_rim spore count that is transferred to the cocoa surface at t=0, simulating gravity, vibration during transport, and condensation drip.</p>
+    <p class="why">A real, measurable effect in industrial settings. Even with a perfectly sterile lid, the cup interior wall above the product picks up airborne spores during filling — and a few percent of those make it down to the cocoa over shelf life. The model lumps this into a one-shot transfer at t=0 rather than a time-distributed flux, because the dominant timing is during the first day (vibration during fill-line transport, distribution truck movement).</p>
+    <dl class="minicard"><dt>Default</dt><dd>0.05 (5 %)</dd><dt>Low-shock cold-chain (direct local delivery)</dt><dd>0.01</dd><dt>Heavy distribution chain</dt><dd>0.10–0.20</dd></dl>
+    <div class="pin">Setting this to 0 disables rim → cocoa transfer entirely. Useful for stress-testing what the rim alone contributes.</div>` },
+  nutrient_factor: { title:"Nutrient factor", body:`
+    <p class="what">Per-compartment multiplier on mold growth rate, 0 to 1. Accounts for how much of a real growth substrate the compartment provides.</p>
+    <p class="why">Mold growth depends on accessible carbon, nitrogen, and trace nutrients. A bulk cream layer is a full dairy matrix and supports mold optimally (factor 1.0). A dry cocoa powder is nutrient-limited even when wetted. Headspace-facing package surfaces (lid, rim) receive nutrients only from aerosols, condensate droplets, and splatter during filling — partial deposition, not bulk-rich.</p>
+    <dl class="minicard">
+      <dt>Bulk dairy / direct cream contact (cup_wall)</dt><dd>1.0</dd>
+      <dt>cup_rim (just above product)</dt><dd>0.5 — splatter + aerosols + condensate droplets running back into product</dd>
+      <dt>lid_product_facing</dt><dd>0.3 — coldest surface, mostly condensate-only nutrient supply, weak aerosol contribution</dd>
+      <dt>cocoa_surface</dt><dd>0.2 — dry cocoa powder, low intrinsic nutrients (Pomilio 2022); cream-side moisture brings some, but not full dairy nutrients</dd>
+    </dl>
+    <p>Literature:</p>
+    <ul>
+      <li>Pitt &amp; Hocking 2009 — dairy-lid mold colonies grow slower than bulk colonies at equivalent a<sub>w</sub>.</li>
+      <li>Gervais et al. 1988 — *P. roqueforti* on poor substrates (cellulose) at 30–50 % of rich-medium rate.</li>
+      <li>Pomilio et al. 2022 — cocoa powder shows essentially no mold development without nutrient-rich contact.</li>
+    </ul>
+    <div class="tip">If your real cocoa contains added sugar or milk solids, raise its factor to 0.5–0.8. If your cold chain is gentle (no splatter from transport vibration), drop rim/lid factors. If your product has a sealed barrier between cream and lid (e.g. a paper insert), lid factor approaches 0.</div>` },
+  logNmax: { title:"logN_max — yeast carrying capacity", body:`
+    <p class="what">The maximum yeast population the matrix can support, expressed as <code>log<sub>10</sub>(N)</code> with N in CFU/g for bulk compartments. Default 8 means N<sub>max</sub> = 10<sup>8</sup> CFU/g.</p>
+    <p class="why">In the logistic-with-lag primary growth model, the population grows toward an asymptote — it can't increase indefinitely. The asymptote (carrying capacity) is set by nutrient, oxygen, or space constraints in the matrix. Once N approaches N<sub>max</sub>, the growth rate slows to zero.</p>
+    <dl class="minicard">
+      <dt>Yeast in dairy</dt><dd>10<sup>8</sup> CFU/g → logN_max = 8 (industry standard)</dd>
+      <dt>Yeast in high-sugar matrix</dt><dd>10<sup>7</sup> – 10<sup>8</sup> CFU/g</dd>
+      <dt>Acidic / preserved matrix</dt><dd>10<sup>6</sup> – 10<sup>7</sup> CFU/g</dd>
+    </dl>
+    <p>For typical tiramisù shelf-life calculations, this parameter <strong>rarely needs adjustment</strong>: the spoilage threshold (default 10<sup>5</sup> CFU/g) is reached well before N approaches N<sub>max</sub>, so the exact ceiling has negligible effect on predicted shelf life. It mainly affects the shape of the curve in the animation and plot after spoilage.</p>
+    <div class="tip">If your in-house challenge tests show the yeast plateau is markedly lower than 10<sup>8</sup>, dial it down. Otherwise, leave at 8.</div>` },
+};
+
+// =========================================================================
+// ENGINE — fixed
+// =========================================================================
+
+const clamp01 = x => Math.max(0, Math.min(1, x));
+
+function gammaCPM(x, xmin, xopt, xmax, n) {
+  if (x <= xmin || x >= xmax) return 0;
+  const left  = Math.pow((x - xmin) / (xopt - xmin), n);
+  const right = (xmax - x) / (xmax - xopt);
+  return clamp01(left * right);   // FIX: clamp to [0,1]
+}
+
+function gammaAw(aw, awmin, awopt) {
+  if (aw <= awmin) return 0;
+  if (aw >= awopt) return 1;
+  return (aw - awmin) / (awopt - awmin);
+}
+
+function hill(x, ic50) { return 1 / (1 + Math.pow(x / Math.max(ic50, 1e-9), 2)); }
+
+function undissociated(total_ppm, pH, pKa) {
+  return total_ppm / (1 + Math.pow(10, pH - pKa));
+}
+
+function leMarcXi(gammas) {
+  const phi = gammas.map(g => Math.pow(1 - g, 3));
+  let psi = 0;
+  for (let j = 0; j < phi.length; j++) {
+    let denom = 2;
+    for (let k = 0; k < phi.length; k++) {
+      if (k === j) continue;
+      denom *= (1 - phi[k]);
+    }
+    if (denom > 1e-12) psi += phi[j] / denom;
+  }
+  if (psi <= 0.5) return 1;
+  if (psi >= 1)   return 0;
+  return 2 * (1 - psi);
+}
+
+function headspaceTrajectory(headspace, dt, n_steps) {
+  const { V_hs, A_lid, V_biscuit_pore, f_trapped_air,
+          flush_O2_pct, flush_CO2_pct, OTR, CO2TR } = headspace;
+
+  // FIX: pore volume not holding air inherits flush composition
+  const denom = V_hs + V_biscuit_pore;
+  const pO2_0 = (flush_O2_pct  * (V_hs + V_biscuit_pore * (1 - f_trapped_air))
+                + 21    * V_biscuit_pore * f_trapped_air) / denom;
+  const pCO2_0 = (flush_CO2_pct * (V_hs + V_biscuit_pore * (1 - f_trapped_air))
+                + 0.04  * V_biscuit_pore * f_trapped_air) / denom;
+
+  const k_O2  = (+OTR  || 0) * (A_lid / 1e4) / V_hs;
+  const k_CO2 = (+CO2TR|| 0) * (A_lid / 1e4) / V_hs;
+
+  const pO2_ext = 21, pCO2_ext = 0.04;
+
+  const pO2  = new Float64Array(n_steps + 1);
+  const pCO2 = new Float64Array(n_steps + 1);
+  pO2[0] = pO2_0; pCO2[0] = pCO2_0;
+  for (let i = 0; i < n_steps; i++) {
+    pO2 [i+1] = pO2 [i] + dt * k_O2  * (pO2_ext  - pO2 [i]);
+    pCO2[i+1] = pCO2[i] + dt * k_CO2 * (pCO2_ext - pCO2[i]);
+  }
+  return { pO2, pCO2 };
+}
+
+// Dantigny et al. 2005 quadratic-decline form: γ = ((MIC - E) / MIC)^2 for E<MIC.
+// Better-grounded in mold literature than the Hill form for ethanol.
+function gammaDantigny(E, MIC) {
+  if (E >= MIC) return 0;
+  if (E <= 0)   return 1;
+  const r = (MIC - E) / MIC;
+  return r * r;
+}
+
+function gammasYeast(T, aw, pH, EtOH_aq, pO2, pCO2, sorb_ppm, benz_ppm, P) {
+  const gT = gammaCPM(T, P.Tmin, P.Topt, P.Tmax, P.n_T);
+  const gA = gammaAw(aw, P.awmin, P.awopt);
+  const gPh= gammaCPM(pH, P.pHmin, P.pHopt, P.pHmax, P.n_pH);
+  const gE = hill(EtOH_aq, P.IC50_EtOH);   // yeasts: keep Hill form (literature pattern)
+  const gO2 = 1.0;
+  const gCO2 = hill(pCO2, P.IC50_CO2);
+  let gSorb = 1, gBenz = 1;
+  if (sorb_ppm > 0) {
+    gSorb = hill(undissociated(sorb_ppm, pH, 4.76), P.MIC_HA_sorb);
+  }
+  if (benz_ppm > 0) {
+    gBenz = hill(undissociated(benz_ppm, pH, 4.20), P.MIC_HA_benz);
+  }
+  return { gT, gA, gPh, gE, gO2, gCO2, gSorb, gBenz, gNat:1.0 };
+}
+
+function gammasMold(T, aw, pH, EtOH_aq, EtOH_vapour, pO2, pCO2, sorb_ppm, benz_ppm, natamycin_ppm, nutrient_factor, P) {
+  const gT = gammaCPM(T, P.Tmin, P.Topt, P.Tmax, P.n_T);
+  const gA = gammaAw(aw, P.awmin, P.awopt);
+  const gPh= gammaCPM(pH, P.pHmin, P.pHopt, P.pHmax, P.n_pH);
+
+  // Effective ethanol: max of local aqueous and vapour-phase contributions.
+  // Vapour-phase ethanol acts on conidia via membrane disruption (Dantigny 2005b).
+  const E_eff = Math.max(+EtOH_aq || 0, +EtOH_vapour || 0);
+  const gE = gammaDantigny(E_eff, P.MIC_EtOH);
+
+  const ref = 21 / (P.K_O2 + 21);
+  const gO2 = ref > 0 ? clamp01((pO2 / (P.K_O2 + pO2)) / ref) : 1;
+  const gCO2 = hill(pCO2, P.IC50_CO2);
+  let gSorb = 1, gBenz = 1, gNat = 1;
+  if (sorb_ppm > 0) {
+    gSorb = hill(undissociated(sorb_ppm, pH, 4.76), P.MIC_HA_sorb);
+  }
+  if (benz_ppm > 0) {
+    gBenz = hill(undissociated(benz_ppm, pH, 4.20), P.MIC_HA_benz);
+  }
+  if (natamycin_ppm > 0) {
+    gNat = hill(natamycin_ppm, P.MIC_nat);
+  }
+  const gNutr = clamp01(+nutrient_factor || 1);
+  return { gT, gA, gPh, gE, gO2, gCO2, gSorb, gBenz, gNat, gNutr };
+}
+
+function gammaProduct(g, useLeMarc) {
+  const arr = [g.gT, g.gA, g.gPh, g.gE, g.gO2, g.gCO2, g.gSorb, g.gBenz, g.gNat];
+  if (g.gNutr !== undefined) arr.push(g.gNutr);
+  let prod = 1;
+  for (const v of arr) prod *= v;
+  if (useLeMarc) prod *= leMarcXi(arr);
+  return prod;
+}
+
+function dominantGamma(g) {
+  const map = { gT:'temperature', gA:'water activity', gPh:'pH', gE:'ethanol',
+                gO2:'O₂', gCO2:'CO₂', gSorb:'sorbate', gBenz:'benzoate', gNat:'natamycin',
+                gNutr:'nutrient limit' };
+  let lo = Infinity, key = null;
+  for (const k of Object.keys(map)) {
+    if (g[k] !== undefined && g[k] < lo) { lo = g[k]; key = k; }
+  }
+  return { factor: map[key], value: lo };
+}
+
+function computeN0(state) {
+  // FIX: track whether any input source contributed > 0; only then apply the floor
+  const perComp = {};
+  const hasSrc  = {};
+  for (const c of state.compartments) {
+    perComp[c.id] = { yeast:0, mold:0 };
+    hasSrc[c.id]  = { yeast:false, mold:false };
+  }
+  // Ingredients
+  for (const ing of state.ingredients) {
+    for (const compId of Object.keys(ing.into)) {
+      const m = +ing.into[compId] || 0;
+      if (m > 0 && perComp[compId]) {
+        const dy = m * (+ing.yeast || 0);
+        const dm = m * (+ing.mold  || 0);
+        if (dy > 0) { perComp[compId].yeast += dy; hasSrc[compId].yeast = true; }
+        if (dm > 0) { perComp[compId].mold  += dm; hasSrc[compId].mold  = true; }
+      }
+    }
+  }
+  // Cocoa surface
+  if (perComp.cocoa_surface) {
+    const g = +state.cocoa.g_per_cup || 0;
+    const cy = g * (+state.cocoa.yeast_cfu_per_g || 0);
+    const cm = g * (+state.cocoa.mold_per_g || 0);
+    if (cy > 0) { perComp.cocoa_surface.yeast += cy; hasSrc.cocoa_surface.yeast = true; }
+    if (cm > 0) { perComp.cocoa_surface.mold  += cm; hasSrc.cocoa_surface.mold  = true; }
+  }
+  // Container -> target compartment(s)
+  // v1.3: container_target now also seeds cup_rim by default (same cup pre-fill cleanliness)
+  const containerComp = state.compartments.find(c => c.id === state.surfaces.container_target);
+  if (containerComp) {
+    const ay = (+containerComp.area_cm2 || 0) * (+state.surfaces.container_yeast_cfu_per_cm2 || 0);
+    const am = (+containerComp.area_cm2 || 0) * (+state.surfaces.container_mold_per_cm2 || 0);
+    if (ay > 0) { perComp[containerComp.id].yeast += ay; hasSrc[containerComp.id].yeast = true; }
+    if (am > 0) { perComp[containerComp.id].mold  += am; hasSrc[containerComp.id].mold  = true; }
+  }
+  // Cup rim — also part of the cup interior, same pre-fill bioburden density as the wall
+  const rimComp = state.compartments.find(c => c.id === 'cup_rim');
+  if (rimComp) {
+    const ay = (+rimComp.area_cm2 || 0) * (+state.surfaces.container_yeast_cfu_per_cm2 || 0);
+    const am = (+rimComp.area_cm2 || 0) * (+state.surfaces.container_mold_per_cm2 || 0);
+    if (ay > 0) { perComp[rimComp.id].yeast += ay; hasSrc[rimComp.id].yeast = true; }
+    if (am > 0) { perComp[rimComp.id].mold  += am; hasSrc[rimComp.id].mold  = true; }
+  }
+  // Lid -> lid_product_facing
+  const lidComp = state.compartments.find(c => c.id === 'lid_product_facing');
+  if (lidComp) {
+    const ay = (+lidComp.area_cm2 || 0) * (+state.surfaces.lid_yeast_cfu_per_cm2 || 0);
+    const am = (+lidComp.area_cm2 || 0) * (+state.surfaces.lid_mold_per_cm2 || 0);
+    if (ay > 0) { perComp[lidComp.id].yeast += ay; hasSrc[lidComp.id].yeast = true; }
+    if (am > 0) { perComp[lidComp.id].mold  += am; hasSrc[lidComp.id].mold  = true; }
+  }
+  // Airborne — v1.3: spread across surfaces exposed to the open headspace at filling.
+  // The lid is sealed last, but the cocoa surface, cup_rim and (briefly) lid all see
+  // settle-plate-style deposition during the open phase. The lid receives roughly half
+  // because it sees the air only on its top surface during placement.
+  // Default exposure weighting by area, with lid down-weighted to 0.5.
+  const exposedIds = ['cocoa_surface', 'cup_rim', 'lid_product_facing'];
+  const exposureWeight = { cocoa_surface: 1.0, cup_rim: 1.0, lid_product_facing: 0.5 };
+  // If user has overridden partition_target to something other than auto-distribute,
+  // honour that for backward compatibility:
+  if (state.air.partition_target && state.air.partition_target !== 'auto') {
+    const airComp = state.compartments.find(c => c.id === state.air.partition_target);
+    if (airComp) {
+      const ay = +state.air.yeast_cfu_per_cup || 0;
+      const am = +state.air.mold_per_cup || 0;
+      if (ay > 0) { perComp[airComp.id].yeast += ay; hasSrc[airComp.id].yeast = true; }
+      if (am > 0) { perComp[airComp.id].mold  += am; hasSrc[airComp.id].mold  = true; }
+    }
+  } else {
+    // Auto-distribute by area × exposure weight
+    let total_weighted = 0;
+    const contribs = [];
+    for (const id of exposedIds) {
+      const c = state.compartments.find(x => x.id === id);
+      if (!c) continue;
+      const w = (+c.area_cm2 || 0) * (exposureWeight[id] || 1.0);
+      if (w > 0) { contribs.push({ id, w }); total_weighted += w; }
+    }
+    if (total_weighted > 0) {
+      const ay = +state.air.yeast_cfu_per_cup || 0;
+      const am = +state.air.mold_per_cup || 0;
+      for (const con of contribs) {
+        const frac = con.w / total_weighted;
+        if (ay * frac > 0) { perComp[con.id].yeast += ay * frac; hasSrc[con.id].yeast = true; }
+        if (am * frac > 0) { perComp[con.id].mold  += am * frac; hasSrc[con.id].mold  = true; }
+      }
+    }
+  }
+
+  // v1.3: rim → cocoa drip-flux at t=0
+  // A small fraction of the rim's initial spores ends up on the cocoa surface due to
+  // gravity, vibration during transport, and condensation droplets running off the rim
+  // back onto the product. Default fraction 5 % of rim CFU transferred to cocoa.
+  const cocoaC = state.compartments.find(c => c.id === 'cocoa_surface');
+  const rimC2  = state.compartments.find(c => c.id === 'cup_rim');
+  if (cocoaC && rimC2 && perComp.cup_rim) {
+    const dripFrac = (state.transport && +state.transport.rim_drip_fraction) || 0.05;
+    const drip_y = perComp.cup_rim.yeast * dripFrac;
+    const drip_m = perComp.cup_rim.mold  * dripFrac;
+    if (drip_y > 0) { perComp.cocoa_surface.yeast += drip_y; hasSrc.cocoa_surface.yeast = true; }
+    if (drip_m > 0) { perComp.cocoa_surface.mold  += drip_m; hasSrc.cocoa_surface.mold  = true; }
+  }
+
+  // FIX: floor only when source > 0
+  for (const c of state.compartments) {
+    if (hasSrc[c.id].yeast) perComp[c.id].yeast = Math.max(1, Math.ceil(perComp[c.id].yeast));
+    else                    perComp[c.id].yeast = 0;
+    if (hasSrc[c.id].mold)  perComp[c.id].mold  = Math.max(1, Math.ceil(perComp[c.id].mold));
+    else                    perComp[c.id].mold  = 0;
+  }
+  return { perComp, hasSrc };
+}
+
+function compartmentGas(c, pO2_hs, pCO2_hs) {
+  if (c.type === 'surface_air') return { pO2:pO2_hs, pCO2:pCO2_hs };
+  if (c.type === 'bulk')        return { pO2:0,      pCO2:pCO2_hs };
+  // surface_package: cup_wall not adjacent to headspace; lid_product_facing and cup_rim are.
+  if (c.id === 'lid_product_facing' || c.id === 'cup_rim') return { pO2:pO2_hs, pCO2:pCO2_hs };
+  return { pO2:0, pCO2:pCO2_hs };
+}
+
+// Normalise the bias-mode setting. Older saved scenarios used `best_estimate: bool`;
+// v1.3.3 uses `mode: 'worst' | 'realistic' | 'best'`. Accept both, prefer `mode`.
+function getMode(state) {
+  const adv = state.advanced || {};
+  if (adv.mode === 'worst' || adv.mode === 'realistic' || adv.mode === 'best') return adv.mode;
+  // Backward-compat: best_estimate flag
+  if (adv.best_estimate === true)  return 'best';
+  if (adv.best_estimate === false) return 'worst';
+  return 'worst';
+}
+
+function effectiveAdvanced(state) {
+  const adv = state.advanced;
+  const mode = getMode(state);
+  if (mode === 'worst') return adv;
+  if (mode === 'realistic') {
+    return {
+      ...adv,
+      h0_yeast:  2.5,
+      h0_mold_d: 1.0,
+      mold: { ...adv.mold, K_O2: 0.5 },
+    };
+  }
+  // best
+  return {
+    ...adv,
+    h0_yeast:  4.0,
+    h0_mold_d: 2.0,
+    mold: { ...adv.mold, K_O2: 1.0 },
+  };
+}
+
+function effectiveThresholds(state) {
+  const mode = getMode(state);
+  if (mode === 'best')      return { yeast_log:6.0, mold_P:0.05 };
+  if (mode === 'realistic') return { yeast_log:5.5, mold_P:0.02 };
+  return state.thresholds; // worst-case uses user-set thresholds (default 5.0 / 0.01)
+}
+
+function effectiveSafety(state) {
+  const mode = getMode(state);
+  if (mode === 'best')      return 1.0;
+  if (mode === 'realistic') return 0.85;
+  return +state.storage.safety_factor;
+}
+
+function useLeMarc(state) {
+  // Le Marc ξ multiplicative-interaction term applied only in best-estimate mode.
+  // Worst-case excludes it (conservative); realistic mode excludes it to keep predictions
+  // consistent with industry-reported chilled-dairy shelf life ranges (~12-18 d for typical
+  // fresh tiramisù) — adding Le Marc to realistic mode would push predictions ~30% higher
+  // than the industry-reported range.
+  return getMode(state) === 'best';
+}
+
+function firstCrossing(t_array, y_array, threshold) {
+  for (let i = 0; i < y_array.length; i++) {
+    if (y_array[i] >= threshold) {
+      if (i === 0) return t_array[0];
+      const y0=y_array[i-1], y1=y_array[i], t0=t_array[i-1], t1=t_array[i];
+      if (y1 === y0) return t1;
+      return t0 + (threshold - y0) * (t1 - t0) / (y1 - y0);
+    }
+  }
+  return null;
+}
+
+// =========================================================================
+// TRANSPORT MODEL  (v1.3)
+// Species transported between adjacent compartments and to/from headspace:
+//   - water (a_w)            : fast in worst-case mode
+//   - ethanol (% v/v aq)     : fast; also partitions to headspace (vapour phase, K_LV)
+//   - sorbate (ppm total)    : slow (large molecule, partitions slowly in dairy gel)
+//   - benzoate (ppm total)   : slow
+// Natamycin: no transport (low solubility, in-situ).
+// pH, sugar, cells: not transported.
+//
+// Master ODE per ordered adjacency (i -> j) for species s:
+//   dC_i/dt = -k_s * f_ij * (C_i - C_j * P_s)
+//   dC_j/dt = +k_s * f_ij * (C_i - C_j * P_s) * (m_i / m_j)
+// f_ij is an interface-factor (0..1). P_s is a partition coefficient at the
+// interface (1.0 for liquid-liquid bulk-bulk; <1 for cocoa↔cream due to
+// different sorption isotherms — kept = 1 in v1 for simplicity).
+//
+// Plus headspace coupling:
+//   ethanol in headspace from cream/biscuit at K_LV(T) × E_aq
+//   water RH in headspace from cream/biscuit at K_water(T) ≈ aw (sealed cup)
+// =========================================================================
+
+function transportSpeed(state, species) {
+  // Global speed setting per species, default "fast" for water/ethanol, "slow" for preservatives.
+  const tr = state.transport || {};
+  const mode = tr[species] || (species === 'water' || species === 'ethanol' ? 'fast' : 'slow');
+  if (mode === 'off')  return 0;
+  if (mode === 'slow') return 0.10;   // 1/day → ~10 d equilibration
+  if (mode === 'fast') return 1.0;    // 1/day → ~1 d
+  return parseFloat(mode) || 0;
+}
+
+// Adjacency factor: bulk-bulk contact = 1.0; cocoa-cream = 0.5 (lower contact
+// area, different sorption); package surfaces don't exchange transported species.
+function interfaceFactor(typeI, typeJ, idI, idJ) {
+  const surface_i = (typeI === 'surface_air' || typeI === 'surface_package');
+  const surface_j = (typeJ === 'surface_air' || typeJ === 'surface_package');
+  if (surface_i && surface_j) return 0; // two surfaces don't directly transport
+  if (typeI === 'surface_package' || typeJ === 'surface_package') return 0;
+  if (idI === 'cocoa_surface' || idJ === 'cocoa_surface') return 0.5;
+  return 1.0;
+}
+
+// Default adjacency graph (undirected).  Returns array of [idA, idB] pairs.
+function defaultAdjacencies(compartments) {
+  const ids = compartments.map(c => c.id);
+  const pairs = [];
+  function pair(a, b) {
+    if (ids.includes(a) && ids.includes(b)) pairs.push([a, b]);
+  }
+  pair('cocoa_surface', 'top_cream');
+  pair('top_cream', 'biscuit_soaked');
+  pair('biscuit_soaked', 'bottom_cream');
+  // bottom_cream ↔ cup_wall: blocked (package surface)
+  // lid_product_facing ↔ top_cream: blocked (package surface; vapour-only contact via headspace)
+  return pairs;
+}
+
+// Liquid-vapour partition for ethanol at temperature T (°C).
+// K_LV is dimensionless: p_EtOH_vapour (% v/v at 1 atm) ≈ K_LV × E_aq (% v/v)
+// Literature midpoint at 4 °C ≈ 0.05; doubles roughly every 10 °C.
+function K_LV_ethanol(T) {
+  return 0.05 * Math.exp(0.05 * (T - 4));
+}
+
+// Build per-compartment, per-species time series.
+// Returns { aw:{compId:Float64Array}, etoh:{...}, sorb:{...}, benz:{...}, p_EtOH_hs:Float64Array }
+function transportTrajectories(state, dt, n_steps, headspaceGas) {
+  const comps = state.compartments;
+  const n = comps.length;
+  const compIdx = {}; comps.forEach((c, i) => { compIdx[c.id] = i; });
+
+  // Initial concentrations
+  const aw  = new Float64Array(n);
+  const eth = new Float64Array(n);
+  const sb  = new Float64Array(n);
+  const bz  = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    aw[i]  = +comps[i].aw;
+    eth[i] = +comps[i].EtOH;
+    const p = state.preservatives[comps[i].id] || {};
+    sb[i]  = (p.sorbate_added  ? +p.sorbate_ppm  : 0) || 0;
+    bz[i]  = (p.benzoate_added ? +p.benzoate_ppm : 0) || 0;
+  }
+
+  // Adjacency list
+  const adj = (state.transport && state.transport.adjacencies) || defaultAdjacencies(comps);
+  const edges = adj.map(([a, b]) => {
+    const ia = compIdx[a], ib = compIdx[b];
+    if (ia === undefined || ib === undefined) return null;
+    return { i: ia, j: ib, f: interfaceFactor(comps[ia].type, comps[ib].type, a, b) };
+  }).filter(e => e && e.f > 0);
+
+  // Rate constants
+  const k_w  = transportSpeed(state, 'water');
+  const k_e  = transportSpeed(state, 'ethanol');
+  const k_s  = transportSpeed(state, 'sorbate');
+  const k_b  = transportSpeed(state, 'benzoate');
+
+  // Output arrays
+  const out_aw  = {}, out_eth = {}, out_sb = {}, out_bz = {};
+  for (const c of comps) {
+    out_aw[c.id]  = new Float64Array(n_steps + 1);
+    out_eth[c.id] = new Float64Array(n_steps + 1);
+    out_sb[c.id]  = new Float64Array(n_steps + 1);
+    out_bz[c.id]  = new Float64Array(n_steps + 1);
+  }
+  for (let i = 0; i < n; i++) {
+    out_aw[comps[i].id][0]  = aw[i];
+    out_eth[comps[i].id][0] = eth[i];
+    out_sb[comps[i].id][0]  = sb[i];
+    out_bz[comps[i].id][0]  = bz[i];
+  }
+
+  // Headspace ethanol — equilibrates with all bulk compartments (mass-weighted average aq EtOH)
+  const T_C = +state.storage.T_C;
+  const K_LV = K_LV_ethanol(T_C);
+  const p_EtOH_hs = new Float64Array(n_steps + 1);
+  // Rate constant for headspace ↔ bulk equilibration of ethanol.
+  // Driven mostly by surface area between cream and headspace.
+  // Use the same lid_OTR-style timescale: k_hs ≈ A_hs / V_hs.
+  // For typical cup, A_hs ~ 10 cm², V_hs ~ 30 mL → fast (~hours), so treat as instantaneous.
+  function E_aq_mean() {
+    let num = 0, den = 0;
+    for (let i = 0; i < n; i++) {
+      if (comps[i].type === 'bulk') {
+        const m = +comps[i].mass_g;
+        num += eth[i] * m;
+        den += m;
+      }
+    }
+    return den > 0 ? num / den : 0;
+  }
+  p_EtOH_hs[0] = K_LV * E_aq_mean();
+
+  // Integrate
+  for (let step = 0; step < n_steps; step++) {
+    // Compute fluxes for all edges
+    const dAw = new Float64Array(n);
+    const dEt = new Float64Array(n);
+    const dSb = new Float64Array(n);
+    const dBz = new Float64Array(n);
+
+    for (const e of edges) {
+      const mi = Math.max(+comps[e.i].mass_g, 1);
+      const mj = Math.max(+comps[e.j].mass_g, 1);
+      // For each species, flux from i to j (positive: i loses, j gains)
+      const dAw_ij  = k_w * e.f * (aw[e.i]  - aw[e.j]);
+      const dEt_ij  = k_e * e.f * (eth[e.i] - eth[e.j]);
+      const dSb_ij  = k_s * e.f * (sb[e.i]  - sb[e.j]);
+      const dBz_ij  = k_b * e.f * (bz[e.i]  - bz[e.j]);
+      // Mass-conserving transfer: concentration change scales with 1/mass
+      dAw[e.i] -= dAw_ij;             dAw[e.j] += dAw_ij * (mi / mj);
+      dEt[e.i] -= dEt_ij;             dEt[e.j] += dEt_ij * (mi / mj);
+      dSb[e.i] -= dSb_ij;             dSb[e.j] += dSb_ij * (mi / mj);
+      dBz[e.i] -= dBz_ij;             dBz[e.j] += dBz_ij * (mi / mj);
+    }
+
+    // Headspace ethanol equilibrium: bulk loses some EtOH to headspace if K_LV high
+    // Lightweight model: at every step pull EtOH back toward K_LV × E_aq_mean equilibrium
+    // (slow correction; mostly the bulk pool dominates)
+    // For v1 we treat the headspace EtOH as an instantaneous slave to bulk EtOH:
+    p_EtOH_hs[step + 1] = K_LV * E_aq_mean();
+
+    // Cocoa surface aw coupling — thin-layer special case.
+    // If cocoa_surface is in the compartment list, override its aw with thickness-weighted blend.
+    // This is applied AFTER ODE update so it dominates user-entered cocoa aw.
+    // L0 = 3 mm (default). RH_hs ≈ 0.95 in sealed cup over moist matrix.
+
+    // Forward-Euler update
+    for (let i = 0; i < n; i++) {
+      aw[i]  = Math.max(0, Math.min(1, aw[i]  + dt * dAw[i]));
+      eth[i] = Math.max(0, eth[i] + dt * dEt[i]);
+      sb[i]  = Math.max(0, sb[i]  + dt * dSb[i]);
+      bz[i]  = Math.max(0, bz[i]  + dt * dBz[i]);
+    }
+
+    // Apply cocoa thin-layer aw override (post-update so it's seen at next step)
+    const cocoaIdx = compIdx['cocoa_surface'];
+    const creamIdx = compIdx['top_cream'];
+    if (cocoaIdx !== undefined && creamIdx !== undefined) {
+      const L  = +(state.cocoa && state.cocoa.layer_thickness_mm) || 1.5;
+      const L0 = +(state.transport && state.transport.L0_mm) || 3.0;
+      const w_cream = Math.exp(-L / Math.max(L0, 0.1));
+      const RH_hs   = 0.95;  // sealed cup over moist substrate
+      const aw_eff  = w_cream * aw[creamIdx] + (1 - w_cream) * RH_hs;
+      aw[cocoaIdx]  = aw_eff;
+    }
+
+    // Record
+    for (let i = 0; i < n; i++) {
+      out_aw[comps[i].id][step + 1]  = aw[i];
+      out_eth[comps[i].id][step + 1] = eth[i];
+      out_sb[comps[i].id][step + 1]  = sb[i];
+      out_bz[comps[i].id][step + 1]  = bz[i];
+    }
+  }
+
+  return { aw: out_aw, eth: out_eth, sb: out_sb, bz: out_bz, p_EtOH_hs };
+}
+
+function simulate(state) {
+  const T = +state.storage.T_C;
+  const max_days = +state.storage.max_days;
+  const dt = +state.storage.time_step_days || 0.1;
+  const n_steps = Math.ceil(max_days / dt);
+  const t_array = new Float64Array(n_steps + 1);
+  for (let i = 0; i <= n_steps; i++) t_array[i] = i * dt;
+
+  const advE = effectiveAdvanced(state);
+  const thr  = effectiveThresholds(state);
+  const sf   = effectiveSafety(state);
+  const lemarc = useLeMarc(state);
+  const mode = getMode(state);
+
+  const { pO2, pCO2 } = headspaceTrajectory(state.headspace, dt, n_steps);
+
+  // v1.3: compute time-varying species fields per compartment
+  const traj = transportTrajectories(state, dt, n_steps, { pO2, pCO2 });
+
+  const N0info = computeN0(state);
+  const N0 = N0info.perComp;
+  const hasSrc = N0info.hasSrc;
+
+  const yeastResults = [];
+  const moldResults  = [];
+  const perCompLimit = {};
+
+  for (const c of state.compartments) {
+    const presv = state.preservatives[c.id] || {};
+    perCompLimit[c.id] = { yeast:null, mold:null };
+
+    // Local trajectories
+    const aw_t   = traj.aw[c.id];
+    const eth_t  = traj.eth[c.id];
+    const sb_t   = traj.sb[c.id];
+    const bz_t   = traj.bz[c.id];
+    // Natamycin doesn't transport — use static per-compartment value if added
+    const nat_ppm = (presv.natamycin_added && presv.natamycin_ppm > 0) ? +presv.natamycin_ppm : 0;
+    // Nutrient factor per compartment. Defaults are set in makeDefaults() per surface type;
+    // fallback if missing: 0.2 for cocoa_surface, 0.5 for cup_rim, 0.3 for lid_product_facing, 1.0 elsewhere.
+    let nutrient_factor;
+    if (c.nutrient_factor !== undefined && c.nutrient_factor !== null) {
+      nutrient_factor = +c.nutrient_factor;
+    } else if (c.id === 'cocoa_surface')      nutrient_factor = 0.2;
+    else if (c.id === 'cup_rim')              nutrient_factor = 0.5;
+    else if (c.id === 'lid_product_facing')   nutrient_factor = 0.3;
+    else                                       nutrient_factor = 1.0;
+
+    // ---- YEAST: only for bulk compartments ----
+    if (c.type === 'bulk' && hasSrc[c.id].yeast) {
+      const mass = Math.max(c.mass_g, 1);
+      const log_N0_yeast = Math.log10(N0[c.id].yeast / mass);
+      const Nmax_log = +c.Nmax;
+      const Nmax = Math.pow(10, Nmax_log);
+      const N0y  = Math.pow(10, log_N0_yeast);
+      const yeast_y = new Float64Array(n_steps + 1);
+      yeast_y[0] = log_N0_yeast;
+      const h0y = +advE.h0_yeast;
+      let lag_consumed = 0;
+      let cum_mu = 0;
+      let last_g = null;
+      for (let i = 1; i <= n_steps; i++) {
+        const gas = compartmentGas(c, pO2[i], pCO2[i]);
+        const g = gammasYeast(T, aw_t[i], +c.pH, eth_t[i], gas.pO2, gas.pCO2, sb_t[i], bz_t[i], advE.yeast);
+        last_g = g;
+        const gprod = gammaProduct(g, lemarc);
+        const mu = +advE.yeast.mu_opt * gprod;
+        if (mu > 1e-6) lag_consumed += dt * mu;
+        if (lag_consumed < h0y) {
+          yeast_y[i] = log_N0_yeast;
+        } else {
+          cum_mu += dt * mu;
+          const N = Nmax / (1 + ((Nmax - N0y) / N0y) * Math.exp(-cum_mu));
+          yeast_y[i] = Math.log10(N);
+        }
+      }
+      const t_fail_y = firstCrossing(t_array, yeast_y, thr.yeast_log);
+      perCompLimit[c.id].yeast = t_fail_y;
+      yeastResults.push({
+        compId:c.id, name:c.name, type:c.type,
+        log_N0:log_N0_yeast, curve:yeast_y, t_fail:t_fail_y,
+        dominant: last_g ? dominantGamma(last_g) : null,
+      });
+    }
+
+    // ---- MOLD: surface compartments only ----
+    if ((c.type === 'surface_air' || c.type === 'surface_package') && hasSrc[c.id].mold) {
+      const lambda = N0[c.id].mold;
+      const P_init = 1 - Math.exp(-lambda);
+
+      const km = advE.mold;
+      const h0_mold_d_at_opt = +advE.h0_mold_d;
+      let lag_int = 0;
+      let cum_dist = 0;
+      const P_curve = new Float64Array(n_steps + 1);
+      P_curve[0] = 0;
+      let last_gm = null;
+      let t_visible_single = null;  // time for a typical single spore to reach visible size
+      for (let i = 1; i <= n_steps; i++) {
+        const gas = compartmentGas(c, pO2[i], pCO2[i]);
+        // Surface compartments adjacent to headspace see ethanol vapour from cream/biscuit
+        const adjacentToHS = (c.type === 'surface_air') || (c.id === 'lid_product_facing') || (c.id === 'cup_rim');
+        const EtOH_vapour = adjacentToHS ? traj.p_EtOH_hs[i] : 0;
+        const g = gammasMold(T, aw_t[i], +c.pH, eth_t[i], EtOH_vapour, gas.pO2, gas.pCO2,
+                             sb_t[i], bz_t[i], nat_ppm, nutrient_factor, km);
+        last_gm = g;
+        const gprod = gammaProduct(g, lemarc);
+        const Kr = +km.Kr_opt * gprod;
+        lag_int += dt * gprod;
+        if (lag_int >= h0_mold_d_at_opt) {
+          cum_dist += dt * Kr;
+        }
+        if (t_visible_single === null && cum_dist >= (+km.r_visible - +km.r_spore)) {
+          t_visible_single = t_array[i];
+        }
+      }
+
+      // v1.3.2: dose-dependent first-visibility time.
+      // With N spores present, the time to first visible colony is the min of N
+      // independent germination/growth times. For lognormal-spread germination,
+      // E[t_first] ≈ t_single − σ · log(N) where σ is roughly the spread of germination times.
+      // For Penicillium at refrigeration, the CV of germination time is ~10-15% (Dantigny 2007).
+      // We treat σ_germ as a fraction of t_single (worst-case 0.10; best-estimate 0.15).
+      // Floor t_visible at 30% of t_visible_single so heavy-contamination cases stay realistic.
+      // σ_germ as fraction of t_single: worst-case=0.10, realistic=0.13, best-estimate=0.15
+      const sigma_germ_frac = (mode === 'best') ? 0.15 : (mode === 'realistic' ? 0.13 : 0.10);
+      let t_visible_effective;
+      if (t_visible_single === null) {
+        t_visible_effective = null;
+      } else if (lambda <= 1) {
+        t_visible_effective = t_visible_single;
+      } else {
+        const sigma_germ = sigma_germ_frac * t_visible_single;
+        const shifted = t_visible_single - sigma_germ * Math.log(lambda);
+        // Floor: even with huge spore counts, first visible can't be earlier than
+        // 30% of the single-spore time (the spore still has to physically grow to visible size)
+        const floor_t = 0.3 * t_visible_single;
+        t_visible_effective = Math.max(floor_t, shifted);
+      }
+
+      // Rebuild P_curve using the dose-corrected first-visible time
+      for (let i = 0; i <= n_steps; i++) {
+        const tv = (t_visible_effective !== null) ? t_visible_effective : max_days * 10;
+        P_curve[i] = P_init / (1 + Math.exp(-(+km.k_steep) * (t_array[i] - tv)));
+      }
+
+      const t_fail_m = firstCrossing(t_array, P_curve, thr.mold_P);
+      perCompLimit[c.id].mold = t_fail_m;
+      moldResults.push({
+        compId:c.id, name:c.name, type:c.type,
+        P_init, t_visible: t_visible_effective, t_visible_single, lambda, curve:P_curve, t_fail:t_fail_m,
+        dominant: last_gm ? dominantGamma(last_gm) : null,
+      });
+    }
+  }
+
+  let limiting = null;
+  let t_predicted = Infinity;
+  for (const r of yeastResults) {
+    if (r.t_fail !== null && r.t_fail < t_predicted) {
+      t_predicted = r.t_fail;
+      limiting = { compId:r.compId, name:r.name, organism:'yeast', dominant:r.dominant };
+    }
+  }
+  for (const r of moldResults) {
+    if (r.t_fail !== null && r.t_fail < t_predicted) {
+      t_predicted = r.t_fail;
+      limiting = { compId:r.compId, name:r.name, organism:'mold', dominant:r.dominant };
+    }
+  }
+  const reached = isFinite(t_predicted);
+  const t_reported = reached ? sf * t_predicted : null;
+
+  return {
+    t_array: Array.from(t_array),
+    pO2: Array.from(pO2),
+    pCO2: Array.from(pCO2),
+    p_EtOH_hs: Array.from(traj.p_EtOH_hs),
+    transport: traj,
+    yeast: yeastResults,
+    mold:  moldResults,
+    N0, hasSrc,
+    perCompLimit,
+    limiting,
+    t_predicted: reached ? t_predicted : null,
+    t_reported,
+    max_days,
+    thresholds: thr,
+    safety_factor: sf,
+    mode: mode,
+    best_estimate: mode === 'best',   // backward-compat for any code reading the boolean
+  };
+}
+
+// =========================================================================
+// UI — state, rendering, event handling
+// =========================================================================
+let state = makeDefaults();
+
+function setByPath(obj, path, val) {
+  const parts = path.split('.');
+  let o = obj;
+  for (let i = 0; i < parts.length - 1; i++) o = o[parts[i]];
+  o[parts[parts.length - 1]] = val;
+}
+function getByPath(obj, path) {
+  const parts = path.split('.');
+  let o = obj;
+  for (const p of parts) {
+    if (o == null) return undefined;
+    o = o[p];
+  }
+  return o;
+}
+
+function renderSimpleInputs() {
+  document.querySelectorAll('input[data-path]').forEach(inp => {
+    const path = inp.dataset.path;
+    const v = getByPath(state, path);
+    if (v !== undefined) inp.value = v;
+  });
+}
+
+function renderCompartmentTable() {
+  const host = document.getElementById('compartment-table');
+  const rows = state.compartments.map((c, i) => {
+    let nf_default;
+    if (c.id === 'cocoa_surface')           nf_default = 0.2;
+    else if (c.id === 'cup_rim')            nf_default = 0.5;
+    else if (c.id === 'lid_product_facing') nf_default = 0.3;
+    else                                    nf_default = 1.0;
+    const nf_val = (c.nutrient_factor !== undefined && c.nutrient_factor !== null) ? c.nutrient_factor : nf_default;
+    return `
+    <tr data-comp="${c.id}">
+      <td><input type="text" data-cfield="name" value="${c.name}"></td>
+      <td class="type-cell">${c.type}</td>
+      <td><input type="number" step="1" data-cfield="mass_g" value="${c.mass_g}"></td>
+      <td><input type="number" step="0.5" data-cfield="area_cm2" value="${c.area_cm2}"></td>
+      <td><input type="number" step="0.01" min="0" max="1" data-cfield="aw" value="${c.aw}"></td>
+      <td><input type="number" step="0.1" data-cfield="pH" value="${c.pH}"></td>
+      <td><input type="number" step="0.5" min="0" data-cfield="EtOH" value="${c.EtOH}"></td>
+      <td><input type="number" step="0.5" data-cfield="Nmax" value="${c.Nmax}"></td>
+      <td><input type="number" step="0.1" min="0" max="1" data-cfield="nutrient_factor" value="${nf_val}"></td>
+    </tr>`;
+  }).join('');
+  host.innerHTML = `
+    <table class="comp-table">
+      <colgroup><col class="c-name"><col class="c-type"><col class="c-mass"><col class="c-area"><col class="c-aw"><col class="c-ph"><col class="c-eth"><col class="c-nmx"><col class="c-nut"></colgroup>
+      <thead><tr>
+        <th>Name</th><th>Type</th>
+        <th title="Mass in g, bulk only">mass g</th>
+        <th title="Area cm², surfaces only">area cm²</th>
+        <th>a<sub>w</sub></th><th>pH</th><th>EtOH %</th><th>logN<sub>max</sub></th>
+        <th title="Nutrient factor (0..1) — limits mold growth on poor substrates">nut</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  host.querySelectorAll('tr[data-comp]').forEach(tr => {
+    const compId = tr.dataset.comp;
+    tr.querySelectorAll('input[data-cfield]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const f = inp.dataset.cfield;
+        const c = state.compartments.find(x => x.id === compId);
+        if (!c) return;
+        c[f] = inp.type === 'number' ? parseFloat(inp.value) : inp.value;
+      });
+    });
+  });
+}
+
+// Which preservatives apply to which compartment type.
+// Sorbate and benzoate are water-soluble, applied via the aqueous phase of a bulk matrix.
+// Natamycin is a surface treatment (dust/coating) and works on any compartment with a real surface.
+// Bulk compartments: all three.
+// surface_air (e.g. cocoa dusting): sorbate/benzoate N/A; natamycin OK (co-dusted with cocoa).
+// surface_package (cup wall, lid underside): sorbate/benzoate N/A; natamycin OK only on lid_product_facing (antimicrobial lid coatings exist).
+function presvApplies(compType, compId, presv) {
+  if (compType === 'bulk') return true;
+  if (presv === 'natamycin') {
+    // Allow on cocoa surface (powder dust), lid underside (coating), cup_rim (coating). Cup wall: not realistic.
+    return compId === 'cocoa_surface' || compId === 'lid_product_facing' || compId === 'cup_rim';
+  }
+  return false; // sorbate/benzoate not applicable to any surface compartment
+}
+
+function renderPreservativesTable() {
+  const host = document.getElementById('preservatives-table');
+  const rows = state.compartments.map(c => {
+    const p = state.preservatives[c.id];
+    const cell = (k) => {
+      const apply = presvApplies(c.type, c.id, k);
+      if (!apply) {
+        return `<div class="presv-cell na" title="Not applicable to ${c.type === 'surface_air' ? 'a powder/air surface' : 'this packaging surface'}">
+          <input type="checkbox" disabled>
+          <input type="number" disabled value="0">
+          <span class="ppm">n/a</span>
+        </div>`;
+      }
+      return `
+        <div class="presv-cell">
+          <input type="checkbox" data-presv="${k}_added" data-comp="${c.id}" ${p[k+'_added']?'checked':''}>
+          <input type="number" step="50" min="0" data-presv="${k}_ppm" data-comp="${c.id}" value="${p[k+'_ppm']}">
+          <span class="ppm">ppm</span>
+        </div>`;
+    };
+    return `<div style="font-family:var(--mono);font-size:11.5px">${c.name}</div>${cell('sorbate')}${cell('benzoate')}${cell('natamycin')}`;
+  }).join('');
+  host.innerHTML = `
+    <div class="presv-grid">
+      <div class="head">Compartment</div><div class="head">Sorbate (pKa 4.76)</div><div class="head">Benzoate (pKa 4.20)</div><div class="head">Natamycin (surface)</div>
+      ${rows}
+    </div>`;
+  host.querySelectorAll('input[data-presv]').forEach(inp => {
+    inp.addEventListener('change', () => {
+      const k = inp.dataset.presv;
+      const id = inp.dataset.comp;
+      if (inp.type === 'checkbox') state.preservatives[id][k] = inp.checked;
+      else state.preservatives[id][k] = parseFloat(inp.value) || 0;
+    });
+  });
+}
+
+function renderIngredientsTable() {
+  const host = document.getElementById('ingredients-table');
+  const compIds = ['top_cream', 'biscuit_soaked', 'bottom_cream'];
+  const head = `<tr><th>Ingredient</th>${compIds.map(id=>`<th>${id} g</th>`).join('')}<th>Yeast CFU/g</th><th>Mold spores/g</th></tr>`;
+  const rows = state.ingredients.map((ing, i) => `
+    <tr data-ing="${i}">
+      <td>${ing.name}</td>
+      ${compIds.map(id=>`<td><input type="number" step="1" min="0" data-ifield="into.${id}" value="${ing.into[id]||0}"></td>`).join('')}
+      <td><input type="number" step="10" min="0" data-ifield="yeast" value="${ing.yeast}"></td>
+      <td><input type="number" step="10" min="0" data-ifield="mold" value="${ing.mold}"></td>
+    </tr>`).join('');
+  host.innerHTML = `<table class="ing-table"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  host.querySelectorAll('tr[data-ing]').forEach(tr => {
+    const idx = parseInt(tr.dataset.ing, 10);
+    tr.querySelectorAll('input[data-ifield]').forEach(inp => {
+      inp.addEventListener('change', () => {
+        const f = inp.dataset.ifield;
+        const val = parseFloat(inp.value) || 0;
+        if (f.startsWith('into.')) {
+          state.ingredients[idx].into[f.split('.')[1]] = val;
+        } else {
+          state.ingredients[idx][f] = val;
+        }
+        checkMassWarning();
+      });
+    });
+  });
+  checkMassWarning();
+}
+
+function checkMassWarning() {
+  const sums = {};
+  for (const ing of state.ingredients) {
+    for (const id of Object.keys(ing.into)) {
+      sums[id] = (sums[id] || 0) + (+ing.into[id] || 0);
+    }
+  }
+  const issues = [];
+  for (const c of state.compartments) {
+    if (c.type === 'bulk') {
+      const s = sums[c.id] || 0;
+      if (Math.abs(s - c.mass_g) > 0.5) {
+        issues.push(`${c.name}: ingredients sum to ${s.toFixed(1)} g vs declared mass ${c.mass_g} g`);
+      }
+    }
+  }
+  const el = document.getElementById('mass-warning');
+  if (issues.length === 0) el.innerHTML = '';
+  else el.innerHTML = `<div class="mass-warn"><strong>Mass mismatch:</strong> ${issues.join(' · ')}. CFU/g computations will be off — adjust either ingredient amounts or compartment mass.</div>`;
+}
+
+function renderLidSelect() {
+  const sel = document.getElementById('lid-select');
+  sel.innerHTML = LID_OPTIONS.map(o => `<option value="${o.name}" ${o.name===state.headspace.lid_material?'selected':''}>${o.name}</option>`).join('');
+  sel.addEventListener('change', () => {
+    const opt = LID_OPTIONS.find(o => o.name === sel.value);
+    state.headspace.lid_material = sel.value;
+    if (opt && opt.OTR !== null) {
+      state.headspace.OTR = opt.OTR;
+      state.headspace.CO2TR = opt.CO2TR;
+      renderSimpleInputs();
+    }
+  });
+}
+
+function renderAll() {
+  renderSimpleInputs();
+  renderCompartmentTable();
+  renderPreservativesTable();
+  renderIngredientsTable();
+  renderLidSelect();
+  // Initialise tri-state bias-mode radio from state
+  const currentMode = getMode(state);
+  document.querySelectorAll('input[name="bias-mode"]').forEach(r => {
+    r.checked = (r.value === currentMode);
+  });
+  updateBanner();
+}
+
+function updateBanner() {
+  const b = document.getElementById('banner');
+  const mode = getMode(state);
+  b.classList.remove('be', 'realistic');
+  if (mode === 'best') {
+    b.classList.add('be');
+    b.innerHTML = '<strong>Best-estimate mode — NOT for shelf-life validation.</strong> No safety margin applied. Use realistic or worst-case for commercial decisions.';
+  } else if (mode === 'realistic') {
+    b.classList.add('realistic');
+    b.innerHTML = '<strong>Realistic mode — middle-ground parameters.</strong> Calibrated to be consistent with industry-reported chilled-dairy shelf life ranges (×0.85 safety factor applied). Still requires challenge testing for label claims.';
+  } else {
+    b.innerHTML = '<strong>Worst-case mode — screening tool, not validation.</strong> Spoilage-only; pathogens not modelled. Conservative bias active (×0.7 safety factor). Use challenge testing for commercial decisions.';
+  }
+}
+
+// ---- Compute & output rendering ----
+function compute() {
+  syncInputsToState();
+  const r = simulate(state);
+  renderHeadline(r);
+  renderMatrix(r);
+  renderPlot(r);
+  animSetSimResult(r);
+}
+
+function renderHeadline(r) {
+  const h = document.getElementById('headline');
+  if (r.t_reported === null) {
+    h.innerHTML = `
+      <div class="label">Reported shelf life</div>
+      <div class="days">&gt; ${r.max_days}<span class="unit">days</span></div>
+      <div class="pred-row">predicted: &gt; ${r.max_days} d · safety factor ${r.safety_factor}</div>
+      <div class="limiter"><span class="key">Limiting factor</span>None within horizon. Increase horizon or check inputs.</div>`;
+    return;
+  }
+  const lim = r.limiting;
+  h.innerHTML = `
+    <div class="label">Reported shelf life</div>
+    <div class="days">${r.t_reported.toFixed(1)}<span class="unit">days</span></div>
+    <div class="pred-row">predicted: ${r.t_predicted.toFixed(2)} d · safety factor ${r.safety_factor.toFixed(2)} · ${r.mode === 'realistic' ? 'realistic' : (r.mode === 'best' ? 'best-estimate' : 'worst-case')} mode</div>
+    <div class="limiter">
+      <span class="key">Limiting factor</span>
+      <strong>${lim.name}</strong> · <em>${lim.organism}</em><br>
+      Dominant γ: <strong>${lim.dominant.factor}</strong> (γ = ${lim.dominant.value.toFixed(3)})
+    </div>`;
+}
+
+function cellClass(t, tlim) {
+  if (t === null) return 'cell-na';
+  if (tlim === null) return '';
+  if (t === tlim) return 'cell-red';
+  if (t <= tlim * 1.2) return 'cell-amber';
+  return 'cell-green';
+}
+
+function renderMatrix(r) {
+  document.getElementById('matrix-block').style.display = 'block';
+  let tlim = Infinity;
+  for (const c of state.compartments) {
+    const v = r.perCompLimit[c.id];
+    if (v.yeast !== null && v.yeast < tlim) tlim = v.yeast;
+    if (v.mold  !== null && v.mold  < tlim) tlim = v.mold;
+  }
+  if (!isFinite(tlim)) tlim = null;
+  const fmt = (t) => t === null ? '—' : (t > r.max_days ? `> ${r.max_days}` : t.toFixed(1));
+  const rows = state.compartments.map(c => {
+    const v = r.perCompLimit[c.id];
+    return `<tr>
+      <td>${c.name}</td>
+      <td class="${cellClass(v.yeast, tlim)}">${fmt(v.yeast)}</td>
+      <td class="${cellClass(v.mold,  tlim)}">${fmt(v.mold)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('matrix-content').innerHTML = `
+    <table class="matrix"><thead><tr><th>Compartment</th><th style="text-align:right">Yeast t<sub>fail</sub> (d)</th><th style="text-align:right">Mold t<sub>fail</sub> (d)</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
+// SVG plot
+const PLOT_W = 440, PLOT_H = 200, PAD_L = 36, PAD_R = 8, PAD_T = 10, PAD_B = 22;
+const COLORS = ['#9c4221','#2563eb','#15803d','#7c3aed','#d97706','#0891b2','#be185d','#4d7c0f'];
+
+function renderPlot(r) {
+  document.getElementById('plot-block').style.display = 'block';
+  const max_t = r.max_days;
+  const xScale = t => PAD_L + (t / max_t) * (PLOT_W - PAD_L - PAD_R);
+
+  // Panel A — yeast log10 N
+  const yMin = 0, yMax = 8;
+  const yScaleA = v => PAD_T + (1 - (v - yMin) / (yMax - yMin)) * (PLOT_H - PAD_T - PAD_B);
+  let svgA = '';
+  // axes
+  svgA += `<line x1="${PAD_L}" y1="${PLOT_H-PAD_B}" x2="${PLOT_W-PAD_R}" y2="${PLOT_H-PAD_B}" stroke="#999" stroke-width="1"/>`;
+  svgA += `<line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${PLOT_H-PAD_B}" stroke="#999" stroke-width="1"/>`;
+  // y labels
+  for (let yt = 0; yt <= 8; yt += 2) {
+    const y = yScaleA(yt);
+    svgA += `<line x1="${PAD_L-3}" y1="${y}" x2="${PAD_L}" y2="${y}" stroke="#999"/>`;
+    svgA += `<text x="${PAD_L-5}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">${yt}</text>`;
+  }
+  // x labels
+  const xticks = Math.min(6, Math.floor(max_t / 10) + 1);
+  for (let i = 0; i <= xticks; i++) {
+    const tt = (i / xticks) * max_t;
+    const x = xScale(tt);
+    svgA += `<line x1="${x}" y1="${PLOT_H-PAD_B}" x2="${x}" y2="${PLOT_H-PAD_B+3}" stroke="#999"/>`;
+    svgA += `<text x="${x}" y="${PLOT_H-PAD_B+13}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">${tt.toFixed(0)}</text>`;
+  }
+  // threshold line
+  const thrY = yScaleA(r.thresholds.yeast_log);
+  svgA += `<line x1="${PAD_L}" y1="${thrY}" x2="${PLOT_W-PAD_R}" y2="${thrY}" stroke="#c1272d" stroke-width="1" stroke-dasharray="4,3"/>`;
+  svgA += `<text x="${PLOT_W-PAD_R}" y="${thrY-3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#c1272d">threshold</text>`;
+  // curves
+  const legA = [];
+  r.yeast.forEach((y, idx) => {
+    const color = COLORS[idx % COLORS.length];
+    const t = r.t_array;
+    const c = y.curve;
+    const step = Math.max(1, Math.floor(c.length / 200));
+    let d = '';
+    for (let i = 0; i < c.length; i += step) {
+      const vx = xScale(t[i]);
+      const vy = yScaleA(Math.max(yMin, Math.min(yMax, c[i])));
+      d += (i === 0 ? `M${vx.toFixed(1)},${vy.toFixed(1)}` : ` L${vx.toFixed(1)},${vy.toFixed(1)}`);
+    }
+    svgA += `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.5"/>`;
+    legA.push(`<span><span class="swatch" style="background:${color}"></span>${y.name}</span>`);
+  });
+  svgA += `<text x="${PLOT_W-PAD_R}" y="${PLOT_H-2}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">days →</text>`;
+  svgA += `<text x="${PAD_L-26}" y="${PAD_T+10}" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">log₁₀ N</text>`;
+  document.getElementById('plot-yeast').innerHTML = svgA;
+  document.getElementById('legend-yeast').innerHTML = legA.join('') || '<span style="color:var(--muted)">No bulk compartment with yeast source</span>';
+
+  // Panel B — mold P_visible
+  let svgB = '';
+  const yScaleB = v => PAD_T + (1 - v) * (PLOT_H - PAD_T - PAD_B);
+  svgB += `<line x1="${PAD_L}" y1="${PLOT_H-PAD_B}" x2="${PLOT_W-PAD_R}" y2="${PLOT_H-PAD_B}" stroke="#999"/>`;
+  svgB += `<line x1="${PAD_L}" y1="${PAD_T}" x2="${PAD_L}" y2="${PLOT_H-PAD_B}" stroke="#999"/>`;
+  for (let yt = 0; yt <= 1; yt += 0.25) {
+    const y = yScaleB(yt);
+    svgB += `<line x1="${PAD_L-3}" y1="${y}" x2="${PAD_L}" y2="${y}" stroke="#999"/>`;
+    svgB += `<text x="${PAD_L-5}" y="${y+3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">${yt.toFixed(2)}</text>`;
+  }
+  for (let i = 0; i <= xticks; i++) {
+    const tt = (i / xticks) * max_t;
+    const x = xScale(tt);
+    svgB += `<line x1="${x}" y1="${PLOT_H-PAD_B}" x2="${x}" y2="${PLOT_H-PAD_B+3}" stroke="#999"/>`;
+    svgB += `<text x="${x}" y="${PLOT_H-PAD_B+13}" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">${tt.toFixed(0)}</text>`;
+  }
+  const thrYB = yScaleB(r.thresholds.mold_P);
+  svgB += `<line x1="${PAD_L}" y1="${thrYB}" x2="${PLOT_W-PAD_R}" y2="${thrYB}" stroke="#c1272d" stroke-width="1" stroke-dasharray="4,3"/>`;
+  svgB += `<text x="${PLOT_W-PAD_R}" y="${thrYB-3}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#c1272d">P=${r.thresholds.mold_P}</text>`;
+  const legB = [];
+  r.mold.forEach((m, idx) => {
+    const color = COLORS[(idx+2) % COLORS.length];
+    const t = r.t_array;
+    const c = m.curve;
+    const step = Math.max(1, Math.floor(c.length / 200));
+    let d = '';
+    for (let i = 0; i < c.length; i += step) {
+      const vx = xScale(t[i]);
+      const vy = yScaleB(Math.max(0, Math.min(1, c[i])));
+      d += (i === 0 ? `M${vx.toFixed(1)},${vy.toFixed(1)}` : ` L${vx.toFixed(1)},${vy.toFixed(1)}`);
+    }
+    svgB += `<path d="${d}" fill="none" stroke="${color}" stroke-width="1.5"/>`;
+    legB.push(`<span><span class="swatch" style="background:${color}"></span>${m.name}</span>`);
+  });
+  svgB += `<text x="${PLOT_W-PAD_R}" y="${PLOT_H-2}" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">days →</text>`;
+  svgB += `<text x="${PAD_L-26}" y="${PAD_T+10}" font-family="IBM Plex Mono, monospace" font-size="9" fill="#888">P</text>`;
+  document.getElementById('plot-mold').innerHTML = svgB;
+  document.getElementById('legend-mold').innerHTML = legB.join('') || '<span style="color:var(--muted)">No surface compartment with mold source</span>';
+}
+
+// ---- Popovers ----
+function openPopup(id, anchor) {
+  const data = POPUPS[id];
+  if (!data) return;
+  const pop = document.getElementById('popover');
+  document.getElementById('pop-title').textContent = data.title.replace(/<[^>]+>/g, '');
+  document.getElementById('pop-body').innerHTML = data.body;
+  document.getElementById('pop-backdrop').classList.add('open');
+  pop.classList.add('open');
+
+  // Set max-height so content scrolls internally rather than overflowing the window
+  const max_h = Math.min(window.innerHeight - 24, 560);
+  pop.style.maxHeight = max_h + 'px';
+
+  // First position guess
+  const r = anchor.getBoundingClientRect();
+  const w = 380;
+  pop.style.left = '0px'; // place off-screen briefly to measure
+  pop.style.top  = '0px';
+
+  // Measure actual rendered height
+  const actual_h = Math.min(pop.offsetHeight, max_h);
+
+  let left = r.right + 10;
+  let top  = r.top - 4;
+  if (left + w > window.innerWidth - 8)   left = Math.max(8, r.left - w - 10);
+  if (top + actual_h > window.innerHeight - 8) top = Math.max(8, window.innerHeight - actual_h - 8);
+  if (top < 8) top = 8;
+  pop.style.left = left + 'px';
+  pop.style.top  = top + 'px';
+}
+function closePopup() {
+  document.getElementById('pop-backdrop').classList.remove('open');
+  document.getElementById('popover').classList.remove('open');
+}
+
+// =========================================================================
+// SYNC inputs to state (used by Compute, Save, auto-compute)
+// =========================================================================
+function syncInputsToState() {
+  document.querySelectorAll('input[data-path]').forEach(inp => {
+    const path = inp.dataset.path;
+    const v = inp.type === 'number' ? parseFloat(inp.value) : inp.value;
+    if (!isNaN(v) || inp.type !== 'number') setByPath(state, path, v);
+  });
+}
+
+// =========================================================================
+// AUTO-COMPUTE
+// =========================================================================
+let autoCompute = false;
+let autoTimer = null;
+function scheduleAutoCompute() {
+  if (!autoCompute) return;
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(() => {
+    document.body.classList.add('computing');
+    requestAnimationFrame(() => {
+      try { compute(); } finally { document.body.classList.remove('computing'); }
+    });
+  }, 200);
+}
+document.addEventListener('input', (e) => {
+  if (!autoCompute) return;
+  const t = e.target;
+  if (t.tagName === 'INPUT' && (t.type === 'number' || t.type === 'checkbox' || t.type === 'text')) {
+    scheduleAutoCompute();
+  } else if (t.tagName === 'SELECT') {
+    scheduleAutoCompute();
+  }
+});
+document.addEventListener('change', (e) => {
+  if (!autoCompute) return;
+  const t = e.target;
+  if (t.tagName === 'SELECT') scheduleAutoCompute();
+});
+
+// =========================================================================
+// SAVE / LOAD
+// =========================================================================
+function downloadFile(name, content, mime) {
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+function saveScenario() {
+  syncInputsToState();
+  const payload = { _format:'tiramisu-calculator-v1.2', _saved: new Date().toISOString(), state };
+  const stamp = new Date().toISOString().slice(0,16).replace(/[:T]/g,'-');
+  downloadFile(`tiramisu-scenario-${stamp}.json`, JSON.stringify(payload, null, 2), 'application/json');
+}
+function loadScenarioFromFile(file) {
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const obj = JSON.parse(ev.target.result);
+      const loaded = obj.state || obj; // accept bare state too
+      if (!loaded.compartments || !loaded.advanced || !loaded.storage) {
+        throw new Error('Missing required fields (compartments / advanced / storage)');
+      }
+      // Shallow merge against defaults to tolerate older saves
+      const base = makeDefaults();
+      state = Object.assign({}, base, loaded);
+      // Ensure nested objects are present
+      state.advanced = Object.assign({}, base.advanced, loaded.advanced || {});
+      state.advanced.yeast = Object.assign({}, base.advanced.yeast, (loaded.advanced||{}).yeast || {});
+      state.advanced.mold  = Object.assign({}, base.advanced.mold,  (loaded.advanced||{}).mold  || {});
+      renderAll();
+      compute();
+      animSetSimResult(null); // force reset, user must Compute → Run again
+    } catch (err) {
+      alert('Load failed: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+// =========================================================================
+// ANIMATION
+// =========================================================================
+const ANIM = {
+  state: 'idle',    // idle | running | paused | stopped
+  t: 0,
+  speed: 5,         // sim days per real second
+  lastRaf: 0,
+  simResult: null,
+  rafId: null,
+  // Visual seeds: per surface-compartment, pre-generated spawn points (positions + threshold sample)
+  spawns: {},
+};
+
+// Layout for the cup SVG. Coordinates in viewBox 0 0 360 240.
+// Compartments mapped by id to a rectangle (x,y,w,h) interior of cup.
+const ANIM_LAYOUT = {
+  cup_outline: { topY:24, bottomY:212, topL:46, topR:314, botL:72, botR:288 },
+  lid:                { rectY:14, rectH:8 },
+  headspace:          { rectY:24, rectH:14 },
+  cocoa_surface:      { rectY:38, rectH:10 },
+  top_cream:          { rectY:48, rectH:46 },
+  biscuit_soaked:     { rectY:94, rectH:36 },
+  bottom_cream:       { rectY:130, rectH:78 },
+};
+
+// Pre-generated spawn point set deterministic per compartment for reproducibility
+function makeSpawns() {
+  const spawns = {};
+  // Surface compartments where mold can grow
+  for (const c of state.compartments) {
+    if (c.type === 'surface_air' || c.type === 'surface_package') {
+      const n = 14;
+      const arr = [];
+      // Seeded pseudo-random
+      let seed = c.id.split('').reduce((a,ch)=>a + ch.charCodeAt(0), 0);
+      const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+      for (let i = 0; i < n; i++) {
+        arr.push({ rx: rand(), ry: rand(), thr: rand() }); // thr = uniform in [0,1] for assignment to P_init
+      }
+      spawns[c.id] = arr;
+    }
+  }
+  return spawns;
+}
+
+function animSetSimResult(r) {
+  ANIM.simResult = r;
+  ANIM.t = 0;
+  ANIM.state = r ? 'idle' : 'idle';
+  ANIM.spawns = r ? makeSpawns() : {};
+  updateAnimButtons();
+  updateAnimTimeline();
+  renderAnimFrame();
+}
+
+function updateAnimButtons() {
+  const has = !!ANIM.simResult;
+  const s = ANIM.state;
+  document.getElementById('anim-run').disabled  = !has || s === 'running';
+  document.getElementById('anim-pause').disabled= !has || s !== 'running' && s !== 'paused';
+  document.getElementById('anim-pause').textContent = (s === 'paused') ? '▶ Resume' : '❚❚ Pause';
+  document.getElementById('anim-stop').disabled = !has || (s !== 'running' && s !== 'paused');
+  document.getElementById('anim-reset').disabled= !has;
+  document.getElementById('anim-state').textContent = s;
+}
+function updateAnimTimeline() {
+  const has = !!ANIM.simResult;
+  const max_t = has ? ANIM.simResult.max_days : 0;
+  document.getElementById('anim-t').textContent = `t = ${ANIM.t.toFixed(2)} d`;
+  document.getElementById('anim-max').textContent = has ? `${max_t} d` : '— d';
+  const pct = has && max_t > 0 ? (ANIM.t / max_t) * 100 : 0;
+  document.getElementById('anim-bar').style.width = `${Math.min(100, pct)}%`;
+}
+
+function animRun() {
+  if (!ANIM.simResult) return;
+  if (ANIM.state === 'running') return;
+  if (ANIM.state === 'stopped' || ANIM.t >= ANIM.simResult.max_days) ANIM.t = 0;
+  ANIM.state = 'running';
+  ANIM.lastRaf = performance.now();
+  updateAnimButtons();
+  if (ANIM.rafId) cancelAnimationFrame(ANIM.rafId);
+  ANIM.rafId = requestAnimationFrame(animTick);
+}
+function animPauseToggle() {
+  if (ANIM.state === 'running') {
+    ANIM.state = 'paused';
+    if (ANIM.rafId) cancelAnimationFrame(ANIM.rafId);
+    updateAnimButtons();
+  } else if (ANIM.state === 'paused') {
+    animRun();
+  }
+}
+function animStop() {
+  ANIM.state = 'stopped';
+  if (ANIM.rafId) cancelAnimationFrame(ANIM.rafId);
+  updateAnimButtons();
+}
+function animReset() {
+  ANIM.t = 0;
+  ANIM.state = 'idle';
+  if (ANIM.rafId) cancelAnimationFrame(ANIM.rafId);
+  updateAnimButtons();
+  updateAnimTimeline();
+  renderAnimFrame();
+}
+function animTick(now) {
+  if (ANIM.state !== 'running') return;
+  const dt_ms = now - ANIM.lastRaf;
+  ANIM.lastRaf = now;
+  ANIM.speed = parseFloat(document.getElementById('anim-speed').value) || 5;
+  const dt_days = (dt_ms / 1000) * ANIM.speed;
+  ANIM.t += dt_days;
+  if (ANIM.t >= ANIM.simResult.max_days) {
+    ANIM.t = ANIM.simResult.max_days;
+    ANIM.state = 'stopped';
+    updateAnimButtons();
+  }
+  updateAnimTimeline();
+  renderAnimFrame();
+  if (ANIM.state === 'running') ANIM.rafId = requestAnimationFrame(animTick);
+}
+
+function interp(t_array, y_array, t) {
+  if (!t_array || t_array.length === 0) return 0;
+  if (t <= t_array[0]) return y_array[0];
+  if (t >= t_array[t_array.length-1]) return y_array[y_array.length-1];
+  // Linear search OK for tightly spaced grid (~600 pts)
+  let lo = 0, hi = t_array.length - 1;
+  while (hi - lo > 1) {
+    const mid = (lo + hi) >> 1;
+    if (t_array[mid] <= t) lo = mid; else hi = mid;
+  }
+  const frac = (t - t_array[lo]) / (t_array[hi] - t_array[lo]);
+  return y_array[lo] + frac * (y_array[hi] - y_array[lo]);
+}
+
+// Render cup at ANIM.t — both static layout and dynamic growth
+function renderAnimFrame() {
+  const svg = document.getElementById('anim-cup');
+  const r = ANIM.simResult;
+  const t = ANIM.t;
+  const L = ANIM_LAYOUT;
+
+  // Cup outline (truncated cone)
+  const co = L.cup_outline;
+  const cupPath = `M${co.topL},${co.topY} L${co.botL},${co.bottomY} L${co.botR},${co.bottomY} L${co.topR},${co.topY} Z`;
+
+  // Helper: interior bounds at a given y (linear interp from top to bottom)
+  function innerBoundsAtY(y) {
+    const f = (y - co.topY) / (co.bottomY - co.topY);
+    const left = co.topL + (co.botL - co.topL) * f;
+    const right = co.topR + (co.botR - co.topR) * f;
+    return { left, right };
+  }
+
+  // Compute yeast log_N at this t per bulk compartment (for tinting)
+  function yeastLogAt(compId) {
+    if (!r) return null;
+    const y = r.yeast.find(x => x.compId === compId);
+    if (!y) return null;
+    return interp(r.t_array, y.curve, t);
+  }
+  // Compute P_visible at this t per surface compartment
+  function moldPat(compId) {
+    if (!r) return 0;
+    const m = r.mold.find(x => x.compId === compId);
+    if (!m) return 0;
+    return interp(r.t_array, m.curve, t);
+  }
+
+  // Build SVG content
+  let out = '';
+  // Background outside cup is empty.
+  // Layered fills inside the cup, clipped to outline.
+  // Use a clip path
+  out += `<defs><clipPath id="cup-clip"><path d="${cupPath}"/></clipPath></defs>`;
+
+  // Bottom cream
+  const bc = L.bottom_cream;
+  const bcYeast = yeastLogAt('bottom_cream');
+  const bcTint = bcYeast !== null ? Math.min(1, Math.max(0, bcYeast / 8)) : 0;
+  const bcCol = mixColor('#fbeec0', '#c1272d', bcTint * 0.7);
+  out += `<rect x="0" y="${bc.rectY}" width="360" height="${bc.rectH}" fill="${bcCol}" clip-path="url(#cup-clip)"/>`;
+
+  // Biscuit
+  const bi = L.biscuit_soaked;
+  const biYeast = yeastLogAt('biscuit_soaked');
+  const biTint = biYeast !== null ? Math.min(1, Math.max(0, biYeast / 8)) : 0;
+  const biCol = mixColor('#c8975f', '#7c2d12', biTint * 0.55);
+  out += `<rect x="0" y="${bi.rectY}" width="360" height="${bi.rectH}" fill="${biCol}" clip-path="url(#cup-clip)"/>`;
+  // Biscuit "soak" stipple
+  for (let i = 0; i < 8; i++) {
+    const sx = 50 + i * 35 + (i%2)*8;
+    const sy = bi.rectY + 8 + (i%3)*8;
+    out += `<circle cx="${sx}" cy="${sy}" r="2.5" fill="#5e3a1a" opacity="0.35" clip-path="url(#cup-clip)"/>`;
+  }
+
+  // Top cream
+  const tc = L.top_cream;
+  const tcYeast = yeastLogAt('top_cream');
+  const tcTint = tcYeast !== null ? Math.min(1, Math.max(0, tcYeast / 8)) : 0;
+  const tcCol = mixColor('#fbeec0', '#c1272d', tcTint * 0.7);
+  out += `<rect x="0" y="${tc.rectY}" width="360" height="${tc.rectH}" fill="${tcCol}" clip-path="url(#cup-clip)"/>`;
+
+  // Cocoa surface
+  const cs = L.cocoa_surface;
+  out += `<rect x="0" y="${cs.rectY}" width="360" height="${cs.rectH}" fill="#5e3a1a" clip-path="url(#cup-clip)"/>`;
+  // Cocoa texture dots
+  for (let i = 0; i < 18; i++) {
+    const sx = 50 + i * 16;
+    const sy = cs.rectY + 3 + (i%2)*4;
+    out += `<circle cx="${sx}" cy="${sy}" r="0.9" fill="#3a230f" clip-path="url(#cup-clip)"/>`;
+  }
+
+  // Headspace
+  const hs = L.headspace;
+  const pCO2 = r ? interp(r.t_array, r.pCO2, t) : 0;
+  const co2Tint = Math.min(1, pCO2 / 100);
+  const hsCol = mixColor('#f5f5f5', '#bfdbfe', co2Tint);
+  out += `<rect x="0" y="${hs.rectY}" width="360" height="${hs.rectH}" fill="${hsCol}" clip-path="url(#cup-clip)"/>`;
+
+  // Lid
+  const lid = L.lid;
+  out += `<rect x="${co.topL-4}" y="${lid.rectY}" width="${co.topR-co.topL+8}" height="${lid.rectH}" fill="#3a3128" rx="2"/>`;
+
+  // Mold colonies
+  function drawMoldOn(compId, baseY, baseH) {
+    if (!r || !ANIM.spawns[compId]) return '';
+    const p = moldPat(compId);
+    const m = r.mold.find(x => x.compId === compId);
+    if (!m) return '';
+    // Use mold cardinal Kr at current local conditions (approximate from t_visible)
+    const tv = m.t_visible || 0;
+    // Radial growth rate, approximated from t_visible: Kr_local ≈ 1mm / (tv - lag) → use 1/max(1,tv) as proxy
+    const Kr_proxy = 1 / Math.max(1, tv - 0.5);   // mm/d-ish
+    let s = '';
+    for (const sp of ANIM.spawns[compId]) {
+      if (sp.thr > p) continue; // colony not yet present
+      // Find the spawn-time = time at which P_visible reached this spawn's threshold
+      // Estimate: P_visible ramps sigmoidally around t_visible; treat sp.thr as t-fraction
+      const spawnT = tv + Math.log(sp.thr / (1 - sp.thr + 1e-9)) / (m.curve[m.curve.length-1] > 0 ? 1 : 1); // crude
+      const age = Math.max(0, t - tv);
+      // Map to pixel radius: 1 mm ≈ 4 px in this viewBox
+      const r_mm = age * Kr_proxy;
+      const r_px = Math.min(8, Math.max(0.8, r_mm * 4));
+      // Position
+      const ib = innerBoundsAtY(baseY + baseH/2);
+      const cx = ib.left + 5 + sp.rx * (ib.right - ib.left - 10);
+      const cy = baseY + 2 + sp.ry * Math.max(2, baseH - 4);
+      s += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r_px.toFixed(2)}" fill="#2d5016" opacity="0.85"/>`;
+      // Lighter halo
+      if (r_px > 2) s += `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${(r_px*1.4).toFixed(2)}" fill="#4a7c2a" opacity="0.25"/>`;
+    }
+    return s;
+  }
+  out += drawMoldOn('cocoa_surface', cs.rectY, cs.rectH+2);
+  out += drawMoldOn('lid_product_facing', lid.rectY+lid.rectH, 6);
+  // cup_rim: draw mold blots on the inner cup wall ring between lid and cocoa (in the headspace zone)
+  if (ANIM.spawns.cup_rim) {
+    const p_rim = moldPat('cup_rim');
+    const m_rim = r ? r.mold.find(x => x.compId === 'cup_rim') : null;
+    if (m_rim) {
+      const tv = m_rim.t_visible || 0;
+      const age = Math.max(0, t - tv);
+      const Kr_proxy = 1 / Math.max(1, tv - 0.5);
+      const rim_top = lid.rectY + lid.rectH;
+      const rim_bot = cs.rectY;
+      let i = 0;
+      for (const sp of ANIM.spawns.cup_rim) {
+        if (sp.thr > p_rim) { i++; continue; }
+        const yy = rim_top + sp.ry * (rim_bot - rim_top);
+        const ib = innerBoundsAtY(yy);
+        const side = (i % 2 === 0);
+        // Pin colonies right against the cup wall (just inside)
+        const cx = side ? ib.left + 2 : ib.right - 2;
+        const r_px = Math.min(5, Math.max(0.8, age * Kr_proxy * 3));
+        out += `<circle cx="${cx.toFixed(1)}" cy="${yy.toFixed(1)}" r="${r_px.toFixed(2)}" fill="#2d5016" opacity="0.85"/>`;
+        if (r_px > 2) out += `<circle cx="${cx.toFixed(1)}" cy="${yy.toFixed(1)}" r="${(r_px*1.4).toFixed(2)}" fill="#4a7c2a" opacity="0.25"/>`;
+        i++;
+      }
+    }
+  }
+  // cup_wall: draw mold blots at cup edges
+  if (ANIM.spawns.cup_wall) {
+    const p_cw = moldPat('cup_wall');
+    const m_cw = r ? r.mold.find(x => x.compId === 'cup_wall') : null;
+    if (m_cw) {
+      const tv = m_cw.t_visible || 0;
+      const age = Math.max(0, t - tv);
+      const Kr_proxy = 1 / Math.max(1, tv - 0.5);
+      let i = 0;
+      for (const sp of ANIM.spawns.cup_wall) {
+        if (sp.thr > p_cw) { i++; continue; }
+        const yy = co.topY + sp.ry * (co.bottomY - co.topY);
+        const ib = innerBoundsAtY(yy);
+        const side = (i % 2 === 0);
+        const cx = side ? ib.left + 3 : ib.right - 3;
+        const r_px = Math.min(5, Math.max(0.8, age * Kr_proxy * 3));
+        out += `<circle cx="${cx.toFixed(1)}" cy="${yy.toFixed(1)}" r="${r_px.toFixed(2)}" fill="#2d5016" opacity="0.8"/>`;
+        i++;
+      }
+    }
+  }
+
+  // Cup outline (stroke last so it's on top)
+  out += `<path d="${cupPath}" fill="none" stroke="#3a3128" stroke-width="2"/>`;
+
+  // Compartment labels (right side)
+  const labelStyle = `font-family="IBM Plex Mono, monospace" font-size="9" fill="#6b5d4f"`;
+  out += `<text x="320" y="${lid.rectY+6}" ${labelStyle}>lid</text>`;
+  out += `<text x="320" y="${hs.rectY+10}" ${labelStyle}>headspace</text>`;
+  out += `<text x="14"  y="${(lid.rectY+lid.rectH+cs.rectY)/2 + 3}" ${labelStyle}>rim</text>`;
+  out += `<text x="320" y="${cs.rectY+8}" ${labelStyle}>cocoa</text>`;
+  out += `<text x="320" y="${tc.rectY+22}" ${labelStyle}>top cream</text>`;
+  out += `<text x="320" y="${bi.rectY+22}" ${labelStyle}>biscuit</text>`;
+  out += `<text x="320" y="${bc.rectY+34}" ${labelStyle}>bottom cream</text>`;
+
+  // Time text
+  out += `<text x="46" y="232" font-family="IBM Plex Mono, monospace" font-size="11" fill="#1a1612">t = ${t.toFixed(2)} d</text>`;
+
+  // O₂ / CO₂ indicator
+  if (r) {
+    const pO2 = interp(r.t_array, r.pO2, t);
+    out += `<text x="220" y="232" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6b5d4f">O₂ ${pO2.toFixed(1)}%  ·  CO₂ ${pCO2.toFixed(1)}%</text>`;
+  }
+
+  svg.innerHTML = out;
+
+  // Events log
+  if (r) {
+    let evtxt = [];
+    if (r.limiting) {
+      const eventT = r.t_predicted;
+      if (t >= eventT) {
+        evtxt.push(`<span style="color:var(--red)">⚠ Spoilage threshold reached at t=${eventT.toFixed(2)} d on ${r.limiting.name} (${r.limiting.organism}).</span>`);
+      } else {
+        evtxt.push(`Predicted failure: t=${eventT.toFixed(2)} d · ${r.limiting.name}/${r.limiting.organism}`);
+      }
+    }
+    document.getElementById('anim-events').innerHTML = evtxt.join('<br>');
+  }
+}
+
+function mixColor(a, b, t) {
+  // a, b: '#rrggbb' strings; t in [0,1]
+  t = Math.max(0, Math.min(1, t));
+  const ah = parseInt(a.slice(1), 16), bh = parseInt(b.slice(1), 16);
+  const ar = (ah>>16)&255, ag = (ah>>8)&255, ab = ah&255;
+  const br = (bh>>16)&255, bg = (bh>>8)&255, bb = bh&255;
+  const r = Math.round(ar + (br-ar)*t);
+  const g = Math.round(ag + (bg-ag)*t);
+  const bv = Math.round(ab + (bb-ab)*t);
+  return `#${((r<<16)|(g<<8)|bv).toString(16).padStart(6,'0')}`;
+}
+
+// Hook animation into compute()
+// (handled by direct edit in compute() below)
+
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList && e.target.classList.contains('info-btn')) {
+    e.stopPropagation();
+    openPopup(e.target.dataset.popup, e.target);
+  }
+});
+document.getElementById('pop-close').addEventListener('click', closePopup);
+document.getElementById('pop-backdrop').addEventListener('click', closePopup);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopup(); });
+
+document.getElementById('compute-btn').addEventListener('click', compute);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  state = makeDefaults();
+  renderAll();
+  document.getElementById('matrix-block').style.display = 'none';
+  document.getElementById('plot-block').style.display = 'none';
+  document.getElementById('headline').innerHTML = `
+    <div class="label">Click Compute to run</div>
+    <div class="days">—<span class="unit">days</span></div>
+    <div class="pred-row">Awaiting inputs</div>`;
+  animSetSimResult(null);
+});
+document.querySelectorAll('input[name="bias-mode"]').forEach(r => {
+  r.addEventListener('change', (e) => {
+    if (!e.target.checked) return;
+    state.advanced.mode = e.target.value;
+    // Maintain legacy alias for save-file backward compatibility
+    state.advanced.best_estimate = (e.target.value === 'best');
+    updateBanner();
+    if (autoCompute) scheduleAutoCompute();
+  });
+});
+
+// Auto-compute toggle
+document.getElementById('autocompute-toggle').addEventListener('change', (e) => {
+  autoCompute = e.target.checked;
+  if (autoCompute) scheduleAutoCompute();
+});
+
+// Save / load
+document.getElementById('save-btn').addEventListener('click', saveScenario);
+document.getElementById('load-btn').addEventListener('click', () => document.getElementById('load-input').click());
+document.getElementById('load-input').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (f) loadScenarioFromFile(f);
+  e.target.value = ''; // allow reloading same file
+});
+
+// Animation buttons
+document.getElementById('anim-run').addEventListener('click', animRun);
+document.getElementById('anim-pause').addEventListener('click', animPauseToggle);
+document.getElementById('anim-stop').addEventListener('click', animStop);
+document.getElementById('anim-reset').addEventListener('click', animReset);
+
+// Initial render + auto-compute
+renderAll();
+compute();
+</script>
+</body>
+</html>

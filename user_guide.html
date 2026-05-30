@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiramisù Spoilage Calculator — User Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ed; --paper:#fffdf7; --text:#1a1612; --muted:#6b5d4f;
+  --accent:#9c4221; --accent-soft:#fdebd6; --border:#e5d9c4; --code-bg:#f1e9d6;
+  --warn-bg:#fef4e6; --warn-bd:#d97706;
+  --tip-bg:#ecfdf5;  --tip-bd:#047857;
+  --note-bg:#eff6ff; --note-bd:#1e40af;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter Tight',-apple-system,system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16.5px;line-height:1.65;
+  font-feature-settings:"ss01","cv11";
+}
+.container{
+  display:grid;grid-template-columns:1fr;
+  max-width:1180px;margin:0 auto;padding:48px 28px 96px;gap:48px;
+}
+@media (min-width:1000px){
+  .container{grid-template-columns:260px 1fr}
+  nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto}
+}
+nav.toc{
+  font-family:var(--sans);font-size:13.5px;
+  border-right:1px solid var(--border);padding-right:20px;
+}
+nav.toc .label{
+  font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--muted);margin:0 0 14px;display:block;
+}
+nav.toc ol{padding:0;margin:0;list-style:none;counter-reset:s}
+nav.toc li{margin:8px 0;counter-increment:s;padding-left:24px;position:relative}
+nav.toc li::before{
+  content:counter(s,decimal-leading-zero);
+  position:absolute;left:0;top:0;font-family:var(--mono);font-size:11px;
+  color:var(--muted);font-weight:500;
+}
+nav.toc a{color:var(--text);text-decoration:none;border-bottom:1px solid transparent}
+nav.toc a:hover{border-bottom-color:var(--accent);color:var(--accent)}
+main{min-width:0}
+
+header.hero{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--accent);margin:0 0 16px;
+}
+h1{
+  font-family:var(--serif);font-weight:500;font-size:clamp(40px,5vw,56px);
+  line-height:1.05;margin:0 0 16px;letter-spacing:-0.02em;
+  font-variation-settings:"opsz" 144,"SOFT" 50;
+}
+h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+.lead{font-family:var(--serif);font-weight:400;font-style:italic;font-size:22px;line-height:1.5;color:var(--muted);margin:0;max-width:60ch}
+
+h2{
+  font-family:var(--serif);font-weight:500;font-size:32px;line-height:1.15;
+  margin:64px 0 8px;letter-spacing:-0.015em;
+  font-variation-settings:"opsz" 100;
+}
+h2 .num{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500;display:block;margin-bottom:4px;letter-spacing:1.5px}
+h3{font-family:var(--serif);font-weight:600;font-size:22px;margin:36px 0 6px;letter-spacing:-0.01em}
+h4{font-family:var(--sans);font-weight:600;font-size:15px;margin:24px 0 6px;color:var(--accent);text-transform:uppercase;letter-spacing:0.6px}
+p{margin:10px 0}
+p+p{margin-top:14px}
+a{color:var(--accent)}
+
+code{font-family:var(--mono);font-size:14px;background:var(--code-bg);padding:1px 5px;border-radius:3px}
+pre{margin:14px 0}
+pre code{display:block;padding:14px 16px;background:var(--code-bg);border-radius:6px;overflow-x:auto;font-size:13px;line-height:1.55}
+
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-family:var(--sans)}
+tbody tr:nth-child(even) td{background:var(--paper)}
+
+.callout{border-left:3px solid;padding:14px 18px;border-radius:0 6px 6px 0;margin:18px 0;background:var(--paper)}
+.callout.warn{background:var(--warn-bg);border-left-color:var(--warn-bd)}
+.callout.tip{background:var(--tip-bg);border-left-color:var(--tip-bd)}
+.callout.note{background:var(--note-bg);border-left-color:var(--note-bd)}
+.callout > strong:first-child{display:block;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;color:var(--warn-bd)}
+.callout.tip > strong:first-child{color:var(--tip-bd)}
+.callout.note > strong:first-child{color:var(--note-bd)}
+
+.field{background:var(--paper);border:1px solid var(--border);padding:14px 18px;border-radius:6px;margin:12px 0}
+.field h4{margin:0 0 4px;font-size:14px}
+.field .id{font-family:var(--mono);font-size:11px;color:var(--muted);float:right;letter-spacing:0.5px}
+.field p{margin:6px 0;font-size:14.5px}
+.field .units{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:6px}
+
+ul,ol{padding-left:22px}
+li{margin:4px 0}
+
+.divider{border:none;border-top:1px solid var(--border);margin:48px 0}
+.smallcaps{font-variant:all-small-caps;letter-spacing:1.2px;color:var(--muted);font-weight:500}
+
+.kbd{font-family:var(--mono);font-size:12px;background:var(--paper);border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:1px 6px}
+
+.example{background:linear-gradient(180deg,var(--accent-soft) 0%,var(--paper) 100%);border:1px solid var(--accent-soft);border-radius:8px;padding:18px 22px;margin:16px 0}
+.example .label{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:500}
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav class="toc">
+  <span class="label">User Guide</span>
+  <ol>
+    <li><a href="#whatsnewv13">What's new in v1.3</a></li>
+    <li><a href="#contamination_levels">Contamination levels reference</a></li>
+    <li><a href="#what">What this is</a></li>
+    <li><a href="#quickstart">Quick start</a></li>
+    <li><a href="#inputs">Filling inputs</a></li>
+    <li><a href="#output">Reading output</a></li>
+    <li><a href="#modes">Bias modes (worst / realistic / best)</a></li>
+    <li><a href="#workflows">Common workflows</a></li>
+    <li><a href="#limits">Limitations</a></li>
+    <li><a href="#glossary">Glossary</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<header class="hero">
+  <p class="eyebrow">Tiramisù Spoilage Calculator · v1.3</p>
+  <h1>User <em>Guide</em></h1>
+  <p class="lead">A practical reference for product developers, food technologists and QA staff using the calculator to screen tiramisù formulations against yeast and mold spoilage under refrigeration.</p>
+</header>
+
+<section id="whatsnewv13">
+<h2><span class="num">§ −1</span>What's new in v1.3</h2>
+
+<p>v1.3 adds the missing piece of the picture: <strong>inter-compartment transport of relevant species</strong>, plus two cocoa-specific physical effects that mattered far more than the original spec acknowledged.</p>
+
+<h3>The three additions</h3>
+
+<ol>
+  <li><strong>Inter-compartment transport.</strong> Four species redistribute between adjacent compartments over shelf life:
+  <ul>
+    <li><strong>Water</strong> — drives a<sub>w</sub> equalisation. A dry cocoa wets up by contact with cream below; a moist biscuit equilibrates with the cream layers it touches.</li>
+    <li><strong>Ethanol</strong> — Marsala from biscuit and cream migrates between layers and partitions into the headspace as vapour (Henry's law, K<sub>LV</sub> ≈ 0.05 at 4 °C).</li>
+    <li><strong>Sorbate / benzoate</strong> — weak-acid preservatives migrate from where applied to adjacent compartments. Mass-conserving: cream loses what biscuit gains.</li>
+  </ul>
+  Each species has its own speed setting (off / slow / fast). Defaults: fast for water and ethanol (matrix equilibrates quickly), slow for preservatives (large molecules in dairy gel).</li>
+  <li><strong>Cocoa thin-layer a<sub>w</sub> coupling.</strong> Effective surface a<sub>w</sub> from cream below + headspace humidity above, weighted by cocoa thickness.</li>
+  <li><strong>Differentiated nutrient factors per surface.</strong> Mold growth rate is multiplied by a compartment-specific nutrient factor that reflects how much real growth substrate is available. Cocoa powder is nutrient-limited (0.2). Lid underside receives only condensate-borne aerosols (0.3). Cup rim above product gets splatter + condensate runback (0.5). Bulk dairy is unconstrained (1.0). All editable per compartment.</li>
+</ol>
+
+<h3>Spore-dose dependence (added in v1.3.2)</h3>
+
+<p>The visible-mold time now depends on how many spores are present, not just whether any are. With N spores on a surface, the time to first visible colony shifts earlier by <code>σ_germ × log(N)</code> (Dantigny 2007 germination-time model). With σ_germ at 10 % of the single-spore time, you get a meaningful spread:</p>
+
+<table>
+<thead><tr><th>Airborne mold spores per cup</th><th>Predicted shelf life (defaults)</th></tr></thead>
+<tbody>
+<tr><td>1 (ultra-clean line)</td><td>~13 d</td></tr>
+<tr><td>10</td><td>~11 d</td></tr>
+<tr><td>100 (typical industrial)</td><td>~8 d</td></tr>
+<tr><td>1,000 (contaminated line)</td><td>~4 d</td></tr>
+<tr><td>10,000 (very poor hygiene)</td><td>~2 d</td></tr>
+</tbody></table>
+
+<p>This matches industry observation: formulations don't differ much between competing tiramisù brands, but plant-hygiene differences explain why one brand declares 5 d and another 14 d for similar recipes. <strong>Hygiene is the dominant lever in v1.3.2.</strong></p>
+
+<h3>Ethanol vapour inhibition of surface mold</h3>
+
+<p>A separate physical change in v1.3: surface mold compartments (cocoa_surface, lid_product_facing) now respond to <strong>ethanol vapour</strong> from the headspace, computed from the aqueous EtOH in the cream and biscuit. Grounded in Dantigny et al. 2005 (Int J Food Microbiol 98: 261–269): MIC for *Penicillium* spoilage molds is 3–5 % v/v, with a quadratic-decline γ shape. v1.3 uses MIC = 5 % v/v (worst-case end of the literature range).</p>
+
+<p>Practical effect: at 1–2 % aqueous Marsala the vapour-phase mold inhibition is small (γ_EtOH ≈ 0.97 → 3 % rate reduction). At 4–5 % aqueous EtOH it becomes meaningful (γ_EtOH ≈ 0.85 → 15 % reduction). At 8 %+ it's strong. This matches the industrial reality that Marsala-heavy products do enjoy modestly extended shelf life through this mechanism.</p>
+
+<h3>What changed numerically</h3>
+
+<p>v1.3 predicts a default-scenario shelf life of about <strong>5.4 days</strong> reported (7.7 d predicted × 0.7 safety), with the <strong>cup rim</strong> (a new compartment, see below) as the limiting compartment — not the cocoa. This is because the new cocoa-specific protections (nutrient factor 0.2, thin-layer a<sub>w</sub> 0.94, modest ethanol-vapour effect) push the cocoa fail time out to ~40 d in worst-case mode, while the cup rim and lid_product_facing have no equivalent protections. The model now correctly highlights that <strong>headspace-facing package surfaces</strong> become the typical industrial failure mode once cocoa is properly protected.</p>
+
+<p>This is documented in the literature: industrial QA returns for tiramisù regularly cite lid-underside and cup-rim mold colonies (often <em>Cladosporium</em> or <em>Penicillium</em>) from condensation drops, not cocoa-surface colonies. v1.3 now reproduces this hierarchy.</p>
+
+<h3>The fourth airborne source: cup rim</h3>
+
+<p>A new <code>cup_rim</code> compartment by default — the internal cup-wall ring above the product surface, ~8 cm² for a 100-g cup. This compartment captures three real, previously-unmodelled effects:</p>
+
+<ol>
+  <li><strong>Airborne deposition</strong> at filling now distributes by area across the cocoa, the cup rim and (with half-weight) the lid product-facing surface. v1.2 dumped everything onto the cocoa, which is wrong: settle-plate dynamics deposit spores on any exposed surface during the open phase.</li>
+  <li><strong>Container CFU/cm²</strong> seeds the cup rim with the same pre-fill cleanliness as the cup wall (it's the same cup, same surface).</li>
+  <li><strong>Rim → cocoa drip-flux</strong> transfers a small fraction (5 % by default) of the rim's initial mold spores to the cocoa surface at t = 0, simulating gravity, vibration during transport, and condensation-droplet runoff. Even with a perfectly sterile lid, the rim picks up airborne spores during filling and bleeds a small fraction onto the cocoa.</li>
+</ol>
+
+<p>Natamycin is applicable to the cup rim (antimicrobial cup-interior coatings exist industrially), so the rim can be protected if it becomes your limiting compartment.</p>
+
+<h3>Practical workflows enabled by v1.3</h3>
+
+<ol>
+  <li><strong>Cocoa thickness optimisation.</strong> Sweep <code>layer_thickness_mm</code> from 0.5 to 4 mm. Diminishing returns above 2 mm.</li>
+  <li><strong>Heavy-Marsala diagnostics.</strong> Raise biscuit EtOH from 1 % to 5 % and see the cocoa surface fail time extend by a real but modest amount.</li>
+  <li><strong>Preservative migration check.</strong> Apply sorbate to cream only; toggle sorbate transport between <em>off</em> and <em>slow</em>; see how much protection the biscuit "borrows" from the cream over shelf life.</li>
+  <li><strong>Surface protection sweep.</strong> Once cocoa is protected, the cup rim and lid become the limiters. Apply natamycin 10 ppm to <code>cup_rim</code> and <code>lid_product_facing</code> to push them out and find the next bottleneck.</li>
+  <li><strong>Cup-cleanliness sensitivity.</strong> Halve <code>container_mold_per_cm2</code> and see how much it extends the rim-limited fail time. This tells you whether to invest in cleaner cup-supplier specs.</li>
+</ol>
+</section>
+
+<section id="contamination_levels">
+<h2><span class="num">§ 00</span>Typical contamination levels — reference</h2>
+
+<p>The numbers below are the values to put into the bioburden inputs based on the kind of plant, line, packaging supplier, and ingredient source you actually have. They are <strong>literature-grounded order-of-magnitude estimates</strong>, not strict standards; bracket them with your supplier CoAs and your own settle-plate / swab data when possible.</p>
+
+<h3>Ingredient bioburden (CFU per gram)</h3>
+
+<p>From supplier certificates of analysis for standard EU-grade dairy ingredients, plus industry experience:</p>
+
+<table>
+<thead><tr><th>Ingredient</th><th>Premium / pasteurised</th><th>Standard industrial</th><th>Lower-grade / problem batch</th></tr></thead>
+<tbody>
+<tr><td>Mascarpone (pasteurised, fresh)</td><td>&lt; 10 yeast/g · &lt; 1 mold/g</td><td>10–50 / 1–10</td><td>100–500 / 10–100 (off-spec)</td></tr>
+<tr><td>UHT cream</td><td>&lt; 1 / 0</td><td>1–10 / 0–1</td><td>&gt; 10 (rare; indicates rework)</td></tr>
+<tr><td>Pasteurised egg yolk</td><td>&lt; 10 / 0</td><td>1–100 / 0–5</td><td>100–1000 / 5–20</td></tr>
+<tr><td>Sugar (sucrose)</td><td>0 / 0</td><td>0 / 0</td><td>0 / 0 (effectively sterile)</td></tr>
+<tr><td>Marsala / Vin Santo</td><td>10–50 / 0–5</td><td>50–200 / 5–20</td><td>500+ / 20+ (suspect of <em>Z. bailii</em> contamination)</td></tr>
+<tr><td>Coffee infusion (filtered)</td><td>1–10 / 0–1</td><td>10–100 / 1–10</td><td>100–500 / 10–50 (unfiltered or aged)</td></tr>
+<tr><td>Savoiardi (baked, sealed)</td><td>1–10 / 1–10</td><td>10–100 / 10–50</td><td>100–500 / 50–200 (broken seal, ambient storage)</td></tr>
+<tr><td>Untreated cocoa powder</td><td>500–2000 yeast/g · 50–200 mold/g</td><td>2000–5000 / 100–500</td><td>5000–10000 / 500–1000</td></tr>
+<tr><td>Steam-treated cocoa</td><td>&lt; 50 / &lt; 10</td><td>50–200 / 10–50</td><td>&gt; 200 / &gt; 50 (treatment failure)</td></tr>
+<tr><td>Sterilised cocoa (ALPHA / similar)</td><td>&lt; 10 / &lt; 1</td><td>—</td><td>—</td></tr>
+</tbody></table>
+
+<div class="callout tip">
+<strong>The cocoa decision dominates if mold-limited</strong>
+Switching from untreated to steam-treated cocoa drops mold spore input by roughly 10×. For mold-on-cocoa-limited shelf life this often buys 3–5 days. If the limit is on the cup rim, cocoa cleanliness barely moves the needle.
+</div>
+
+<h3>Packaging surface bioburden (CFU per cm²)</h3>
+
+<p>From swab-test data and supplier specifications. The "container" CFU/cm² applies to the cup interior (which also seeds <code>cup_rim</code>).</p>
+
+<table>
+<thead><tr><th>Surface state</th><th>Yeast</th><th>Mold</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Pharma-grade / freshly moulded in clean room</td><td>0.001–0.01</td><td>0.001–0.01</td><td>Injection moulded under HEPA, immediate sealing; rarely achievable for dairy cups</td></tr>
+<tr><td>Decontaminated (UV, H₂O₂, or peroxide fog)</td><td>0.01–0.05</td><td>0.01–0.05</td><td>Cups sterilised inline before filling; specified for premium long-life products</td></tr>
+<tr><td>Standard industrial (clean storage, prompt use)</td><td>0.05–0.2</td><td>0.02–0.1</td><td>Cups stored sealed in dust-free conditions, used within days of delivery</td></tr>
+<tr><td>Standard industrial (default in calculator)</td><td>0.1</td><td>0.05</td><td>Realistic middle-of-the-road industrial default</td></tr>
+<tr><td>Long-stored / dusty warehouse</td><td>0.5–2</td><td>0.2–1</td><td>Cups sat for weeks in ambient warehouse; visible dust accumulation</td></tr>
+<tr><td>Poor handling / open storage</td><td>2–10</td><td>1–5</td><td>Pallets handled without dust covers, cups exposed to plant air for hours</td></tr>
+<tr><td>Lid only — printed inside</td><td>0.1–0.5</td><td>0.05–0.2</td><td>Ink and printing solvents can carry residual contamination</td></tr>
+</tbody></table>
+
+<h3>Airborne contamination during filling (CFU per cup)</h3>
+
+<p>The total number of cells/spores deposited on the exposed product surfaces (cocoa + cup_rim + briefly the lid) during the time the cup is open on the filling line. Driven by air quality and dwell time. Settle-plate measurements next to the filling head, converted to per-cup deposition.</p>
+
+<table>
+<thead><tr><th>Plant condition</th><th>Yeast</th><th>Mold</th><th>Typical fit</th></tr></thead>
+<tbody>
+<tr><td>Pharma-grade (ISO Class 7 / Grade B)</td><td>&lt; 1</td><td>&lt; 0.1</td><td>Not realistic for dairy; specified for parenteral pharma</td></tr>
+<tr><td>Aseptic dairy (ISO Class 8 / Grade C)</td><td>1–3</td><td>0.1–1</td><td>Modern UHT or extended-shelf-life dairy plant with HEPA fill area</td></tr>
+<tr><td>Standard dairy production (clean line, default)</td><td>5–20</td><td>2–10</td><td>Well-maintained dairy plant, daily CIP/SIP, restricted access during fill</td></tr>
+<tr><td>Older / less controlled plant</td><td>20–100</td><td>10–50</td><td>Open production floor, lower air-change rate, occasional door opening</td></tr>
+<tr><td>Poor hygiene / contaminated line</td><td>100–500</td><td>50–500</td><td>Visible contamination on settle plates; QA action threshold</td></tr>
+<tr><td>Gross contamination</td><td>500+</td><td>500+</td><td>Plant shutdown territory; do not produce</td></tr>
+</tbody></table>
+
+<div class="callout warn">
+<strong>How to measure your own airborne value</strong>
+Place a Sabouraud Dextrose Agar (or similar) settle plate next to the filling head with the lid off. Leave open for 1 minute during normal production. Incubate at 25 °C for 5–7 days. Count yeast and mold colonies separately. Convert: <code>per_cup ≈ (CFU on plate per minute) × (cup-open seconds) / 60 × (cup-opening cross-section / plate area)</code>. For a typical 1-s exposure with the cup mouth ~80 cm², a settle plate of ~65 cm² shows roughly the same CFU as one cup picks up per second. Repeat across shifts; use the 95th percentile.
+</div>
+
+<h3>Per-compartment a<sub>w</sub>, pH and EtOH</h3>
+
+<p>Post-equilibration values typically observed:</p>
+
+<table>
+<thead><tr><th>Compartment</th><th>a<sub>w</sub></th><th>pH</th><th>EtOH % v/v (aqueous)</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Cocoa surface</td><td>0.92–0.95 (model-derived from thickness)</td><td>5.5–6.5 (cocoa-cream blend)</td><td>0 (cocoa doesn't carry alcohol)</td><td>aw automatically computed from thickness</td></tr>
+<tr><td>Lid product-facing</td><td>0.88–0.95 (condensate-driven)</td><td>~6.0–6.5</td><td>0 (vapour-derived)</td><td>Coldest surface, often saturated at refrigeration</td></tr>
+<tr><td>Cup rim</td><td>0.90–0.95</td><td>~6.0–6.5</td><td>0 (vapour-derived)</td><td>Receives some product splatter</td></tr>
+<tr><td>Top cream</td><td>0.92–0.95</td><td>6.0–6.5 (standard); 4.8–5.2 (acidified)</td><td>0.2–2 (depending on Marsala)</td><td>Mascarpone-rich, alkaline by default</td></tr>
+<tr><td>Biscuit soaked</td><td>0.95–0.97</td><td>5.0–5.8 (coffee + Marsala lower pH)</td><td>1–5 (Marsala-heavy)</td><td>Highest a<sub>w</sub> compartment</td></tr>
+<tr><td>Bottom cream</td><td>0.92–0.95</td><td>6.0–6.5</td><td>0.2–2</td><td>Same physics as top cream</td></tr>
+<tr><td>Cup wall</td><td>0.92–0.95 (cream contact)</td><td>~6.0–6.5</td><td>0.2–2 (cream contact)</td><td>Anaerobic — mold doesn't grow here in practice</td></tr>
+</tbody></table>
+
+<h3>Lid materials and OTR</h3>
+
+<table>
+<thead><tr><th>Lid material</th><th>OTR (cm³/m²/day)</th><th>CO₂TR</th><th>Cost-per-cup proxy</th><th>When to use</th></tr></thead>
+<tbody>
+<tr><td>PP only</td><td>80</td><td>320</td><td>cheapest</td><td>Short-life products (≤ 7 d), no MAP</td></tr>
+<tr><td>PET only</td><td>30</td><td>120</td><td>+10–20 %</td><td>Short to mid-life, no MAP</td></tr>
+<tr><td>PP + EVOH (3-layer)</td><td>2</td><td>8</td><td>+30–50 %</td><td>Mid-life MAP (14–21 d)</td></tr>
+<tr><td>PET/Al/PE laminate</td><td>0.5</td><td>2</td><td>+40–60 %</td><td>Long-life MAP (21–35 d)</td></tr>
+<tr><td>Aluminium peel foil</td><td>0.05</td><td>0.2</td><td>+50–80 %</td><td>Premium long-life (35+ d), gas-flushed</td></tr>
+</tbody></table>
+
+<div class="callout note">
+<strong>Match lid to flush ambition</strong>
+A CO₂ flush under a PP-only lid leaks out within a week. If you spend on flush gas, you must spend on the lid too. The other direction is cheaper but less common: a barrier lid without flush still gives meaningful protection by keeping atmospheric O₂ out, but doesn't deliver the active CO₂ inhibition.
+</div>
+
+</section>
+
+<section id="whatsnew">
+<h2><span class="num">§ 00</span>What's new in v1.2</h2>
+
+<p>Five additions to the v1.1 calculator. The predictive engine and parameter set are unchanged; numerical results for identical inputs match v1.1 exactly.</p>
+
+<ul>
+  <li><strong>Auto-compute mode.</strong> Toggle at the top of the page. When on, any numeric or selection change triggers a debounced recompute (~200 ms). The UI dims briefly while the engine runs. Useful for live "what-if" sliding; turn off when entering many inputs at once.</li>
+  <li><strong>Save / Load.</strong> Two buttons in the top bar export the current scenario to JSON and reload it. The file format includes a small header (<code>_format</code>, <code>_saved</code>) for compatibility checking; older saves missing those fields are accepted as long as they contain the core <code>compartments</code>, <code>storage</code> and <code>advanced</code> objects.</li>
+  <li><strong>Animation panel.</strong> A stylised cup cross-section below the top banner plays the predicted spoilage trajectory after each Compute. Run / Pause / Stop / Reset, with adjustable speed (sim days per real second). Mold colonies appear and grow on surface compartments; cream layers tint amber-to-red as yeast log<sub>10</sub> N rises toward the threshold; the headspace tints blue as CO₂ rises. Buttons are disabled until a result is available.</li>
+  <li><strong>Preservative applicability shading.</strong> Cells where a preservative cannot be physically applied to that compartment type are now shown with a hatched pattern and disabled inputs. Sorbate and benzoate are water-soluble and only applicable to bulk matrices; natamycin works on the cocoa surface (co-dusted) and on the lid product-facing surface (coating), but not on the cup wall. Hover the cell or click the ▦ icon next to the panel title for the full explanation.</li>
+  <li><strong>Wider a<sub>w</sub> column.</strong> The a<sub>w</sub> input in the compartments table was previously too narrow to show the full value (0.93 wrapped or clipped). Now doubled in width; pH and logN<sub>max</sub> columns slightly narrowed to compensate.</li>
+</ul>
+
+<div class="callout note">
+<strong>Saved scenarios are portable</strong>
+The JSON files saved by v1.2 can be re-opened on any computer running the same calculator. Useful for sharing formulations between team members, archiving the inputs that went into a challenge test, or comparing two formulations side-by-side by saving each and computing one at a time.
+</div>
+</section>
+
+<section id="what">
+<h2><span class="num">§ 01</span>What this calculator is — and is not</h2>
+
+<p>This tool predicts the time to <strong>spoilage</strong> of a refrigerated, single-cup industrial tiramisù-type dessert under user-defined conditions. It simulates two worst-case organisms in parallel:</p>
+
+<ul>
+  <li><strong>Yeast:</strong> <em>Zygosaccharomyces bailii</em> — preservative-resistant, osmotolerant, ethanol-tolerant. Causes cup deformation, off-flavours and gas pockets.</li>
+  <li><strong>Mold:</strong> <em>Penicillium roqueforti</em> — psychrotrophic, CO₂-tolerant, the classic MAP-defeating dairy spoiler. Causes visible surface colonies.</li>
+</ul>
+
+<p>For each user-defined compartment of the product (cocoa surface, cream layer, biscuit layer, lid interface, etc.), the calculator computes the predicted time to reach a spoilage threshold and returns the limiting (compartment × organism) combination as the bottleneck for shelf life.</p>
+
+<div class="callout warn">
+<strong>Out of scope</strong>
+This is <strong>not a food-safety tool</strong>. It does not predict pathogens (<em>Salmonella</em>, <em>Listeria monocytogenes</em>, <em>S. aureus</em>, <em>B. cereus</em>) or toxin formation. It does not replace challenge testing, durability studies, or HACCP analysis. Use the output to <strong>rank and screen formulations</strong>, never to certify a shelf life or label a product.
+</div>
+
+<h3>How to think about the result</h3>
+
+<p>The headline number is a deliberately conservative estimate of when a worst-case yeast strain or worst-case mold spore would, given the inputs, render the product unacceptable. Two scenarios with identical inputs should rank consistently. The absolute number is most useful as a <em>relative</em> comparison: <em>scenario A predicts 5 days, scenario B predicts 22 days — therefore B is the preservation strategy worth challenge-testing first</em>.</p>
+
+<div class="callout tip">
+<strong>Mental model</strong>
+Think of the calculator as a structured way to ask "<em>which hurdle is currently doing the work, and which one should I push on next?</em>" The "limiting factor" output is the answer.
+</div>
+</section>
+
+<section id="quickstart">
+<h2><span class="num">§ 02</span>Quick start (5 minutes)</h2>
+
+<p>The fastest path from open-tab to result.</p>
+
+<ol>
+  <li><strong>Open the calculator.</strong> All inputs are pre-filled with conservative defaults for an industrial fresh tiramisù (4 °C, PP-only lid, air headspace, no preservatives, pH 6, a<sub>w</sub> ~ 0.93).</li>
+  <li><strong>Click <span class="kbd">Compute</span>.</strong> The output appears below: headline shelf life, per-compartment matrix and a two-panel plot.</li>
+  <li><strong>Identify the limiting factor</strong> from the headline panel. It will name the compartment, the organism, and the dominant γ term (the hurdle currently doing most of the work).</li>
+  <li><strong>Adjust one variable</strong> — temperature, lid material, sorbate ppm, pH — and recompute. The new prediction shows how much that one change buys you.</li>
+  <li><strong>Iterate</strong> until the limiting factor changes. That tells you you've shifted to a different bottleneck and need a different lever.</li>
+</ol>
+
+<div class="example">
+<div class="label">Worked example</div>
+<p>Default → predicted shelf life ≈ 2.5 days, limited by mold on the cocoa surface, dominant γ = temperature.</p>
+<p>Change lid to "Aluminium peel foil laminate" + set headspace flush to 70 % CO₂ → predicted shelf life jumps to ≈ 31 days, limited by mold on cocoa surface, dominant γ = CO₂. Temperature is no longer the bottleneck; you've moved the hurdle stack.</p>
+</div>
+</section>
+
+<section id="inputs">
+<h2><span class="num">§ 03</span>Filling inputs</h2>
+
+<p>Inputs are grouped into seven panels in the calculator. Below: what each one means, what to put in, common pitfalls.</p>
+
+<h3>Storage</h3>
+
+<div class="field"><span class="id">T_C</span><h4>Temperature (°C)</h4>
+<p>Single, constant refrigeration temperature. Default 4 °C reflects regulatory dairy-cold-chain target.</p>
+<p class="units">range: −5 to 25 · default: 4</p>
+</div>
+
+<div class="field"><span class="id">max_days</span><h4>Simulation horizon (days)</h4>
+<p>How long to run the integration. Set comfortably longer than the shelf life you're targeting. 60 d is enough for almost all refrigerated dairy products.</p>
+<p class="units">range: 1 to 365 · default: 60</p>
+</div>
+
+<div class="field"><span class="id">safety_factor</span><h4>Safety factor</h4>
+<p>Final multiplier applied to the predicted shelf life. Reported value = factor × predicted. 0.7 is conservative; use lower (0.5) for first-launch products or sensitive matrices, higher (0.85) only with strong historical validation data.</p>
+<p class="units">range: 0.5 to 1.0 · default: 0.7</p>
+</div>
+
+<h3>Compartments</h3>
+
+<p>The product is modelled as N user-defined compartments. The default template covers six layers plus headspace:</p>
+
+<table>
+<thead><tr><th>Compartment</th><th>Type</th><th>What it represents</th></tr></thead>
+<tbody>
+<tr><td><code>cocoa_surface</code></td><td>surface_air</td><td>Cocoa dusting at the air interface. Usually the limiting compartment for mold.</td></tr>
+<tr><td><code>lid_product_facing</code></td><td>surface_package</td><td>Underside of the lid in contact with headspace. Mold can colonise from condensation drops.</td></tr>
+<tr><td><code>top_cream</code></td><td>bulk</td><td>The cream layer immediately under the cocoa.</td></tr>
+<tr><td><code>biscuit_soaked</code></td><td>bulk</td><td>Coffee-soaked savoiardi layer in the middle. Often the highest-bioburden compartment.</td></tr>
+<tr><td><code>bottom_cream</code></td><td>bulk</td><td>The cream layer at the base of the cup.</td></tr>
+<tr><td><code>cup_wall</code></td><td>surface_package</td><td>Inner cup wall in contact with the bottom cream.</td></tr>
+</tbody></table>
+
+<div class="callout note">
+<strong>Critical input</strong>
+For <code>aw</code> and <code>pH</code>, enter <strong>post-equilibration values</strong> — what the layer will be 24–72 h after assembly, when moisture and acid have diffused. v1 does <em>not</em> simulate cross-compartment transport, so a dry cocoa surface entered at a<sub>w</sub> = 0.4 will be treated as such for the whole shelf life, which is unrealistic. Equilibrated cocoa-cream interface is typically a<sub>w</sub> ≈ 0.92 to 0.95.
+</div>
+
+<h4>Per-compartment fields</h4>
+
+<div class="field"><span class="id">aw</span><h4>Water activity (a<sub>w</sub>)</h4>
+<p>Free water available for microbial growth. <em>Z. bailii</em> grows down to 0.80, <em>P. roqueforti</em> down to 0.83. Mascarpone cream typically 0.92–0.95; soaked biscuit 0.96–0.98.</p>
+<p class="units">range: 0.60 to 0.99</p>
+</div>
+
+<div class="field"><span class="id">pH</span><h4>pH</h4>
+<p>Acidity of the compartment. Dairy cream layer ~6.0–6.5, coffee-soaked biscuit slightly lower (~5.5). Lowering pH below 5 is the single most cost-effective hurdle because it dramatically activates sorbate and benzoate.</p>
+<p class="units">range: 2.0 to 9.0</p>
+</div>
+
+<div class="field"><span class="id">EtOH</span><h4>Ethanol (% v/v in aqueous phase)</h4>
+<p>Marsala or other liqueur. Express as the alcohol concentration in the water phase of that compartment, not as % of total mass. Typical: 0.5–2 % for cream, 1–5 % for heavily-soaked biscuit.</p>
+<p class="units">range: 0 to 20</p>
+</div>
+
+<div class="field"><span class="id">Nmax</span><h4>Carrying capacity (log CFU/g)</h4>
+<p>Maximum population that the matrix can support. Standard yeast spoilage carrying capacity in dairy is ~10⁸ CFU/g, which equals log Nmax = 8. Rarely needs adjustment.</p>
+<p class="units">range: 6 to 10 · default: 8</p>
+</div>
+
+<h3>Headspace &amp; packaging</h3>
+
+<p>Models the gas phase above the product, including initial flush, biscuit-trapped air and slow gas exchange through the lid.</p>
+
+<div class="field"><span class="id">V_hs / A_lid</span><h4>Headspace volume and lid area</h4>
+<p>Geometric properties of the cup. A typical 100-g single-serve tiramisù cup has V<sub>hs</sub> ≈ 25–35 mL and A<sub>lid</sub> ≈ 8–12 cm². Measure on real product.</p>
+</div>
+
+<div class="field"><span class="id">V_biscuit_pore</span><h4>Biscuit pore air</h4>
+<p>Trapped air inside the porous savoiardi structure. Even after coffee soaking, residual microbubbles persist. Acts as an <strong>O₂ reservoir</strong> that defeats short-term gas flushing.</p>
+<p class="units">typical: 1–3 mL for 30–50 g of biscuit</p>
+</div>
+
+<div class="field"><span class="id">f_trapped_air</span><h4>Fraction of biscuit pore air still present</h4>
+<p>How much of the dry biscuit's pore air survives the coffee soak. 0.5 is a reasonable industrial average. Heavily-soaked, vacuum-impregnated biscuit may go as low as 0.1.</p>
+<p class="units">range: 0 to 1 · default: 0.5</p>
+</div>
+
+<div class="field"><span class="id">flush_O2 / flush_CO2</span><h4>Initial gas flush (% v/v)</h4>
+<p>Composition of the gas blown into the cup before sealing. Air = 21 % O₂, ~0 % CO₂. Inert flush = 0 % O₂, 100 % N₂. CO₂-rich MAP = 30–70 % CO₂ with N₂ balance. The two values do not need to sum to 100 — the remainder is assumed to be inert (N₂).</p>
+</div>
+
+<div class="field"><span class="id">OTR / CO2TR</span><h4>Lid material and permeability</h4>
+<p>Choose from the dropdown. Lid permeability is critical because <strong>CO₂TR is typically 3–6× OTR for the same film</strong>, so a CO₂-enriched headspace deflates faster than air refills — the more you spend on CO₂ flush, the more you need a barrier lid to keep it there.</p>
+<p class="units">Aluminium peel foil = best barrier · PP only = no barrier</p>
+</div>
+
+<h3>Preservatives</h3>
+
+<p>Each compartment has independent toggles for sorbate, benzoate and natamycin. Add ppm and tick the box; setting ppm without ticking leaves the preservative inactive.</p>
+
+<div class="callout warn">
+<strong>Common mistake</strong>
+Adding sorbate at the typical 500–1000 ppm but leaving cream pH at 6.0 produces <strong>essentially zero effect</strong>. Sorbate works only via the undissociated sorbic acid fraction, and at pH 6 only ~7 % is undissociated. To make 1000 ppm sorbate do real work you need pH ≤ 5.0 (~23 % undissociated) or ideally pH ≤ 4.5 (~50 % undissociated). The calculator models this correctly; the surprise often comes from realising the chemistry doesn't allow the shortcut.
+</div>
+
+<h4>Applicability per compartment (v1.2)</h4>
+
+<p>Each preservative cell in the table is enabled only where the preservative can physically be applied to that compartment type. Cells with a hatched pattern are inactive on purpose:</p>
+
+<table>
+<thead><tr><th>Compartment type</th><th>Sorbate</th><th>Benzoate</th><th>Natamycin</th></tr></thead>
+<tbody>
+<tr><td>Bulk (cream, biscuit)</td><td>✓</td><td>✓</td><td>✓</td></tr>
+<tr><td>Cocoa surface (powder)</td><td>—</td><td>—</td><td>✓ co-dusted</td></tr>
+<tr><td>Lid product-facing</td><td>—</td><td>—</td><td>✓ as coating</td></tr>
+<tr><td>Cup wall</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody></table>
+
+<p>Sorbate and benzoate are water-soluble preservatives that act through the aqueous phase of a bulk matrix; they cannot be sprinkled on a powder or deposited on a hard packaging surface in any normal industrial process. Natamycin can be applied as a fine powder (co-dusted with cocoa) or as an antimicrobial lid coating, but the cup wall is not a realistic application target.</p>
+
+<table>
+<thead><tr><th>Preservative</th><th>Active form</th><th>Effective vs</th><th>Practical range</th></tr></thead>
+<tbody>
+<tr><td>Potassium sorbate</td><td>Undissociated sorbic acid (pKa 4.76)</td><td>Yeasts, molds</td><td>500–1000 ppm at pH ≤ 5.0</td></tr>
+<tr><td>Sodium benzoate</td><td>Undissociated benzoic acid (pKa 4.20)</td><td>Yeasts, molds</td><td>200–800 ppm at pH ≤ 4.5</td></tr>
+<tr><td>Natamycin</td><td>Direct membrane binding</td><td>Molds only (surface)</td><td>5–20 ppm on surface, dry-coat or dusted</td></tr>
+</tbody></table>
+
+<div class="callout warn">
+<strong>Natamycin — regulatory restrictions in the EU</strong>
+Under EC Regulation 1129/2011, natamycin (E235) is authorised in the EU <strong>only for surface treatment of hard, semi-hard and semi-soft cheese, and dried sausage</strong>. Application to dairy-dessert categories (tiramisù, mousses, panna cotta, etc.) is <em>not currently permitted</em> without specific category authorisation, novel-food approval, or product reclassification. In other markets (US under FDA 21 CFR 172.155 with category-specific limits, several Latin American countries, parts of Asia) the use is broader but still subject to regulatory limits. <strong>Confirm with your regulatory affairs team before specifying natamycin in any product formula.</strong> The calculator allows it because the physics is real, but the legal use may not be.
+</div>
+
+<div class="callout warn">
+<strong>Storage temperature — physically powerful, operationally risky</strong>
+Lowering storage temperature is the single biggest physical lever in the model (every degree closer to T<sub>min</sub> roughly halves growth rate). However, EU dairy cold chains validate to 4 °C ± 2 °C, retail displays oscillate ±2–3 °C, and setting the storage target at 2 °C means the cold cycles drop below 0 °C and the mascarpone freezes — ruining the texture irreversibly. Use the temperature lever in the calculator for scenario exploration, but treat it as <em>generally unavailable in practice</em> for products distributed through standard retail cold chains. The lever is genuinely available only when the producer owns the full end-to-end cold chain (direct-to-consumer, food-service, or institutional).
+</div>
+
+
+<h3>Bioburden</h3>
+
+<p>The initial microbial load on day zero, split into yeast and mold and into four sources:</p>
+
+<ul>
+  <li><strong>Ingredients</strong> — mass × CFU/g for each ingredient routed to each bulk compartment.</li>
+  <li><strong>Container / cup wall</strong> — CFU/cm² × surface area in contact.</li>
+  <li><strong>Lid</strong> — CFU/cm² × lid area facing product.</li>
+  <li><strong>Airborne</strong> — total CFU deposited per cup during filling (simpler than CFU/m³ × time).</li>
+  <li><strong>Cocoa</strong> — dosed separately because it goes only to the cocoa_surface.</li>
+</ul>
+
+<div class="callout note">
+<strong>Where to get the numbers</strong>
+Supplier certificates of analysis are the primary source for ingredient CFU/g. Lot-to-lot variability is significant — what's tabulated below are <em>typical industry midpoints</em> for screening calculations. For real production decisions, use your own supplier specs and your own settle-plate / swab data.
+</div>
+
+<h3>Reference contamination levels</h3>
+
+<p>Practical ranges for the four bioburden sources, by scenario class. All values are total CFU (or mold spores) per gram, per cm², or per cup as indicated. The "yeast" and "mold" splits below refer to total yeast CFU/g and total viable mold spores/g respectively.</p>
+
+<h4>Ingredients (CFU/g)</h4>
+
+<table>
+<thead><tr><th>Ingredient</th><th>Clean (premium / EU dairy)</th><th>Standard (typical supplier)</th><th>Poor (uncontrolled / commodity)</th></tr></thead>
+<tbody>
+<tr><td>Mascarpone (pasteurised)</td><td>yeast &lt; 10<br>mold &lt; 1</td><td>yeast 10–50<br>mold 1–10</td><td>yeast 100–1000<br>mold 50–500</td></tr>
+<tr><td>UHT cream</td><td>yeast &lt; 1<br>mold &lt; 1</td><td>yeast 1–10<br>mold &lt; 1</td><td>yeast 10–100<br>mold 1–10</td></tr>
+<tr><td>Pasteurised egg yolk</td><td>yeast &lt; 1<br>mold &lt; 1</td><td>yeast 1–10<br>mold &lt; 1</td><td>yeast 10–100<br>mold 1–10</td></tr>
+<tr><td>Sugar (sucrose)</td><td>0 / 0</td><td>0 / 0</td><td>yeast 0–10<br>mold 0–10</td></tr>
+<tr><td>Coffee infusion (filtered)</td><td>yeast 1–10<br>mold &lt; 1</td><td>yeast 10–100<br>mold 1–10</td><td>yeast 100–1000<br>mold 10–100</td></tr>
+<tr><td>Marsala / Vin Santo wine</td><td>yeast 10–100<br>mold &lt; 10</td><td>yeast 100–500<br>mold 10–50</td><td>yeast 500–5000<br>mold 50–500</td></tr>
+<tr><td>Savoiardi (baked biscuit)</td><td>yeast &lt; 100<br>mold &lt; 50</td><td>yeast 100–500<br>mold 50–200</td><td>yeast 500–5000<br>mold 200–2000</td></tr>
+<tr><td>Cocoa powder — untreated</td><td>—</td><td>yeast 1000–5000<br>mold 100–500</td><td>yeast 5000–50000<br>mold 500–5000</td></tr>
+<tr><td>Cocoa powder — steam-treated</td><td>yeast 10–100<br>mold 10–50</td><td>yeast 100–500<br>mold 50–100</td><td>—</td></tr>
+</tbody></table>
+
+<p>Sources: ICMSF microbiological specifications for dairy, IFST guidelines, Pomilio et al. 2022 (cocoa retail survey), Codex Alimentarius dairy standards, supplier datasheets from major EU/IT dairy ingredients suppliers (Galbani, Granarolo, Lattebusche).</p>
+
+<h4>Container (cup) and lid surfaces (CFU/cm²)</h4>
+
+<table>
+<thead><tr><th>Pre-fill state</th><th>Yeast CFU/cm²</th><th>Mold spores/cm²</th></tr></thead>
+<tbody>
+<tr><td>Pharma-grade decontaminated (UV-treated, freshly extruded, ISO 5 cleanroom)</td><td>&lt; 0.01</td><td>&lt; 0.005</td></tr>
+<tr><td>Clean — freshly moulded, kept in sealed sleeves until use</td><td>0.01–0.05</td><td>0.005–0.02</td></tr>
+<tr><td>Standard — typical industrial storage, ISO 8 fill area, no decontamination</td><td>0.05–0.5</td><td>0.02–0.2</td></tr>
+<tr><td>Poor — open-warehouse storage, dust exposure, long lead time between moulding and filling</td><td>0.5–5</td><td>0.2–2</td></tr>
+<tr><td>Very poor — visible dust at inspection, contaminated supplier</td><td>5–50</td><td>2–20</td></tr>
+</tbody></table>
+
+<p>Lids are typically slightly cleaner than cups (smaller surface, more often sealed in stacks); use 50–80 % of the cup value. Steam decontamination of cups before filling (industrial practice for premium long-life dairy) brings values down to the "Clean" range; H₂O₂ vapour decontamination (pharma-grade) brings them to the "Pharma" range.</p>
+
+<h4>Airborne deposition during filling (total CFU per cup, open phase)</h4>
+
+<table>
+<thead><tr><th>Air class</th><th>Yeast CFU/cup</th><th>Mold spores/cup</th><th>Typical setting</th></tr></thead>
+<tbody>
+<tr><td>ISO 5 (pharma)</td><td>&lt; 0.1</td><td>&lt; 0.1</td><td>HEPA-filtered isolator over fill head</td></tr>
+<tr><td>ISO 7</td><td>&lt; 1</td><td>&lt; 0.5</td><td>HEPA-filtered laminar flow, validated</td></tr>
+<tr><td>ISO 8 — clean dairy line</td><td>1–5</td><td>0.5–2</td><td>Modern dairy fill room with positive pressure, HVAC filtration</td></tr>
+<tr><td>Standard dairy line</td><td>5–50</td><td>2–20</td><td>Conventional refrigerated dairy production, basic ventilation</td></tr>
+<tr><td>Poor / open line</td><td>50–500</td><td>20–200</td><td>Open production environment, no air conditioning, doors to outside</td></tr>
+<tr><td>Very poor</td><td>&gt; 500</td><td>&gt; 200</td><td>Outdoor / artisanal, no air control, near soil or plant matter</td></tr>
+</tbody></table>
+
+<p>Source: EN ISO 14644-1 cleanroom classification, EHEDG hygiene guidelines, settle-plate data from published dairy-plant audits. Convert from settle-plate (CFU per plate per hour) using: <code>CFU/cup ≈ (CFU/plate/h × open_time_s) / 60</code> for a ~90 cm² standard settle plate.</p>
+
+<h4>Quick reference: putting it together</h4>
+
+<table>
+<thead><tr><th>Plant scenario</th><th>Container CFU/cm²</th><th>Airborne CFU/cup</th><th>Lid CFU/cm²</th></tr></thead>
+<tbody>
+<tr><td>Pharma-grade (UV-cup, ISO 5 fill)</td><td>0.01 / 0.005</td><td>0.5 / 0.2</td><td>0.01 / 0.005</td></tr>
+<tr><td>Premium dairy (clean cups, ISO 8)</td><td>0.05 / 0.02</td><td>3 / 1.5</td><td>0.04 / 0.01</td></tr>
+<tr><td>Standard (typical industrial)</td><td>0.2 / 0.1</td><td>30 / 10</td><td>0.15 / 0.07</td></tr>
+<tr><td>Poor (uncontrolled)</td><td>1 / 0.5</td><td>100 / 50</td><td>0.8 / 0.4</td></tr>
+</tbody></table>
+
+<p>Format: <em>yeast / mold</em> per scenario. The calculator's default scenario uses values close to "Standard". For a meaningful shelf-life prediction, edit to match your actual plant audit data.</p>
+
+<div class="callout tip">
+<strong>How to measure your own values</strong>
+<ul>
+  <li><strong>Container / lid CFU/cm²</strong>: contact-plate (Rodac) on a representative sample, incubate 5 d at 25 °C for total + 7 d on Sabouraud or Rose Bengal agar for yeast/mold count, divide by plate area (~24 cm²).</li>
+  <li><strong>Airborne</strong>: 90 mm settle plate next to the fill head, exposed for 1 h, incubate as above. Per-cup deposition ≈ (CFU/plate/h) × (open time / 60).</li>
+  <li><strong>Ingredients</strong>: supplier certificate of analysis, or plate-count agar at your QC lab.</li>
+</ul>
+</div>
+
+<h3>Thresholds</h3>
+
+<div class="field"><span class="id">yeast_log</span><h4>Yeast spoilage threshold (log CFU/g or CFU/cm²)</h4>
+<p>The population level above which the product is deemed spoiled. Industry standard for visible/organoleptic spoilage in dairy is 10⁵–10⁶ CFU/g (log 5 to 6). Use 5.0 for worst-case screening, 6.0 for best-estimate.</p>
+</div>
+
+<div class="field"><span class="id">mold_P</span><h4>Visible mold probability threshold</h4>
+<p>Probability that at least one mold colony has grown to visible size (~1 mm). Industrial QA targets typically &lt; 0.01 (1 % of cups), so 0.01 is the appropriate worst-case threshold.</p>
+</div>
+
+<h3>Advanced</h3>
+
+<p>Hidden behind a collapsible panel. Contains the cardinal parameters for both organisms (T<sub>min</sub>, T<sub>opt</sub>, a<sub>w,min</sub>, pH<sub>min</sub>, IC₅₀ for ethanol and CO₂, MICs for preservatives) plus the lag-phase parameter h₀ and the mold-specific K<sub>O₂</sub>. Most users should leave these alone. See the technical reference for parameter sources.</p>
+
+<div class="callout tip">
+<strong>When to touch advanced</strong>
+Three legitimate reasons: (1) you have strain-specific challenge-test data and want to override defaults; (2) you're swapping in a different target organism (e.g. <em>Debaryomyces hansenii</em> for natamycin-resistant yeast scenarios); (3) you're stress-testing the model's sensitivity to parameter uncertainty.
+</div>
+
+<h3>Best-estimate mode toggle</h3>
+
+<p>Flips the entire calculator from conservative (worst-case) to realistic (best-estimate). See §05 for the full distinction. <strong>Worst-case is the default for a reason</strong>; do not switch to best-estimate for commercial decisions.</p>
+</section>
+
+<section id="output">
+<h2><span class="num">§ 04</span>Reading the output</h2>
+
+<p>After Compute, three blocks appear.</p>
+
+<h3>Headline</h3>
+
+<p>The single most important number: <strong>reported shelf life in days</strong>, computed as <code>safety_factor × predicted_time</code>. Below it: the limiting compartment, the limiting organism (yeast or mold), and the dominant γ factor — the one currently doing most of the work to keep growth slow.</p>
+
+<div class="example">
+<div class="label">Reading the headline</div>
+<p><strong>Reported: 2.45 days · Limiting: cocoa_surface (mold) · Dominant γ: temperature (0.15)</strong></p>
+<p>Means: the product will spoil from mold growth on the cocoa surface in ~3.5 days predicted (×0.7 safety factor = 2.45 reported). Temperature is currently the strongest hurdle, but it's only γ = 0.15 (i.e. the mold is growing at 15 % of its optimal speed). Pushing other levers won't extend shelf life much unless they bring another γ below 0.15.</p>
+</div>
+
+<h3>Matrix</h3>
+
+<p>One row per compartment, columns for yeast t<sub>fail</sub> and mold t<sub>fail</sub>. Cells are colour-coded: red = the limiting cell, amber = within 20 % of limiting, green = comfortably long. <code>—</code> means the organism doesn't apply to that compartment type (mold is surface-only, yeast may be either).</p>
+
+<p>Use the matrix to see whether the bottleneck is sharp or shallow. If the limiting cell is 3 d but the next-worst is 30 d, fixing the limiting hurdle yields a 10× improvement. If they're 3 d and 4 d, you'll need to fix both.</p>
+
+<h3>Plot — two panels</h3>
+
+<p><strong>Panel A — yeast log₁₀ N(t):</strong> growth curves for every compartment, plus a horizontal dashed line at the yeast threshold. Curves stay flat through lag, then sigmoid up to N<sub>max</sub>. The first curve to cross the threshold is the yeast-limiting compartment.</p>
+
+<p><strong>Panel B — mold P_visible(t):</strong> probability of visible mold over time for each surface compartment. Curves are sigmoid around the visible-time. The first curve to cross the visible-mold threshold is the mold-limiting compartment.</p>
+
+<div class="callout tip">
+<strong>Pattern to look for</strong>
+A "step-change" plot, with all compartments crossing the threshold within a narrow time window, means the hurdles are well-balanced and shelf life is at the equilibrium your formulation can support. A plot with one compartment failing far earlier than the rest means there's a low-hanging fruit — fix it and you'll get a big jump.
+</div>
+</section>
+
+<section id="modes">
+<h2><span class="num">§ 05</span>Bias modes — worst-case, realistic, best-estimate</h2>
+
+<p>The calculator runs in one of three bias modes selected by the segmented control above the headline. Each mode sets a coherent group of conservatism parameters.</p>
+
+<table>
+<thead><tr><th>Parameter</th><th>Worst-case (default)</th><th>Realistic (v1.3.3)</th><th>Best-estimate</th></tr></thead>
+<tbody>
+<tr><td>Le Marc ξ interaction</td><td>Off</td><td>Off</td><td>On (synergistic hurdles)</td></tr>
+<tr><td>Lag parameter h₀ (mold / yeast)</td><td>0.5 d / 1.5</td><td>1.0 d / 2.5</td><td>2.0 d / 4.0</td></tr>
+<tr><td>Mold K<sub>O₂</sub></td><td>0.2 %</td><td>0.5 %</td><td>1.0 %</td></tr>
+<tr><td>Yeast threshold</td><td>10⁵ CFU/g</td><td>10⁵·⁵ CFU/g</td><td>10⁶ CFU/g</td></tr>
+<tr><td>Visible mold threshold</td><td>1 %</td><td>2 %</td><td>5 %</td></tr>
+<tr><td>Dose-dependence σ<sub>germ</sub></td><td>0.10</td><td>0.13</td><td>0.15</td></tr>
+<tr><td>Safety factor on output</td><td>0.7</td><td>0.85</td><td>1.0</td></tr>
+<tr><td>Output banner</td><td>Standard (cream)</td><td>Yellow (caution)</td><td>Red ("NOT for validation")</td></tr>
+</tbody></table>
+
+<h3>When to use which</h3>
+
+<p><strong>Worst-case mode</strong> is the default and the only mode for label claims:</p>
+<ul>
+  <li>Setting commercial shelf life with a safety margin</li>
+  <li>Pass/fail formulation decisions for regulatory submissions</li>
+  <li>HACCP risk assessments</li>
+  <li>Customer-facing documentation</li>
+</ul>
+
+<p><strong>Realistic mode (new in v1.3.3)</strong> is the central estimate consistent with industry-reported declared shelf life ranges (not strictly validated against peer-reviewed data — see the strategy report § 04 for available reference sources):</p>
+<ul>
+  <li>Product strategy and benchmarking against competitor products</li>
+  <li>Estimating what your own challenge tests will likely show</li>
+  <li>Reconciling model predictions with historical data</li>
+  <li>Cost-benefit analysis of intervention options</li>
+</ul>
+
+<p><strong>Best-estimate mode</strong> is a sensitivity-analysis tool only:</p>
+<ul>
+  <li>Understanding which input variables matter most</li>
+  <li>Internal R&amp;D exploration of an upper bound</li>
+  <li>Identifying parameter combinations that might justify additional investigation</li>
+</ul>
+
+<div class="callout warn">
+<strong>Never quote a best-estimate number externally</strong>
+Even if you trust the parameters and the matrix in best-estimate mode, you have no business communicating it as a shelf life. Best-estimate has no safety factor. Realistic mode is the appropriate communication for internal product-strategy work; worst-case is what you put on a label after challenge-test confirmation.
+</div>
+
+<div class="callout">
+<strong>Why realistic mode exists</strong>
+The original two-mode system (worst-case ↔ best-estimate) gave a 3-5× spread between modes — too wide for either to match observed reality well. The realistic mode fills the gap with literature-midpoint parameters chosen to be consistent with the limited industry-source data available for chilled dairy desserts (e.g., a "two-week standard pasteurised shelf life" cited by industry interviews, retailer "minimum days at delivery" inference for branded products — see strategy report § 04). Use it as the central estimate; bracket with worst-case for the safety floor and best-estimate for the optimistic ceiling. The relative ranking of scenarios is more robust than the absolute days.
+</div>
+</section>
+
+<section id="workflows">
+<h2><span class="num">§ 06</span>Common workflows</h2>
+
+<h3>Workflow A — Reformulation screening</h3>
+
+<p>You're proposing 5 formulation tweaks and need to pick the 2 worth challenge-testing.</p>
+<ol>
+  <li>Baseline: enter the current formulation and record predicted shelf life and limiting factor.</li>
+  <li>For each variant, change <em>one</em> field, recompute, record.</li>
+  <li>Rank by predicted improvement. The variants that move the bottleneck (change the dominant γ) are the most informative.</li>
+  <li>Send the top 2 to challenge testing. Do not skip challenge testing.</li>
+</ol>
+
+<h3>Workflow B — Packaging trade study</h3>
+
+<p>You're comparing PP-only cup with peel-foil vs full Al-PE laminate.</p>
+<ol>
+  <li>Lock all formulation inputs.</li>
+  <li>Vary lid material dropdown across the options. Record reported shelf life for each.</li>
+  <li>Plot results vs lid OTR. Look for the inflection point: beyond a certain OTR threshold, lid permeability stops being the bottleneck and something else takes over (usually cocoa pH or storage T).</li>
+  <li>That inflection point tells you the OTR you actually need to buy; anything tighter is overspecified.</li>
+</ol>
+
+<h3>Workflow C — Cold-chain abuse test</h3>
+
+<p>You want to know how robust the formulation is to 12 °C abuse for 1 day.</p>
+<ol>
+  <li>v1 supports a single fixed temperature, not a profile, so run two scenarios: one at 4 °C, one at 12 °C.</li>
+  <li>Read off the predicted shelf life ratio. If 12 °C gives 1/5 of the 4 °C result, then 1 day at 12 °C "consumes" ~5 days of 4 °C shelf life.</li>
+  <li>Subtract that consumption from the 4 °C reported shelf life to get a manual abuse-corrected estimate.</li>
+</ol>
+
+<h3>Workflow D — Preservative effectiveness</h3>
+
+<p>You want to know whether to add sorbate, and at what ppm.</p>
+<ol>
+  <li>First check what the limiting factor is. If it's surface mold on the cocoa, sorbate in the cream is irrelevant — the cocoa surface doesn't see the cream preservative.</li>
+  <li>If the limiting factor is yeast in the cream, then sorbate matters — but only if the cream pH is ≤ 5.0.</li>
+  <li>Run a sweep: 0 / 250 / 500 / 1000 ppm sorbate at the lowest pH you can technologically accept. The curve should show diminishing returns above ~500 ppm.</li>
+  <li>Pick the lowest ppm that delivers the target shelf life. Don't overdose; sorbate above 1000 ppm hits flavour and may exceed regulatory limits in some markets.</li>
+</ol>
+
+<h3>Workflow E — Visual diagnosis with the animation</h3>
+
+<p>You're presenting results to a colleague or a customer and want to convey <em>where</em> spoilage happens, not just <em>when</em>.</p>
+<ol>
+  <li>Configure the scenario as usual and click Compute.</li>
+  <li>Set the animation speed to a comfortable pace (5–10 days/sec for short shelf lives, 2–3 for premium).</li>
+  <li>Click Run. Watch the cocoa surface for the first mold colonies; watch the cream layers darken as yeast multiplies; watch the headspace tint change with CO₂.</li>
+  <li>Pause at the moment of predicted failure (shown in red below the timeline). The frozen frame is a defensible visual of <em>what fails first</em>.</li>
+</ol>
+<p>The animation is qualitative — colony positions are seeded pseudo-randomly so two cups with the same inputs will show the same pattern. The radii and tints are derived from the underlying simulation results.</p>
+
+<h3>Workflow F — Saving and comparing scenarios</h3>
+
+<p>You're iterating on five formulation variants and want to come back to each.</p>
+<ol>
+  <li>Configure variant 1, click Save, name the file (the calculator suggests a timestamp).</li>
+  <li>Repeat for each variant. JSON files are tiny (~5 KB), easy to email or store in a shared folder.</li>
+  <li>To compare, Load each in turn, recompute, screenshot the headline + matrix.</li>
+  <li>If the model is updated (new version), saved files remain readable as long as the core structure stays the same — missing fields fall back to defaults.</li>
+</ol>
+</section>
+
+<section id="limits">
+<h2><span class="num">§ 07</span>Limitations</h2>
+
+<p>v1 has a deliberately narrow scope. The following are <strong>not</strong> modelled.</p>
+
+<h3>Out of scope for v1</h3>
+
+<ul>
+  <li><strong>Pathogens.</strong> No <em>Salmonella</em>, <em>Listeria</em>, <em>S. aureus</em>, <em>B. cereus</em>, <em>Clostridium botulinum</em>. The calculator is spoilage-only.</li>
+  <li><strong>Cross-compartment transport.</strong> a<sub>w</sub>, ethanol and preservatives do not diffuse between compartments. Enter post-equilibration values.</li>
+  <li><strong>Temperature profiles.</strong> Single fixed T only. Use the abuse workflow above for rough estimates.</li>
+  <li><strong>Competing microbiota.</strong> No Jameson effect, no lactic acid bacteria, no protective cultures.</li>
+  <li><strong>Multiple strains.</strong> One yeast strain, one mold strain. Worst-case from literature ranges.</li>
+  <li><strong>Mycotoxins.</strong> Mold visibility is modelled, but toxin production rate is not.</li>
+  <li><strong>Structural / matrix effects.</strong> γ<sub>matrix</sub> is fixed at 1.0. No fat-globule protection effect, no gel-network constraint on diffusion.</li>
+  <li><strong>Probabilistic inputs.</strong> Deterministic only; no Monte Carlo on input uncertainty.</li>
+  <li><strong>Persistence.</strong> No saving of sessions. Take screenshots or export the matrix manually.</li>
+</ul>
+
+<h3>Known v1 issues from validation</h3>
+
+<p>The following were identified in the v1 validation study (see <code>validation_report.md</code>) and are flagged for v1.1:</p>
+
+<ul>
+  <li><strong>Detection floor.</strong> Every compartment is rounded up to a minimum of 1 CFU before computation, which sets <em>P</em><sub>init</sub> = 0.63 on surfaces and makes the bioburden inputs ineffective for any cup with truly low surface contamination. Workaround: do not interpret very-short surface-mold predictions as discriminating between "low spore count" and "no spore count" — they're not.</li>
+  <li><strong>γ<sub>pH</sub> above the optimum.</strong> Between pH<sub>opt</sub> and pH<sub>max</sub>, γ can exceed 1.0 by 1–3 %. Small effect, will be clamped in v1.1.</li>
+  <li><strong>Mold lag length.</strong> Current implementation gives germination times slightly shorter than literature for <em>P. roqueforti</em> at 4 °C. Conservative bias direction, but parameter values may need refitting.</li>
+  <li><strong>Default ingredient mass overshoots.</strong> The default ingredient table places more grams into each cream/biscuit compartment than the declared compartment mass. Either correct the masses to match your real formulation, or accept that the default scenario inflates CFU/g by 3–4×.</li>
+</ul>
+</section>
+
+<section id="glossary">
+<h2><span class="num">§ 08</span>Glossary</h2>
+
+<dl style="display:grid;grid-template-columns:180px 1fr;gap:8px 20px;font-size:14.5px">
+<dt><strong>a<sub>w</sub></strong></dt><dd>Water activity. Ratio of the vapour pressure of water in the food to the vapour pressure of pure water, 0 to 1. Free water available for microbial growth.</dd>
+<dt><strong>Bioburden</strong></dt><dd>Initial microbial load on day zero, from all sources (ingredients, packaging, air).</dd>
+<dt><strong>Cardinal model</strong></dt><dd>A predictive-microbiology model in which growth rate depends on each environmental factor through its minimum, optimum and maximum values. See Rosso et al. 1995.</dd>
+<dt><strong>CFU</strong></dt><dd>Colony-forming unit. Standard count of viable microbial cells (or, for molds, viable spores).</dd>
+<dt><strong>Compartment</strong></dt><dd>A user-defined region of the product treated as homogeneous, with its own a<sub>w</sub>, pH, preservatives and bioburden.</dd>
+<dt><strong>γ (gamma) term</strong></dt><dd>A normalised factor between 0 and 1 representing the fractional reduction in growth rate due to one environmental hurdle. γ = 1 means no inhibition; γ = 0 means complete inhibition.</dd>
+<dt><strong>Headspace</strong></dt><dd>Gas-filled volume between product and lid.</dd>
+<dt><strong>Hurdle technology</strong></dt><dd>The combination of multiple sub-lethal stresses to achieve microbial stability that no single one could.</dd>
+<dt><strong>IC₅₀</strong></dt><dd>Concentration of an inhibitor at which growth rate is halved.</dd>
+<dt><strong>Lag phase</strong></dt><dd>The initial period after inoculation during which cells adapt to their environment before exponential growth begins.</dd>
+<dt><strong>Le Marc ξ</strong></dt><dd>An interaction term that captures the synergistic effect of multiple hurdles when several are simultaneously near their inhibitory limits.</dd>
+<dt><strong>MAP</strong></dt><dd>Modified atmosphere packaging. Gas composition in the headspace deliberately set to inhibit spoilage organisms.</dd>
+<dt><strong>MIC</strong></dt><dd>Minimum inhibitory concentration. The lowest concentration of an antimicrobial that prevents visible growth.</dd>
+<dt><strong>μ (mu)</strong></dt><dd>Specific growth rate of a population, 1/time. μ<sub>opt</sub> is the optimal value; the actual μ at conditions is μ<sub>opt</sub> × Π γ.</dd>
+<dt><strong>OTR / CO₂TR</strong></dt><dd>Oxygen / CO₂ Transmission Rate of a packaging film: cm³ of gas through 1 m² of film per day at standard conditions.</dd>
+<dt><strong>Poisson visibility</strong></dt><dd>Probability that at least one viable spore is present on a surface, given an expected spore count λ: P = 1 − exp(−λ).</dd>
+<dt><strong>RLT / h₀</strong></dt><dd>Relative lag time, a dimensionless parameter capturing how long the lag phase is, expressed in units of generation time.</dd>
+<dt><strong>Worst case</strong></dt><dd>In this calculator, the deliberate use of the most permissive parameters and shortest lag values for the spoilage organisms, biased toward predicting <em>shorter</em> shelf life than reality.</dd>
+</dl>
+</section>
+
+<section id="faq">
+<h2><span class="num">§ 09</span>FAQ</h2>
+
+<h3>The calculator says my tiramisù lasts 2.5 days. Industry standard is 5–7. Why?</h3>
+<p>The 2.5 d figure is the worst-case-mode <em>reported</em> shelf life, which already includes the 0.7 safety factor. The <em>predicted</em> value is 3.5 d. In best-estimate mode you'd get ~7 d, matching industry. The worst-case bias is deliberate — see §05.</p>
+
+<h3>I added 1000 ppm sorbate and nothing changed.</h3>
+<p>Check your pH. At pH 6, sorbate is ~93 % dissociated and therefore inactive. Lower the cream pH to 5.0 or below and sorbate becomes effective.</p>
+
+<h3>Adding alcohol to the biscuit didn't extend shelf life.</h3>
+<p>The limiting compartment is almost always the cocoa surface (mold). Biscuit alcohol doesn't reach the cocoa in v1 (no cross-compartment transport). To extend mold-limited shelf life, intervene on the surface: natamycin, MAP, barrier lid, or lower T.</p>
+
+<h3>What does "γ = 0.15" mean?</h3>
+<p>The organism is currently growing at 15 % of its optimal speed because of that hurdle. γ values multiply, so several γ at 0.5 each combine to a much smaller effective growth rate than one γ at 0.5.</p>
+
+<h3>Why does the matrix show "—" for some cells?</h3>
+<p>Mold is modelled only on surface compartments (it grows on interfaces). Yeast may be modelled on both bulk and surface, but the threshold interpretation differs (CFU/g vs CFU/cm²). When a column doesn't apply to a compartment type, the cell shows "—".</p>
+
+<h3>Can I trust the absolute predicted days?</h3>
+<p>No. Trust the <em>ranking</em>. Two formulations whose predicted shelf lives differ by 2× are likely to rank in the same order in challenge tests. Absolute numbers must be validated empirically.</p>
+
+<h3>Is the model conservative enough for regulatory use?</h3>
+<p>This is a screening and exploration tool, not a regulatory model. Regulatory shelf life requires challenge testing or durability studies per ISO 11290 / ISO 16649 and equivalents. Use the calculator's output to design those studies, not to replace them.</p>
+
+<h3>My product has unusual preservatives (lysozyme, lactoperoxidase, …). Can I model them?</h3>
+<p>Not in v1. Only sorbate, benzoate and natamycin are supported as explicit γ terms. For other antimicrobials, you can approximate via the IC₅₀ ethanol field as a generic inhibitor, but the result will be misleading. Wait for v2 or use an external model.</p>
+
+<h3>The cup_wall shows yeast t<sub>fail</sub> = never. Is that right?</h3>
+<p>Probably yes. Default cup-wall yeast bioburden is 0.1 CFU/cm² × ~60 cm² = 6 CFU per cup, distributed over the wall area, giving log<sub>10</sub> N<sub>0</sub> = −1.0 CFU/cm². To reach 10<sup>5</sup> CFU/cm² from there takes many doublings; under refrigeration's slow growth, it doesn't happen within max_days. The cup wall is rarely the bottleneck.</p>
+
+</section>
+
+<hr class="divider">
+
+<p style="color:var(--muted);font-size:13px;font-family:var(--mono)">Tiramisù Spoilage Calculator v1 · User Guide · For internal R&amp;D use only. Predictive screening tool; not a substitute for challenge testing or shelf-life validation.</p>
+
+</main>
+</div>
+</body>
+</html>

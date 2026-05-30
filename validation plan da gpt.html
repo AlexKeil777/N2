@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiramisù Spoilage Simulator — Peer-review Response & Validation Path</title>
+<style>
+:root{
+  --bg:#faf6ed; --paper:#fffdf7; --ink:#1b1712; --muted:#6d6256;
+  --accent:#9c4221; --accent2:#c27a46; --border:#e4d6bf;
+  --green:#166534; --amber:#b45309; --red:#b91c1c; --blue:#1d4ed8;
+  --warn:#fff7ed; --good:#ecfdf5; --note:#eff6ff;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --serif: Georgia, "Times New Roman", serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.58;font-size:15px}
+.wrap{max-width:1180px;margin:0 auto;padding:42px 24px 86px}
+.hero{border-bottom:1px solid var(--border);padding-bottom:24px;margin-bottom:30px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(36px,5vw,56px);line-height:1.04;letter-spacing:-.02em;margin:0 0 10px}
+h1 em{color:var(--accent);font-style:italic;font-weight:400}
+.subtitle{font-family:var(--serif);font-size:19px;font-style:italic;color:var(--muted);max-width:75ch;margin:0}
+.grid{display:grid;gap:18px}.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:820px){.grid.two,.grid.three{grid-template-columns:1fr}}
+.card{background:var(--paper);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.card h3{margin-top:0}
+h2{font-family:var(--serif);font-size:29px;line-height:1.15;margin:44px 0 12px;letter-spacing:-.015em}
+h2 .num{display:block;font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.8px;margin-bottom:4px}
+h3{font-family:var(--serif);font-size:20px;margin:26px 0 8px;color:var(--accent)}
+h4{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin:18px 0 6px}
+p{margin:8px 0}.small{font-size:13px;color:var(--muted)}
+.badge{font-family:var(--mono);font-size:11px;border-radius:999px;padding:4px 8px;display:inline-block;margin:2px 4px 2px 0;border:1px solid var(--border);background:#fff}
+.badge.good{background:var(--good);color:var(--green);border-color:#bbf7d0}.badge.warn{background:var(--warn);color:var(--amber);border-color:#fed7aa}.badge.stop{background:#fef2f2;color:var(--red);border-color:#fecaca}.badge.note{background:var(--note);color:var(--blue);border-color:#bfdbfe}
+.callout{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:14px 18px;background:var(--paper);margin:14px 0}
+.callout.warn{background:var(--warn);border-left-color:var(--amber)}.callout.good{background:var(--good);border-left-color:var(--green)}.callout.stop{background:#fef2f2;border-left-color:var(--red)}.callout.note{background:var(--note);border-left-color:var(--blue)}
+.callout strong:first-child{display:block;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:4px;color:inherit}
+table{border-collapse:collapse;width:100%;margin:14px 0;background:var(--paper);font-size:13.5px}th,td{border:1px solid var(--border);padding:8px 10px;vertical-align:top;text-align:left}th{background:#f7ead7;color:var(--accent);font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.8px}td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+code{font-family:var(--mono);font-size:12px;background:#f1e7d5;border-radius:4px;padding:1px 5px;color:var(--accent)}
+ul,ol{padding-left:22px}li{margin:4px 0}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.step{position:relative;background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:14px}.step .k{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.4px}.step b{display:block;margin:4px 0;font-family:var(--serif);font-size:18px}@media(max-width:950px){.flow{grid-template-columns:1fr 1fr}}@media(max-width:540px){.flow{grid-template-columns:1fr}}
+.matrix td:first-child{font-weight:600}.priority-high{border-left:4px solid var(--red)}.priority-med{border-left:4px solid var(--amber)}.priority-low{border-left:4px solid var(--green)}
+.bar{height:8px;border-radius:999px;background:#e7d8c1;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<p class="eyebrow">Peer-review response · validation protocol · v0.1</p>
+<h1>Tiramisù Spoilage Simulator — <em>Revised Conclusions & Test Path</em></h1>
+<p class="subtitle">Response to an independent reviewer: porous biscuit air, temperature practicality, cocoa bioburden, natamycin legality, nutrient-factor calibration, packaging bioburden, and the meaning of “reported” shelf-life days.</p>
+</header>
+
+<section>
+<h2><span class="num">§ 01</span>Executive revision to the scientific conclusions</h2>
+<div class="grid two">
+<div class="card priority-high">
+<h3>Conclusion that should change most</h3>
+<p><strong>Natamycin must be demoted from “recommended lever” to “technical positive control / jurisdiction-dependent option”.</strong> In EU-style regulatory framing, its use on tiramisù surfaces is a likely showstopper unless specifically authorised. The study should instead prioritise legal, taste-neutral levers: cocoa bioburden, packaging hygiene, fill-air control, barrier packaging, and robust cold-chain verification.</p>
+</div>
+<div class="card priority-high">
+<h3>Conclusion that needs new experiments</h3>
+<p><strong>Cocoa bioburden is under-isolated in the current scenario set.</strong> It appears in mixed scenarios where air, cups, temperature, barrier lid and natamycin also change. Add independent cocoa-ladder tests with sterile/gamma/VHP cups and clean filling, so cocoa quality can be quantified as its own lever.</p>
+</div>
+</div>
+
+<div class="callout warn">
+<strong>Bottom line after peer review</strong>
+The model remains useful, but the manuscript should pivot from “best alcohol-free path = 2 °C + natamycin + packaging” toward “best validated path = independent control of cocoa, packaging surfaces and airborne filling contamination; temperature and natamycin are high-impact but constrained levers.”
+</div>
+</section>
+
+<section>
+<h2><span class="num">§ 02</span>Point-by-point response to reviewer</h2>
+<table>
+<thead><tr><th>Reviewer issue</th><th>Does current work address it?</th><th>What it adds to conclusions</th><th>Required revision</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>Air flux from porous biscuits</strong></td>
+<td>Partly. The simulator includes <code>V_biscuit_pore</code> and <code>f_trapped_air</code> as an initial trapped-air reservoir, but not time-dependent gas flux from biscuit pores during storage.</td>
+<td>Relevant mainly for N₂/MAP/barrier scenarios. It may explain oxygen rebound after sealing and reduce the apparent benefit of N₂ flush.</td>
+<td>Add a dynamic pore-gas exchange term or explicitly state “initial dilution only”. Validate with O₂ sensors in cups with normal vs vacuum-degassed biscuits.</td>
+</tr>
+<tr>
+<td><strong>Lowering temperature is difficult</strong></td>
+<td>Current report treats 2 °C as a practical lever.</td>
+<td>Revise: 2 °C is a high-impact sensitivity / premium controlled-chain option, not a generally flexible industrial setting. Oscillations can cause local freezing or texture damage.</td>
+<td>Keep P06 but relabel as “hypothetical or controlled cold-chain scenario”; include stable 4 °C, stable 2 °C and oscillating 0–4 °C validation arms.</td>
+</tr>
+<tr>
+<td><strong>Cocoa bioburden not independently tested</strong></td>
+<td>True. Cocoa changes are mixed with other changes in P05/P09/P10.</td>
+<td>Cocoa deserves higher priority than natamycin because it is a legal ingredient-specification lever.</td>
+<td>Add cocoa ladder: sterile/irradiated cocoa, steam-treated cocoa, standard cocoa, intentionally high-bioburden cocoa.</td>
+</tr>
+<tr>
+<td><strong>Nutrient factor now very relevant</strong></td>
+<td>Yes. The simulator uses nutrient factors of 0.2 for cocoa, 0.3 for lid underside, 0.5 for cup rim, and 1.0 for bulk/cream-contact surfaces.</td>
+<td>The model’s compartment ranking depends strongly on nutrient assumptions. This is acceptable only if treated as a calibration parameter.</td>
+<td>Validate with surface-coupon tests: clean lid, rim with splatter, cocoa layer, cream smear; fit nutrient factors from radial growth rates.</td>
+</tr>
+<tr>
+<td><strong>Airborne control vs cup/lid bioburden</strong></td>
+<td>Current language mixes them. The simulator has separate inputs for airborne CFU/cup and package CFU/cm², but the report’s “fix the plant” wording is ambiguous.</td>
+<td>Separate levers: fill-air deposition, cup internal surface, lid product-facing surface, and ingredient/cocoa bioburden.</td>
+<td>Rename “airborne contamination control” to “fill-air deposition control” and add “packaging-surface bioburden control” as a distinct intervention.</td>
+</tr>
+<tr>
+<td><strong>“Reported” days look too precise</strong></td>
+<td>The report defines reported days as predicted × 0.7 safety factor, not measured shelf life.</td>
+<td>The label is misleading. It can be mistaken for real market data matching the scenario.</td>
+<td>Rename to “conservative model output” or “screening recommendation after 0.7 factor”. Round to whole days or half-days.</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2><span class="num">§ 03</span>Revised hierarchy of practical levers</h2>
+<table class="matrix">
+<thead><tr><th>Rank</th><th>Lever</th><th>Practical status</th><th>Why it moves up or down</th><th>Validation priority</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>Cup/lid surface bioburden control</td><td><span class="badge good">legal & practical</span></td><td>Directly affects rim/lid limiters. Can be tested with VHP, UV, gamma-irradiated packaging, sterile bags, and swabs.</td><td><span class="badge stop">critical</span></td></tr>
+<tr><td class="num">2</td><td>Fill-air deposition control</td><td><span class="badge good">legal & practical</span></td><td>Separate from packaging. Cleanroom/laminar flow can reduce spores deposited during open-cup dwell time.</td><td><span class="badge stop">critical</span></td></tr>
+<tr><td class="num">3</td><td>Cocoa bioburden/specification</td><td><span class="badge good">legal & practical</span></td><td>More publishable and deployable than natamycin; must be isolated from packaging and air effects.</td><td><span class="badge stop">critical</span></td></tr>
+<tr><td class="num">4</td><td>Nutrient availability on lid/rim/cocoa</td><td><span class="badge warn">model-sensitive</span></td><td>Not a process lever alone, but determines whether rim/lid/cocoa predictions are credible.</td><td><span class="badge stop">critical</span></td></tr>
+<tr><td class="num">5</td><td>Barrier lid + N₂ flush</td><td><span class="badge good">legal & practical</span></td><td>Useful but likely limited if biscuit pores and residual O₂ dominate. Needs pore-air validation.</td><td><span class="badge warn">high</span></td></tr>
+<tr><td class="num">6</td><td>2 °C cold chain</td><td><span class="badge warn">high impact, constrained</span></td><td>Biologically powerful, but often difficult commercially; freezing/texture risk under normal oscillations.</td><td><span class="badge warn">high</span></td></tr>
+<tr><td class="num">7</td><td>Natamycin</td><td><span class="badge stop">possible showstopper</span></td><td>Technically strong antifungal, but food-additive authorisation may not cover tiramisù surfaces.</td><td><span class="badge note">optional</span></td></tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2><span class="num">§ 04</span>Proposed validation path — feasible lab programme</h2>
+<div class="flow">
+<div class="step"><span class="k">PHASE 0</span><b>Instrument the product</b><p>Measure aw, pH, O₂/CO₂, temperature, texture/freezing indicators, and initial bioburden.</p></div>
+<div class="step"><span class="k">PHASE 1</span><b>Calibrate components</b><p>Validate cocoa, packaging, fill-air, biscuit-pore and nutrient-factor submodels independently.</p></div>
+<div class="step"><span class="k">PHASE 2</span><b>Run factorial cup tests</b><p>Assemble real cups under cleanroom/sterile-equipment conditions and follow visible mold/time-to-failure.</p></div>
+<div class="step"><span class="k">PHASE 3</span><b>Fit and challenge</b><p>Calibrate parameters on one data subset, then blind-predict another subset.</p></div>
+</div>
+
+<h3>Phase 0 — baseline measurements before microbiology</h3>
+<table>
+<thead><tr><th>Measurement</th><th>Method</th><th>Reason</th><th>Decision threshold</th></tr></thead>
+<tbody>
+<tr><td>aw by compartment</td><td>aw meter on cocoa, top cream, biscuit, bottom cream at day 0 and after equilibration</td><td>Needed because cocoa aw is modelled via thin-layer coupling, not simply user input.</td><td>If cocoa aw differs by &gt;0.03 from model, refit cocoa <code>L0_mm</code>.</td></tr>
+<tr><td>pH by compartment</td><td>Microelectrode or homogenised compartment pH</td><td>Weak-acid preservatives and pathogen boundaries depend on pH.</td><td>If pH drifts &gt;0.2 units, transport/buffering assumptions need revision.</td></tr>
+<tr><td>Headspace O₂/CO₂</td><td>Non-destructive optical spot sensors or septum sampling</td><td>Validates OTR, trapped pore air and N₂ flush persistence.</td><td>If O₂ rebounds faster than lid OTR predicts, biscuit-pore flux is relevant.</td></tr>
+<tr><td>Temperature distribution</td><td>Data loggers inside dummy cups, lid surface, carton centre</td><td>Needed before treating 2 °C as realistic.</td><td>Any local sub-zero episodes require texture/freezing assessment.</td></tr>
+<tr><td>Texture/freezing</td><td>Visual ice check, syneresis, cream rheology, sensory screen</td><td>Low-temperature shelf-life gain is useless if quality fails.</td><td>Reject 2 °C scenario if oscillations damage cream or biscuit texture.</td></tr>
+</tbody>
+</table>
+
+<h3>Phase 1 — independent calibration experiments</h3>
+<table>
+<thead><tr><th>Test block</th><th>Experimental design</th><th>Controls</th><th>Primary endpoint</th><th>Model parameter tested</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>A. Cocoa bioburden ladder</strong></td>
+<td>Prepare identical sterile-base cups using four cocoa levels: sterile/irradiated, steam-treated, standard supplier, and high-bioburden inoculated cocoa.</td>
+<td>Gamma or VHP-sterilised cups/lids; cleanroom filling; no natamycin; same 4 °C storage.</td>
+<td>Time to visible cocoa mold and initial mold spores/g.</td>
+<td>Cocoa source term, cocoa nutrient factor, cocoa aw coupling.</td>
+</tr>
+<tr>
+<td><strong>B. Cup/lid surface bioburden</strong></td>
+<td>Use the same sterile formulation and cocoa, but compare gamma-irradiated packaging, VHP-sterilised packaging, supplier-clean packaging, and deliberately contaminated packaging coupons.</td>
+<td>Cleanroom fill and low-bioburden cocoa fixed.</td>
+<td>Rim/lid mold incidence and location.</td>
+<td>Package CFU/cm² inputs and rim/lid limiters.</td>
+</tr>
+<tr>
+<td><strong>C. Fill-air deposition</strong></td>
+<td>Same ingredients and packaging, filled under ISO/laminar flow, clean room, and controlled open-air exposure. Use settle plates or active air sampling during filling.</td>
+<td>Gamma/VHP packaging fixed; cocoa fixed.</td>
+<td>Airborne CFU/cup and resulting surface mold time.</td>
+<td>Airborne deposition partitioning across cocoa/rim/lid.</td>
+</tr>
+<tr>
+<td><strong>D. Porous biscuit air</strong></td>
+<td>N₂-flushed cups with normal soaked biscuits, vacuum-degassed soaked biscuits, fully saturated biscuits, and dry/high-pore biscuits.</td>
+<td>Barrier lid fixed; sterile filling; non-destructive O₂ sensors.</td>
+<td>O₂ rebound curve over 0–7 days and mold time under N₂.</td>
+<td><code>V_biscuit_pore</code>, <code>f_trapped_air</code>, and any new pore-exchange constant.</td>
+</tr>
+<tr>
+<td><strong>E. Nutrient-factor surface coupons</strong></td>
+<td>Inoculate identical spores onto lid film, cup rim material, cocoa layer, cream smear and cocoa-over-cream coupons under controlled humidity.</td>
+<td>Same strain/spore dose, temperature and gas atmosphere.</td>
+<td>Radial growth rate, germination time, visible colony time.</td>
+<td><code>nutrient_factor</code> for cocoa/rim/lid.</td>
+</tr>
+<tr>
+<td><strong>F. Cold-chain realism</strong></td>
+<td>Store identical cups at stable 4 °C, stable 2 °C, oscillating 0–4 °C and abuse 8 °C.</td>
+<td>Same batch, packaging, cocoa and air conditions.</td>
+<td>Mold time plus texture/freezing/syneresis.</td>
+<td>Temperature gamma; practical feasibility of 2 °C.</td>
+</tr>
+<tr>
+<td><strong>G. Natamycin ring-fenced control</strong></td>
+<td>Only if allowed by the target jurisdiction or run as a non-commercial technical control. Compare 0 vs 5 vs 10 ppm surface exposure on coupons/cups.</td>
+<td>Same cocoa, packaging and air conditions.</td>
+<td>Fungal inhibition without bulk sensory change.</td>
+<td>Natamycin gamma; not a default recommendation.</td>
+</tr>
+</tbody>
+</table>
+
+<div class="callout note">
+<strong>Feasible minimum</strong>
+If resources are limited, prioritise blocks A–E. They directly address the reviewer’s criticisms and validate the strongest scientific claims. Block F is important for practical recommendations; block G is optional unless the regulatory path is confirmed.
+</div>
+</section>
+
+<section>
+<h2><span class="num">§ 05</span>Suggested cup-level validation matrix</h2>
+<p>This matrix keeps the experiment feasible by using a staged fractional design rather than every possible combination.</p>
+<table>
+<thead><tr><th>ID</th><th>Purpose</th><th>Cocoa</th><th>Packaging</th><th>Fill environment</th><th>Gas/lid</th><th>Temperature</th><th>Expected learning</th></tr></thead>
+<tbody>
+<tr><td>V1</td><td>Clean baseline</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Lowest practical no-preservative baseline.</td></tr>
+<tr><td>V2</td><td>Cocoa sterile</td><td>Sterile/irradiated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Residual failures are not cocoa-driven.</td></tr>
+<tr><td>V3</td><td>Cocoa standard</td><td>Standard supplier</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Independent cocoa effect.</td></tr>
+<tr><td>V4</td><td>Cocoa high</td><td>High-bioburden/inoculated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Dose-response and model slope.</td></tr>
+<tr><td>V5</td><td>Cup/lid supplier effect</td><td>Steam-treated</td><td>Supplier-clean</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Packaging bioburden contribution.</td></tr>
+<tr><td>V6</td><td>Dirty package positive</td><td>Steam-treated</td><td>Known contaminated</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Rim/lid failure sensitivity.</td></tr>
+<tr><td>V7</td><td>Airborne effect</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Standard room/open fill</td><td>Air / PP</td><td>4 °C</td><td>Fill-air deposition contribution.</td></tr>
+<tr><td>V8</td><td>N₂ with normal biscuit</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>N₂ / barrier</td><td>4 °C</td><td>Actual benefit of inert headspace.</td></tr>
+<tr><td>V9</td><td>N₂ with degassed biscuit</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>N₂ / barrier</td><td>4 °C</td><td>Quantifies porous-biscuit O₂ contribution.</td></tr>
+<tr><td>V10</td><td>Low-T ideal</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>2 °C stable</td><td>Biological temperature ceiling.</td></tr>
+<tr><td>V11</td><td>Low-T realistic</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>0–4 °C oscillating</td><td>Freezing/quality risk and practical limit.</td></tr>
+<tr><td>V12</td><td>Technical natamycin control</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Only if legally/ethically permitted; calibrates antifungal upper bound.</td></tr>
+</tbody>
+</table>
+
+<h3>Replication and sampling</h3>
+<ul>
+<li><strong>Visible mold/time-to-event:</strong> at least 24–30 sealed cups per condition if using nondestructive daily observation. More is better because mold appearance is stochastic.</li>
+<li><strong>Destructive microbiology:</strong> n=3 cups per condition at day 0 and selected time points, e.g. days 7, 14, 21, 28, plus at first visible mold.</li>
+<li><strong>Locations:</strong> record first colony site separately: cocoa, rim, lid underside, cup wall. Photograph every failure.</li>
+<li><strong>Microbiology:</strong> yeast/mold counts by compartment, ingredient CFU/g, packaging swabs CFU/cm², settle plates/air sampler CFU during filling.</li>
+<li><strong>Instrumented subset:</strong> at least 3 cups per gas condition with O₂/CO₂ monitoring.</li>
+</ul>
+</section>
+
+<section>
+<h2><span class="num">§ 06</span>Model changes before re-running scenarios</h2>
+<table>
+<thead><tr><th>Change</th><th>Why</th><th>Implementation</th><th>Effect on paper</th></tr></thead>
+<tbody>
+<tr><td>Rename “reported days”</td><td>Avoid implying real market or experimental data.</td><td>Use “conservative screening days = predicted × 0.7”, rounded to whole days.</td><td>Major credibility gain.</td></tr>
+<tr><td>Split contamination levers</td><td>Airborne ≠ cup/lid surface bioburden.</td><td>Separate report sections: fill-air deposition, cup interior, lid product-facing, cocoa, ingredients.</td><td>Clearer practical recommendations.</td></tr>
+<tr><td>Add biscuit pore flux option</td><td>Current model only mixes trapped air at t=0.</td><td>Add optional <code>k_pore</code> exchange between biscuit pore reservoir and headspace, fitted from O₂ curves.</td><td>Better MAP/N₂ predictions.</td></tr>
+<tr><td>Make nutrient factors calibration parameters</td><td>They strongly influence rim/lid/cocoa ranking.</td><td>Report sensitivity tornado; fit values from coupon radial growth.</td><td>Prevents overclaiming.</td></tr>
+<tr><td>Add cocoa-only scenarios</td><td>Independent cocoa effect missing.</td><td>P13–P16 cocoa ladder at fixed clean packaging/air.</td><td>Moves study toward deployable conclusions.</td></tr>
+<tr><td>Demote natamycin in strategy</td><td>Potential additive-law showstopper.</td><td>Move to appendix or “technical positive control”.</td><td>Avoids regulatory criticism.</td></tr>
+<tr><td>Relabel 2 °C</td><td>Cold chain usually not flexible and may freeze locally.</td><td>“High-impact constrained option”; add oscillation/freezing tests.</td><td>More industrially realistic.</td></tr>
+</tbody>
+</table>
+</section>
+
+<section>
+<h2><span class="num">§ 07</span>Analysis plan</h2>
+<div class="grid two">
+<div class="card">
+<h3>Primary endpoint</h3>
+<p><strong>Time to first visible mold by compartment</strong>, analysed as time-to-event data. Use Kaplan–Meier curves for “no visible mold yet” and Cox/AFT models for intervention effects. Treat “no failure by end of study” as censored, not as an exact long shelf life.</p>
+</div>
+<div class="card">
+<h3>Model validation metrics</h3>
+<p>Compare predicted vs observed median failure times using RMSE in days, mean signed bias, accuracy factor, bias factor, and rank correlation across interventions. The most important question is whether the model ranks levers correctly.</p>
+</div>
+<div class="card">
+<h3>Mechanistic calibration</h3>
+<p>Fit or update <code>nutrient_factor</code>, cocoa <code>L0_mm</code>, rim-drip fraction, package CFU/cm² mapping, and optional biscuit <code>k_pore</code>. Keep a held-out subset for blind prediction.</p>
+</div>
+<div class="card">
+<h3>Safety boundary</h3>
+<p>Run spoilage validation separately from pathogen safety. For commercial shelf life, a parallel Listeria/RTE safety justification is required; this model should not claim pathogen control.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2><span class="num">§ 08</span>Recommended rewritten conclusion for the manuscript</h2>
+<div class="callout good">
+<strong>Proposed conclusion</strong>
+The simulator is best presented as a compartmental screening framework for identifying tiramisù spoilage bottlenecks, especially the relative contributions of cocoa, package surfaces, and fill-air deposition. The peer-review comments strengthen the manuscript by shifting emphasis from additive-based preservation toward experimentally testable, legally robust hygiene and ingredient-control levers. Temperature and natamycin remain biologically informative but should be treated as constrained or jurisdiction-dependent interventions rather than default commercial recommendations.
+</div>
+</section>
+
+<section>
+<h2><span class="num">§ 09</span>Key references and regulatory anchors</h2>
+<ul>
+<li>European Commission Food Additives database — natamycin E235 authorised categories: <a href="https://ec.europa.eu/food/food-feed-portal/screen/food-additives/search/details/POL-FAD-IMPORT-3053">EC Food and Feed Information Portal</a>.</li>
+<li>EFSA Scientific Opinion on natamycin E235 — surface treatment of selected cheeses and dry cured sausages: <a href="https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1412">EFSA Journal 2009;7(12):1412</a>.</li>
+<li>FDA Federal Register rule for natamycin/pimaricin use on cheese surfaces: <a href="https://www.federalregister.gov/documents/2001/03/08/01-5612/food-additives-permitted-for-direct-addition-to-food-for-human-consumption-natamycin-pimaricin">Federal Register, 8 Mar 2001</a>.</li>
+<li>European Commission Listeria monocytogenes RTE-food guidance and Regulation 2073/2005 context: <a href="https://food.ec.europa.eu/system/files/2016-10/biosafety_fh_mc_guidance_document_lysteria.pdf">EC guidance document</a>.</li>
+<li>Iacumin et al. 2022, microbial characterization of cocoa powders and chocolate bars: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9497492/">Foods 2022;11:2753</a>.</li>
+<li>FDA regulatory report on irradiation of food packaging materials: <a href="https://www.fda.gov/food/ingredients-additives-gras-packaging-guidance-documents-regulatory-information/regulatory-report-irradiation-food-packaging-materials">FDA food packaging irradiation report</a>.</li>
+</ul>
+</section>
+
+<div class="footer">
+Prepared as a revision-oriented response to independent peer review. This document is a validation plan and manuscript-positioning aid; it is not a shelf-life certification protocol or food-safety approval.
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiramisù Calculator — Experimental Validation Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6ed; --paper:#fffdf7; --text:#1a1612; --muted:#6b5d4f;
+  --accent:#9c4221; --accent-soft:#fdebd6; --border:#e5d9c4; --code-bg:#f1e9d6;
+  --red:#c1272d; --amber:#d97706; --green:#15803d;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter Tight',-apple-system,system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14.5px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 24px 80px}
+
+header.hero{margin-bottom:32px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+h1{font-family:var(--serif);font-weight:500;font-size:42px;line-height:1.05;margin:0 0 10px;letter-spacing:-0.02em}
+h1 em{font-style:italic;color:var(--accent)}
+.subtitle{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:18px;margin:0;max-width:65ch}
+
+h2{font-family:var(--serif);font-weight:500;font-size:28px;margin:50px 0 14px;letter-spacing:-0.015em}
+h2 .num{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.8px;font-weight:500;display:block;margin-bottom:4px}
+h3{font-family:var(--serif);font-weight:600;font-size:19px;margin:30px 0 8px;color:var(--accent)}
+h4{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin:18px 0 6px}
+
+p{margin:8px 0}
+
+.callout{background:var(--paper);border:1px solid var(--border);border-left:3px solid var(--accent);padding:14px 18px;margin:14px 0;border-radius:0 6px 6px 0;font-size:14px}
+.callout strong:first-child{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+.callout.green{border-left-color:var(--green)}
+.callout.green strong:first-child{color:var(--green)}
+.callout.warn{border-left-color:var(--amber);background:#fef4e6}
+.callout.warn strong:first-child{color:var(--amber)}
+
+table{border-collapse:collapse;width:100%;margin:18px 0;font-size:13.5px}
+th,td{border:1px solid var(--border);padding:8px 11px;text-align:left;vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.6px;color:var(--accent)}
+tbody tr:nth-child(even) td{background:var(--paper)}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+code{font-family:var(--mono);font-size:12.5px;background:var(--code-bg);padding:1px 5px;border-radius:3px;color:var(--accent)}
+
+.test{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:22px 26px;margin:22px 0}
+.test .thead{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:14px;border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:14px}
+.test .tid{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:1.5px;font-weight:600}
+.test .tname{font-family:var(--serif);font-weight:600;font-size:21px;color:var(--text);margin:4px 0 0}
+.test .tier{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);border-radius:3px;background:var(--accent-soft)}
+.test .tier.t1{background:#fdeeef;border-color:#f4c5c8;color:var(--red)}
+.test .tier.t2{background:#fef3c7;border-color:#facc15;color:var(--amber)}
+.test .tier.t3{background:#dcfce7;border-color:#bbf7d0;color:var(--green)}
+
+ul.compact{margin:6px 0 6px 18px;padding:0}
+ul.compact li{margin:3px 0}
+
+.workflow-step{margin:6px 0;padding-left:24px;position:relative;font-size:13.5px}
+.workflow-step::before{content:counter(s);counter-increment:s;position:absolute;left:0;top:0;font-family:var(--mono);font-size:10.5px;color:var(--accent);font-weight:600;width:18px;height:18px;background:var(--accent-soft);border:1px solid var(--accent);border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.workflow{counter-reset:s}
+
+.passfail{font-family:var(--mono);font-size:12.5px}
+.passfail .crit{color:var(--green);font-weight:600}
+.passfail .fail{color:var(--red);font-weight:600}
+
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--border);font-size:11.5px;font-family:var(--mono);color:var(--muted);line-height:1.5}
+
+nav.toc{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin:18px 0;font-size:13.5px}
+nav.toc h3{margin:0 0 8px;font-size:12px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:1.5px}
+nav.toc ol{margin:0;padding-left:22px}
+nav.toc li{margin:2px 0}
+nav.toc a{color:var(--text);text-decoration:none;border-bottom:1px dotted var(--border)}
+nav.toc a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+<p class="eyebrow">Tiramisù Calculator · Experimental Validation Plan · v1</p>
+<h1>Validation <em>Test Path</em></h1>
+<p class="subtitle">A staged experimental program to confirm the model's predictions about shelf-life-limiting compartments, hygiene leverage, and quantitative dose-response — using a VHP cup sterilizer (or γ-irradiated materials), controlled-bioburden ingredients, sterile filling, and a controlled-environment fill room.</p>
+</header>
+
+<section>
+<h2><span class="num">§ 01</span>Purpose and approach</h2>
+
+<p>The strategy report makes specific predictions that are not yet confirmed by published tiramisù-specific data. This document specifies an experimental test path that validates those predictions using the equipment that a competent dairy R&amp;D lab typically has access to. The program is staged so that each tier can be executed independently and the most informative tests come first.</p>
+
+<p>Three tiers, in execution order:</p>
+
+<ul class="compact">
+<li><strong>Tier 1 — Core model assumptions</strong>: which compartment limits shelf life, and does removing that limiter shift failure to the next-predicted limiter? These tests answer "is the model right about <em>where</em> failure happens?"</li>
+<li><strong>Tier 2 — Quantitative parameters</strong>: do the model's dose-response curves match measured behaviour? These tests calibrate the model and answer "is the model right about <em>how fast</em> failure happens?"</li>
+<li><strong>Tier 3 — Specific mechanisms</strong>: rim-to-cocoa drip, Marsala vapour, biscuit pore air. These tests confirm the more subtle predictions.</li>
+</ul>
+
+<div class="callout">
+<strong>Pass/fail logic for the model as a whole</strong>
+The model is <em>confirmed</em> for screening-tool use if the realistic-mode predictions fall within the experimental confidence band of the corresponding tests, for the majority of Tier 1 tests. Individual deviations on Tier 2 or Tier 3 tests should be used to <em>calibrate</em> specific parameters (e.g. <code>nutrient_factor</code>) rather than reject the model. The model is <em>invalidated</em> if multiple Tier 1 tests show the wrong limiter or the wrong relative ordering of failure times.
+</div>
+
+<nav class="toc">
+<h3>Test inventory</h3>
+<ol>
+<li><a href="#test-T1A">T1A — Limiter identification: bulk vs surface failure</a></li>
+<li><a href="#test-T1B">T1B — Cocoa-quality binary saturation (P13/P14/P15 replicate)</a></li>
+<li><a href="#test-T1C">T1C — Hygiene composite — single-variable improvement insufficient</a></li>
+<li><a href="#test-T2A">T2A — Airborne dose-response curve (1 to 10000 CFU/cup)</a></li>
+<li><a href="#test-T2B">T2B — Nutrient-factor calibration on package surfaces</a></li>
+<li><a href="#test-T2C">T2C — Temperature γ_T cardinal check (4 / 8 / 12 °C)</a></li>
+<li><a href="#test-T3A">T3A — Biscuit pore air defeats MAP (standard vs vacuum-impregnated)</a></li>
+<li><a href="#test-T3B">T3B — Marsala vapour effect on sterile surfaces</a></li>
+<li><a href="#test-T3C">T3C — Rim-to-cocoa drip-flux at t = 0</a></li>
+</ol>
+</nav>
+
+</section>
+
+<section>
+<h2><span class="num">§ 02</span>Materials, equipment, organisms</h2>
+
+<h3>Cup and lid preparation</h3>
+
+<p>Three sterility states for cup interior and lid product-facing surfaces, applied independently:</p>
+
+<table>
+<thead><tr><th>State</th><th>Method</th><th>Expected residual CFU/cm²</th><th>Use for</th></tr></thead>
+<tbody>
+<tr><td><strong>Sterile</strong></td><td>VHP cycle (35 % H₂O₂ vapour, 30 min, 30 °C dwell) <em>or</em> γ-irradiation (25 kGy from accredited supplier)</td><td class="num">&lt; 10⁻³ (effectively zero)</td><td>All tests requiring controlled surface bioburden</td></tr>
+<tr><td><strong>Inoculated (controlled)</strong></td><td>VHP-sterilised cup spray-coated with calibrated suspension of <em>P. roqueforti</em> spores in 0.1 % Tween-80, dried under laminar flow</td><td class="num">10⁻¹ to 10² (target value)</td><td>Dose-response tests (T2A), nutrient-factor tests (T2B)</td></tr>
+<tr><td><strong>Standard industrial</strong></td><td>Cups as received from supplier, no decontamination</td><td class="num">0.05–0.5 mold spores/cm² (measure by swab to confirm)</td><td>Baseline / control arm in Tier 1 tests</td></tr>
+</tbody></table>
+
+<h3>Bulk ingredients — controlled bioburden</h3>
+
+<p>Two ingredient sterility states:</p>
+
+<table>
+<thead><tr><th>State</th><th>Method</th><th>Use for</th></tr></thead>
+<tbody>
+<tr><td>Sterile</td><td>UHT mascarpone reconstituted just before fill; pasteurised egg yolk autoclaved 121 °C 15 min; coffee infusion sterile-filtered (0.22 µm); savoiardi γ-irradiated at 10 kGy; cocoa γ-irradiated at 25 kGy</td><td>All Tier 1, 2, 3 tests except where ingredient bioburden is the variable</td></tr>
+<tr><td>Inoculated</td><td>Sterile base + calibrated suspension of <em>Z. bailii</em> (yeast) at 10² CFU/g and/or <em>P. roqueforti</em> spores (mold) at target dose</td><td>Bulk-vs-surface tests (T1A), ingredient bioburden tests</td></tr>
+</tbody></table>
+
+<h3>Filling environment</h3>
+
+<table>
+<thead><tr><th>Element</th><th>Specification</th></tr></thead>
+<tbody>
+<tr><td>Cleanroom class</td><td>ISO 7 (cleanroom) for Tier 1 sterile-arm tests; ISO 8 acceptable for Tier 2/3 if measured airborne &lt; 5 CFU/m³</td></tr>
+<tr><td>Filling equipment</td><td>Pre-sterilised piston filler (autoclave or VHP cycle) inside laminar-flow hood</td></tr>
+<tr><td>Operator garbing</td><td>Full sterile suit + gloves + face shield</td></tr>
+<tr><td>Settle-plate monitoring</td><td>One Sabouraud-Dextrose Agar plate at fill point per session, exposed for 1 min during fill, incubated at 25 °C for 7 days</td></tr>
+</tbody></table>
+
+<h3>Challenge organisms</h3>
+
+<table>
+<thead><tr><th>Organism</th><th>Strain reference</th><th>Cultivation</th><th>Inoculum prep</th></tr></thead>
+<tbody>
+<tr><td><em>Penicillium roqueforti</em> (worst-case dairy mold)</td><td>ATCC 10110 or CECT 2904 (national equivalents acceptable)</td><td>PDA, 25 °C, 7 days until heavy sporulation</td><td>Harvest conidia in 0.1 % Tween-80 saline, count with haemocytometer, dilute to target dose</td></tr>
+<tr><td><em>Zygosaccharomyces bailii</em> (worst-case dairy yeast)</td><td>ATCC 60483 or CECT 1131</td><td>Sabouraud Dextrose Broth, 25 °C, 48 h to stationary phase</td><td>Centrifuge, wash, resuspend in sterile saline; plate-count to confirm target dose</td></tr>
+</tbody></table>
+
+<h3>Endpoint scoring</h3>
+
+<p>Each cup is photographed daily through the (transparent or removed-for-photo) lid under 10× magnification. Endpoint criteria:</p>
+
+<ul class="compact">
+<li><strong>First-visible mold</strong>: any hyphal growth visible to a trained scorer (~1 mm colony diameter or visible aerial mycelium). Time-to-event is the day of first detection.</li>
+<li><strong>Yeast spoilage</strong>: cream pH drop ≥ 0.3, off-odour, or visible gas; confirm by enumeration on Dichloran Rose Bengal Chloramphenicol (DRBC) agar plate, 25 °C, 5 days.</li>
+<li><strong>Quantitative bioburden</strong> at endpoint: 1 g cream sample plated on DRBC, 25 °C, 5 days; CFU/g recorded.</li>
+</ul>
+
+<p>All scoring blinded — codes on cups, decoded only at analysis.</p>
+
+</section>
+
+<section>
+<h2><span class="num">§ 03</span>Test inventory — summary table</h2>
+
+<table>
+<thead><tr><th>Test</th><th>Validates</th><th>Replicates</th><th>Duration</th><th>Tier</th></tr></thead>
+<tbody>
+<tr><td><strong>T1A</strong> — Bulk vs surface failure</td><td>Limiter is surface, not bulk</td><td class="num">8 × 5 cups</td><td>60 d</td><td><span class="tier t1">Tier 1</span></td></tr>
+<tr><td><strong>T1B</strong> — Cocoa-quality saturation</td><td>P13/P14/P15 prediction</td><td class="num">3 × 6 cups</td><td>45 d</td><td><span class="tier t1">Tier 1</span></td></tr>
+<tr><td><strong>T1C</strong> — Hygiene composite</td><td>All 3 hygiene variables matter (P03 prediction)</td><td class="num">4 × 5 cups</td><td>30 d</td><td><span class="tier t1">Tier 1</span></td></tr>
+<tr><td><strong>T2A</strong> — Airborne dose-response</td><td>t_visible(N) ≈ t_single − σ_germ × ln(N)</td><td class="num">5 × 6 cups</td><td>30 d</td><td><span class="tier t2">Tier 2</span></td></tr>
+<tr><td><strong>T2B</strong> — Nutrient-factor calibration</td><td>Lid &lt; rim &lt; bulk growth rates</td><td class="num">3 × 6 cups</td><td>30 d</td><td><span class="tier t2">Tier 2</span></td></tr>
+<tr><td><strong>T2C</strong> — Temperature γ_T check</td><td>Cardinal-parameter model for mold</td><td class="num">3 × 6 cups</td><td>30 d</td><td><span class="tier t2">Tier 2</span></td></tr>
+<tr><td><strong>T3A</strong> — Biscuit pore air</td><td>Vacuum-impregnation &gt;&gt; standard soak under N₂ flush</td><td class="num">2 × 6 cups</td><td>60 d</td><td><span class="tier t3">Tier 3</span></td></tr>
+<tr><td><strong>T3B</strong> — Marsala vapour effect</td><td>Vapour reaches surfaces, not just direct contact</td><td class="num">3 × 6 cups</td><td>45 d</td><td><span class="tier t3">Tier 3</span></td></tr>
+<tr><td><strong>T3C</strong> — Rim → cocoa drip-flux</td><td>5 % of rim spores transfer at t = 0</td><td class="num">3 × 8 cups</td><td>30 d</td><td><span class="tier t3">Tier 3</span></td></tr>
+</tbody></table>
+
+<p>Total cells consumed: ~290 cups over ~12 weeks if tests are run serially, or 4-6 weeks in parallel with adequate incubator capacity. Each Tier-1 test requires roughly 30-40 hours of analyst time including prep, fill, scoring, and final enumeration.</p>
+
+</section>
+
+<section>
+<h2><span class="num">§ 04</span>Tier 1 — Core model assumptions</h2>
+
+<div class="test" id="test-T1A">
+<div class="thead">
+<div><div class="tid">T1A</div><div class="tname">Limiter identification — bulk vs surface failure</div></div>
+<span class="tier t1">Tier 1 · Foundational</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The model's most important claim: that for a hygienically-made tiramisù the limiter is a <em>surface</em> compartment (cup_rim, lid, or cocoa_surface) and not the bulk. If this claim is wrong, the entire intervention strategy is wrong.</p>
+
+<h4>Design — 2 × 2 factorial</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Bulk ingredients</th><th>Surfaces (cup, lid, cocoa, rim)</th><th>Predicted limiter</th><th>Predicted t_fail (realistic)</th></tr></thead>
+<tbody>
+<tr><td><strong>A1</strong> · Both sterile</td><td>Sterile</td><td>VHP-sterilised</td><td>None within 60 d</td><td>&gt; 60 d</td></tr>
+<tr><td><strong>A2</strong> · Surfaces dirty, bulk sterile</td><td>Sterile</td><td>Standard industrial (untreated)</td><td>cup_rim or lid</td><td>~17 d (≈ P00b)</td></tr>
+<tr><td><strong>A3</strong> · Surfaces sterile, bulk dirty</td><td>Inoculated with <em>Z. bailii</em> at 10² CFU/g</td><td>VHP-sterilised</td><td>top_cream or bottom_cream (yeast)</td><td>~25-30 d</td></tr>
+<tr><td><strong>A4</strong> · Both dirty</td><td>Inoculated as A3</td><td>Standard industrial</td><td>cup_rim or lid (surface still faster)</td><td>~17 d</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<div class="workflow">
+<div class="workflow-step">Prepare 4 × 5 = 20 cups per condition (total 80 cups). Cups are 100 g, transparent PP for visual scoring through the side wall.</div>
+<div class="workflow-step">Apply VHP cycle (35 % H₂O₂, 30 min, 30 °C dwell) to half the cups + lids; verify by swab → DRBC (target &lt; 1 CFU per cup).</div>
+<div class="workflow-step">For dirty surface arm: leave cups as received from supplier; measure baseline by swabbing 3 cups → expect 0.05–0.5 mold/cm².</div>
+<div class="workflow-step">Prepare sterile and inoculated bulk ingredient sets per § 02.</div>
+<div class="workflow-step">Fill all 80 cups in ISO 7 cleanroom under laminar flow, single fill session, single batch per arm.</div>
+<div class="workflow-step">Seal lids (no flush; ambient air) and store at 4 °C ± 0.5 °C.</div>
+<div class="workflow-step">Photograph daily through transparent walls; score first-visible mold and first-yeast indication (pH, off-odour through a small sniff-port if equipped, or sacrificial cup at days 7, 14, 21, 28).</div>
+<div class="workflow-step">At each cup's failure point, enumerate yeast and mold separately on the cream surface, on the cocoa, and on the cup rim (sterile swab + DRBC).</div>
+</div>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> for limiter identification if:
+</p>
+<ul class="compact">
+<li>Arm A1 shows no growth within 60 d (validates sterile-baseline; absence of contamination during fill).</li>
+<li>Arm A2 fails at 14-22 d with mold on cup_rim or lid as the first visible signal.</li>
+<li>Arm A3 fails with yeast in the cream (log&nbsp;N ≥ 5) <em>before</em> visible mold on any surface.</li>
+<li>Arm A4 fails at a time within 20 % of A2 (surface still dominates even with dirty bulk).</li>
+</ul>
+<p class="passfail">
+The model is <span class="fail">REJECTED</span> if A1 fails on its own (process contamination dominates) <em>or</em> A3 fails on surfaces despite sterile cups and lids (means our surface bioburden model is wrong).
+</p>
+
+<h4>Calibration outputs</h4>
+<p>Even if the model passes, the exact A2 fail time provides the calibration value for the realistic-mode <code>nutrient_factor</code> on the rim. Reset that parameter so the model predicts A2's measured value; rerun the strategy report.</p>
+</div>
+
+<div class="test" id="test-T1B">
+<div class="thead">
+<div><div class="tid">T1B</div><div class="tname">Cocoa-quality binary saturation</div></div>
+<span class="tier t1">Tier 1 · Foundational</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The strategy report's strongest practical claim: cocoa quality is a <em>binary</em> lever. Untreated → steam-treated extends shelf life; steam-treated → sterilised does not. If this is wrong, expensive sterilised-cocoa procurement would be worth it.</p>
+
+<h4>Design — three arms (replicates of P13, P14, P15)</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Cocoa (CFU/g)</th><th>Source</th><th>Predicted limiter</th><th>Predicted t_fail (realistic)</th></tr></thead>
+<tbody>
+<tr><td><strong>B1</strong> — untreated</td><td>~3000 yeast / 300 mold</td><td>As supplied by typical cocoa wholesaler</td><td>cocoa_surface (mold)</td><td>~14 d (≈ P13)</td></tr>
+<tr><td><strong>B2</strong> — steam-treated</td><td>~100 yeast / 30 mold</td><td>NPC, Granocacao, or similar steam-treated grade</td><td>cup_rim (mold)</td><td>~21 d (≈ P14)</td></tr>
+<tr><td><strong>B3</strong> — γ-irradiated (model "sterilised")</td><td>&lt; 10 / &lt; 1</td><td>Sample of B2 cocoa irradiated at 25 kGy</td><td>cup_rim (mold)</td><td>~21 d (≈ P15)</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<p>All other variables held at "clean baseline" (P04): VHP-sterilised cups and lids, sterile bulk ingredients except cocoa, ISO 7 fill. Six cups per arm.</p>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if:
+</p>
+<ul class="compact">
+<li>B1 fail time is significantly shorter (Δ ≥ 5 d) than B2 — confirming untreated cocoa is the limiter when present.</li>
+<li>B2 fail time is within 3 d of B3 — confirming saturation (further cocoa cleaning buys nothing).</li>
+<li>B1 limiter is identified as cocoa-surface mold; B2 and B3 limiters are rim or lid.</li>
+</ul>
+
+<p>Sample-size note: with ~25-30 % CV typical in challenge tests, n = 6 per arm gives ~80 % power to detect a 5-day difference at the 0.05 significance level via two-sample t-test.</p>
+
+</div>
+
+<div class="test" id="test-T1C">
+<div class="thead">
+<div><div class="tid">T1C</div><div class="tname">Hygiene composite — single-variable improvement insufficient</div></div>
+<span class="tier t1">Tier 1 · Foundational</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The "fix all three hygiene variables together" claim (P03 vs P02 in the strategy report). If cleaning only the airborne deposition or only the cups doesn't help much, that justifies the recommendation; if it <em>does</em> help substantially, the model's area-weighted distribution of airborne deposition is wrong.</p>
+
+<h4>Design — four arms</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Airborne</th><th>Cups</th><th>Lids</th><th>Predicted t_fail (realistic)</th></tr></thead>
+<tbody>
+<tr><td><strong>C1</strong> · All dirty</td><td>Open lab (~100 spores/cup)</td><td>As supplied</td><td>As supplied</td><td>~12 d (≈ P02)</td></tr>
+<tr><td><strong>C2</strong> · Air only clean</td><td>ISO 7 cleanroom</td><td>As supplied</td><td>As supplied</td><td>~14 d (≈ P03; only modest improvement)</td></tr>
+<tr><td><strong>C3</strong> · Cups + lids only clean</td><td>Open lab</td><td>VHP-sterilised</td><td>VHP-sterilised</td><td>~14 d (similar to C2 by symmetry)</td></tr>
+<tr><td><strong>C4</strong> · All three clean</td><td>ISO 7 cleanroom</td><td>VHP-sterilised</td><td>VHP-sterilised</td><td>~21 d (≈ P04)</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<div class="workflow">
+<div class="workflow-step">All four arms use sterile bulk ingredients, steam-treated cocoa (to remove cocoa as a confounding variable), no Marsala.</div>
+<div class="workflow-step">"Open lab" airborne = standard lab area, not cleanroom; measure baseline by 1-min settle plate next to fill point during each session.</div>
+<div class="workflow-step">5 cups per arm (n = 20 total).</div>
+<div class="workflow-step">Score first-visible mold daily for 30 days at 4 °C.</div>
+</div>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if:
+</p>
+<ul class="compact">
+<li>C1 fails at the predicted time (~10-14 d). Establishes baseline.</li>
+<li>C2 and C3 both improve over C1 by only 1-3 d (single-variable improvement is small).</li>
+<li>C4 improves over C1 by 5-10 d (composite hygiene matters).</li>
+<li>C2 ≈ C3 within experimental error (no large asymmetry between the two hygiene routes).</li>
+</ul>
+<p class="passfail">
+The model is <span class="fail">REJECTED</span> if C2 or C3 alone matches the C4 improvement — this would mean the model's area-weighted deposition model is wrong, and either the airborne or the cup pathway dominates the other in reality.
+</p>
+
+</div>
+
+</section>
+
+<section>
+<h2><span class="num">§ 05</span>Tier 2 — Quantitative parameter checks</h2>
+
+<div class="test" id="test-T2A">
+<div class="thead">
+<div><div class="tid">T2A</div><div class="tname">Airborne dose-response curve</div></div>
+<span class="tier t2">Tier 2 · Quantitative</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The model's <em>quantitative</em> dose-response claim (§ 09 of the strategy report): <code>t_visible(N) ≈ t_single − σ_germ × ln(N)</code> with σ_germ ≈ 0.13 × t_single in realistic mode. Five dose levels confirm both the shape and the slope.</p>
+
+<h4>Design — five doses, n = 6 each</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Mold spores per cup (deposited)</th><th>Predicted realistic t_fail (d)</th></tr></thead>
+<tbody>
+<tr><td><strong>D1</strong></td><td class="num">1</td><td class="num">~22</td></tr>
+<tr><td><strong>D2</strong></td><td class="num">10</td><td class="num">~19</td></tr>
+<tr><td><strong>D3</strong></td><td class="num">100</td><td class="num">~14</td></tr>
+<tr><td><strong>D4</strong></td><td class="num">1 000</td><td class="num">~9</td></tr>
+<tr><td><strong>D5</strong></td><td class="num">10 000</td><td class="num">~5</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<div class="workflow">
+<div class="workflow-step">All 30 cups use VHP-sterilised packaging, sterile bulk ingredients, steam-treated cocoa, no Marsala. Filled in ISO 7 cleanroom.</div>
+<div class="workflow-step">Before sealing each cup, spray-deposit a calibrated suspension of <em>P. roqueforti</em> conidia (in 50 µL of 0.1 % Tween-80) onto the cocoa surface using a micro-atomiser. Calibrate spore concentration by direct count + plate verification, prepare five 10× dilutions.</div>
+<div class="workflow-step">Photograph daily, score first visible colony.</div>
+<div class="workflow-step">Fit measured t_fail vs ln(N) by linear regression. Expected slope is approximately −σ_germ (≈ −2.5 d/decade in realistic mode).</div>
+</div>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if:
+</p>
+<ul class="compact">
+<li>Mean t_fail decreases monotonically with increasing dose.</li>
+<li>Regression slope of t_fail vs ln(N) is within ±50 % of −2.5 d/decade (i.e. between −1.3 and −3.8).</li>
+<li>D5 t_fail is not less than 2 d (the model's 30 % floor).</li>
+</ul>
+
+<h4>Calibration outputs</h4>
+<p>The fitted slope is the true σ_germ for your strain and matrix; use it to update the model's <code>sigma_germ_frac</code> in realistic mode.</p>
+
+</div>
+
+<div class="test" id="test-T2B">
+<div class="thead">
+<div><div class="tid">T2B</div><div class="tname">Nutrient-factor calibration on package surfaces</div></div>
+<span class="tier t2">Tier 2 · Quantitative</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The most uncertain parameter set in the model: <code>nutrient_factor</code> for lid (0.3), rim (0.5), and bulk (1.0). These weren't validated by tiramisù-specific data when the model was built (strategy report § 10 acknowledges this).</p>
+
+<h4>Design — three substrate types in identical environment</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Substrate (sterile, identical area = 4 cm²)</th><th>Predicted relative growth rate</th></tr></thead>
+<tbody>
+<tr><td><strong>N1</strong></td><td>Sterile mascarpone cream (bulk dairy proxy)</td><td>1.0 (reference)</td></tr>
+<tr><td><strong>N2</strong></td><td>Sterile PP coupon coated with sterile condensate from headspace above N1 sample, refreshed daily (lid proxy)</td><td>~0.3</td></tr>
+<tr><td><strong>N3</strong></td><td>Sterile PP coupon mounted vertically above N1 sample with periodic agitation to simulate splatter (rim proxy)</td><td>~0.5</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<div class="workflow">
+<div class="workflow-step">Prepare 18 small Petri-style chambers: 4 cm² substrate in a sealed 50 mL container with ~10 mL headspace.</div>
+<div class="workflow-step">Inoculate each substrate centrally with 100 <em>P. roqueforti</em> conidia in 5 µL 0.1 % Tween.</div>
+<div class="workflow-step">Incubate at 25 °C (accelerated, to get faster signal in 14 d).</div>
+<div class="workflow-step">Daily photographs at 10×. Measure colony diameter at days 5, 7, 10, 14.</div>
+<div class="workflow-step">For each arm, fit colony radius vs time to extract Kr (mm/day).</div>
+<div class="workflow-step">Compute ratios Kr(N2)/Kr(N1) and Kr(N3)/Kr(N1). These are the true nutrient_factor values for your matrix.</div>
+</div>
+
+<h4>Pass criteria</h4>
+<p>This is a <em>calibration</em> test, not pass/fail. Output: numerical nutrient_factor for lid and rim (each as a ratio relative to the bulk cream). Compare to model defaults (0.3 and 0.5) and update accordingly.</p>
+
+<p>The model is <em>broadly correct</em> if the measured values fall in [0.1, 0.6] for lid and [0.3, 0.8] for rim. Outside these ranges, re-examine the assumed deposition physics.</p>
+
+</div>
+
+<div class="test" id="test-T2C">
+<div class="thead">
+<div><div class="tid">T2C</div><div class="tname">Temperature cardinal-parameter check</div></div>
+<span class="tier t2">Tier 2 · Quantitative</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The model uses Rosso/Zwietering cardinal-parameter γ<sub>T</sub> with T<sub>min</sub> = −2 °C and T<sub>opt</sub> = 25 °C for <em>P. roqueforti</em>. Check that the predicted ratios of growth rate at 4, 8, 12 °C match measurement on your specific strain.</p>
+
+<h4>Design — same matrix (sterile cream cups, fixed inoculum 100 spores), three temperatures</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Temperature</th><th>Predicted γ_T</th><th>Predicted relative t_fail vs T1 (4 °C)</th></tr></thead>
+<tbody>
+<tr><td><strong>T1</strong></td><td>4 °C ± 0.5</td><td>0.052</td><td>1.0×</td></tr>
+<tr><td><strong>T2</strong></td><td>8 °C ± 0.5</td><td>0.139</td><td>0.37× (faster)</td></tr>
+<tr><td><strong>T3</strong></td><td>12 °C ± 0.5</td><td>0.281</td><td>0.18× (much faster)</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<p>Six cups per temperature, all otherwise identical (sterile packaging, sterile cream, 100-spore inoculum on cocoa surface). Three calibrated incubators with continuous logging. Score daily for 30 days.</p>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if measured t_fail ratios are within ±30 % of predicted ratios.
+</p>
+
+<p>This is a sensitive check because the cardinal model is the most-validated component of predictive microbiology; if it fails here, something specific to your strain or matrix is wrong rather than the general formalism.</p>
+
+</div>
+
+</section>
+
+<section>
+<h2><span class="num">§ 06</span>Tier 3 — Specific mechanisms</h2>
+
+<div class="test" id="test-T3A">
+<div class="thead">
+<div><div class="tid">T3A</div><div class="tname">Biscuit pore air defeats MAP — vacuum impregnation vs standard soak</div></div>
+<span class="tier t3">Tier 3 · Mechanism</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The strategy report's most economically consequential mechanism claim: an Al-foil lid + pure N₂ flush gives ~15 d if the biscuit is standard-soaked but >60 d if vacuum-impregnated. The trapped pore air carries enough O₂ to support surface mold for weeks.</p>
+
+<h4>Design — two arms × six cups</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Biscuit treatment</th><th>Predicted realistic t_fail</th></tr></thead>
+<tbody>
+<tr><td><strong>P1</strong></td><td>Standard 5 s espresso dip (residual pore-air fraction ~50 %)</td><td>~25-30 d</td></tr>
+<tr><td><strong>P2</strong></td><td>Vacuum impregnation: biscuit + sterile coffee in vacuum chamber, 15 min at 20 mbar, vent slowly (pore air ~5 %)</td><td>&gt; 60 d</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<div class="workflow">
+<div class="workflow-step">All other variables identical: VHP-sterile cups + Al-foil lids, sterile cream, ISO 7 fill, pure N₂ flush at sealing.</div>
+<div class="workflow-step">Inoculate cocoa surface with 100 <em>P. roqueforti</em> spores (controlled challenge).</div>
+<div class="workflow-step">Optional: measure headspace O₂ at days 0, 7, 14, 30 by needle sampling through a self-sealing septum patch.</div>
+<div class="workflow-step">Score first-visible mold daily.</div>
+</div>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if:
+</p>
+<ul class="compact">
+<li>P1 fails between 18 and 40 d.</li>
+<li>P2 shows no visible mold within 60 d.</li>
+<li>Headspace O₂ in P1 starts at ≥ 0.5 % at day 0; P2 starts at &lt; 0.1 %.</li>
+</ul>
+
+<p>If P2 also fails within 30 d, either the biscuit didn't impregnate as expected (measure residual pore air directly by mass uptake) or there is a continuous biscuit-headspace flux that the model doesn't capture (strategy report § 10 limitation).</p>
+
+</div>
+
+<div class="test" id="test-T3B">
+<div class="thead">
+<div><div class="tid">T3B</div><div class="tname">Marsala vapour effect on sterile surfaces</div></div>
+<span class="tier t3">Tier 3 · Mechanism</span>
+</div>
+
+<h4>What this tests</h4>
+<p>Marsala's mechanism in the model is vapour-phase ethanol partition into the headspace (Henry's law K_LV ≈ 0.05 at 4 °C, Dantigny 2005 inhibition with MIC = 5 % v/v). At 2 % aqueous biscuit ethanol the predicted γ_EtOH ≈ 0.97 — small but measurable on a sufficiently sensitive test.</p>
+
+<h4>Design — three arms × six cups</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Biscuit</th><th>Predicted realistic t_fail</th></tr></thead>
+<tbody>
+<tr><td><strong>M1</strong> — no alcohol</td><td>Sterile biscuit + sterile coffee only</td><td>~21 d (≈ P04)</td></tr>
+<tr><td><strong>M2</strong> — standard Marsala</td><td>Sterile biscuit + sterile coffee + 2 % v/v ethanol</td><td>~24 d (small Marsala benefit)</td></tr>
+<tr><td><strong>M3</strong> — heavy Marsala</td><td>Sterile biscuit + sterile coffee + 5 % v/v ethanol</td><td>~32 d (strong vapour effect)</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<p>All cups VHP-sterile, all bulk ingredients sterile except for the biscuit ethanol content. Cocoa surface inoculated with 100 <em>P. roqueforti</em> spores. Filled in ISO 7. Stored at 4 °C, scored daily for 45 d.</p>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if M1 &lt; M2 &lt; M3, with M3 − M1 ≥ 7 d and M2 − M1 in the range 1-5 d.
+</p>
+
+<p>If M2 = M1 within noise (no Marsala benefit at standard concentration), the Henry's-law partition coefficient in the model is wrong or the Dantigny MIC should be lowered.</p>
+
+</div>
+
+<div class="test" id="test-T3C">
+<div class="thead">
+<div><div class="tid">T3C</div><div class="tname">Rim → cocoa drip-flux at t = 0</div></div>
+<span class="tier t3">Tier 3 · Mechanism</span>
+</div>
+
+<h4>What this tests</h4>
+<p>The model assumes 5 % of cup-rim spores transfer to the cocoa at t = 0 via gravity, vibration during transport, and condensation runoff. This is one of the more speculative model assumptions. If wrong by 10×, the limiter ranking between rim and cocoa shifts.</p>
+
+<h4>Design — three arms × eight cups</h4>
+
+<table>
+<thead><tr><th>Arm</th><th>Rim contamination</th><th>Cocoa contamination</th><th>Predicted first-visible site</th></tr></thead>
+<tbody>
+<tr><td><strong>R1</strong> — rim only</td><td>500 <em>P. roqueforti</em> spores on rim (sterile cocoa)</td><td>0</td><td>Rim first, then cocoa later from drip</td></tr>
+<tr><td><strong>R2</strong> — cocoa only</td><td>0 (sterile rim)</td><td>25 spores on cocoa (= 5% of rim count)</td><td>Cocoa only, at same time as R1's cocoa colony</td></tr>
+<tr><td><strong>R3</strong> — control</td><td>0</td><td>0</td><td>None within 60 d</td></tr>
+</tbody></table>
+
+<h4>Protocol</h4>
+<div class="workflow">
+<div class="workflow-step">VHP-sterile cups and lids; sterile bulk ingredients; ISO 7 fill.</div>
+<div class="workflow-step">Apply spore suspensions to specific anatomical sites with micro-syringe before bulk fill: rim spray (R1), cocoa centre droplet (R2), neither (R3).</div>
+<div class="workflow-step">Simulate transport vibration: 30 s on orbital shaker (150 rpm) immediately after sealing.</div>
+<div class="workflow-step">Score daily for 30 d. Record location of <em>first</em> visible colony separately from later colonies.</div>
+</div>
+
+<h4>Pass criteria</h4>
+<p class="passfail">
+The model is <span class="crit">CONFIRMED</span> if:
+</p>
+<ul class="compact">
+<li>R1 shows rim colonies first; cocoa colonies appear 3-10 d later (consistent with 5 % drip).</li>
+<li>R2 shows cocoa colonies at the same time as R1's first <em>cocoa</em> colony (matched dose hypothesis).</li>
+<li>R3 shows no growth (sterile-fill validation).</li>
+</ul>
+
+<p>The drip fraction can be back-calculated from the time gap between R1's rim-colony and R1's cocoa-colony if the model's t_visible(N) curve is independently calibrated (via T2A). Update <code>rim_drip_fraction</code> accordingly.</p>
+
+</div>
+
+</section>
+
+<section>
+<h2><span class="num">§ 07</span>Execution sequence and decision tree</h2>
+
+<p>Execute in three stages. Each stage gates the next: a failed Tier 1 test means the model needs rebuilding before further tests have meaning.</p>
+
+<h3>Stage 1 — Foundational (weeks 1-6)</h3>
+<p>Run T1A, T1B, T1C in parallel if you have the cleanroom capacity; otherwise serial. These collectively use ~120 cups and ~120 analyst-hours. After Stage 1:</p>
+<ul class="compact">
+<li>If all three pass → proceed to Stage 2.</li>
+<li>If T1A fails (wrong limiter) → re-examine the model's compartment structure; rest of the program is on hold.</li>
+<li>If T1B fails (cocoa not binary) → may indicate a missing growth-mode (e.g. lipid-driven, mycotoxin-related); consult Pomilio 2022 for cocoa-specific kinetics.</li>
+<li>If T1C fails (one-variable improvement matches all-variable) → either airborne or packaging dominates; recalibrate the airborne deposition weighting in <code>computeN0()</code>.</li>
+</ul>
+
+<h3>Stage 2 — Quantitative calibration (weeks 5-10, overlapping)</h3>
+<p>Run T2A, T2B, T2C. These produce numerical calibration values that should be fed back into the model's defaults. After Stage 2 the model is locked in for your specific strain + matrix.</p>
+
+<h3>Stage 3 — Mechanism confirmation (weeks 9-15, overlapping)</h3>
+<p>Run T3A, T3B, T3C. These are the most product-specific tests and inform recipe / packaging decisions. If T3A confirms biscuit-pore-air dominance, the recommended capex is vacuum impregnation; if T3B confirms Marsala vapour effect, alcohol-free formulations need a stronger surface-protection compensation strategy.</p>
+
+<div class="callout green">
+<strong>After full validation</strong>
+A successful pass of Stage 1 + 2 makes the calculator a defensible screening tool for your products. Stage 3 sharpens the recommendations. Total program: ~15 weeks, ~290 cups, ~400 analyst-hours, estimated direct cost €15-25k excluding equipment depreciation.
+</div>
+
+</section>
+
+<section>
+<h2><span class="num">§ 08</span>Statistical and reporting requirements</h2>
+
+<h3>Sample size and power</h3>
+
+<p>Sample sizes specified per test (n = 5-8 per arm) are based on:</p>
+
+<ul class="compact">
+<li>Typical CV for first-visible-mold time in challenge tests: ~25-30 %</li>
+<li>Target detectable difference: ~3 d (Tier 1) or ~20 % relative (Tier 2/3)</li>
+<li>Significance level: α = 0.05, two-sided</li>
+<li>Power: 0.8</li>
+</ul>
+
+<p>For survival-curve comparison (Kaplan-Meier with log-rank test, the appropriate analysis for first-visibility data), n = 6 per arm gives ~80 % power to detect a hazard ratio of 2.5. Reduce or expand based on your prior data.</p>
+
+<h3>Reporting template per test</h3>
+
+<p>Each completed test should produce a one-page summary including:</p>
+
+<ol class="compact">
+<li>Test ID, dates, operator initials, lot numbers of all materials</li>
+<li>Settle-plate / swab baseline measurements for each arm (verifying that the intended bioburden was achieved)</li>
+<li>Kaplan-Meier curves of time-to-first-visible-mold per arm, with 95 % confidence bands</li>
+<li>Final yeast and mold enumeration per compartment (cream, cocoa, rim swab, lid swab)</li>
+<li>Photographs of representative endpoints</li>
+<li>Pass/fail call against the model's predictions per the test-specific criteria above</li>
+<li>Updated parameter recommendations for the model (if any)</li>
+</ol>
+
+<h3>Cross-test consistency checks</h3>
+
+<p>Beyond individual test outcomes, check consistency:</p>
+
+<ul class="compact">
+<li>T1A:A4 should match T1B:B1 within experimental error (both are "untreated cocoa + dirty surfaces" combinations).</li>
+<li>T2A intercept (D1 at N=1 spore) should approximately match T2C:T1 (a single-spore, 4 °C, otherwise sterile scenario).</li>
+<li>T2C:T1 should match T1A:A2 within experimental error.</li>
+</ul>
+
+<p>Inconsistencies between these points indicate either lot-to-lot variation in materials, undocumented protocol drift, or strain instability — investigate before drawing larger conclusions.</p>
+
+</section>
+
+<section>
+<h2><span class="num">§ 09</span>What this program does NOT validate</h2>
+
+<p>Honest scoping — these are explicitly out of scope:</p>
+
+<ul class="compact">
+<li><strong>Pathogen risk.</strong> The model is spoilage-only. HACCP and pathogen-specific challenge tests (<em>Listeria monocytogenes</em>, <em>Salmonella</em>) require their own dedicated programs per ISO 11290 and equivalent standards.</li>
+<li><strong>Mycotoxin production.</strong> Even if surface mold appears at the predicted time, the toxin profile (ochratoxin A from <em>P. nordicum</em>/<em>verrucosum</em>, citrinin, patulin) is not addressed by this program.</li>
+<li><strong>Natural-contamination variability.</strong> All tests use controlled inoculation. Natural production-line contamination will have a different and wider distribution; commercial declared shelf life must account for that statistically, not just from the model.</li>
+<li><strong>Mixed-strain dynamics.</strong> Real spoilage involves multiple strains and species; Jameson effect and bioprotective culture interactions are not in the model.</li>
+<li><strong>Temperature abuse profiles.</strong> Single-temperature tests; cold-chain abuse must be modelled separately.</li>
+<li><strong>Sensory shelf life.</strong> Visible mold is a microbial endpoint; consumer-acceptable texture and flavour decay typically come first by 1-3 d. Sensory panels are a separate program.</li>
+</ul>
+
+<p>A validated screening tool plus the items above plus a sensory panel collectively constitute the basis for setting a defensible commercial shelf life. This program addresses only the first.</p>
+
+</section>
+
+<footer>
+Tiramisù Calculator · Experimental Validation Plan v1 · Designed for a competent dairy R&amp;D laboratory with VHP cup sterilization or γ-irradiated materials access · For internal use to validate the predictive model before relying on it for commercial decisions · Not a replacement for a HACCP study or commercial shelf-life validation; complementary to both.
+</footer>
+
+</div>
+</body>
+</html>
