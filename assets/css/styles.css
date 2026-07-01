@@ -65,7 +65,16 @@ body{
   line-height: 1.62;
   letter-spacing: 0.005em;
   min-height: 100vh;
+  /* Sticky footer: column layout so <main> can grow and pin the
+     footer to the bottom on short pages. The fixed side-rail header
+     and decorative bg layers are out of flow and unaffected. */
+  display: flex;
+  flex-direction: column;
 }
+
+/* <main> takes up all remaining height; footer stays its natural size */
+main{ flex: 1 0 auto; }
+footer, .footer{ flex-shrink: 0; }
 
 a{ color: inherit; text-decoration: none; }
 a:hover{ text-decoration: none; }
