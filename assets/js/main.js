@@ -95,30 +95,27 @@
   // Don't double-inject
   if (document.querySelector('.molecule-bg')) return;
 
-  // Inline SVG markup for one H2O2 molecule (H–O–O–H, simplified)
+  // Inline SVG markup for one H2O2 molecule (H–O–O–H) — flat schematic
+  // line-art to match the "lab datasheet" theme (ink bonds/H, amber O).
   const moleculeSVG = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" aria-hidden="true">
-  <defs>
-    <radialGradient id="oxyG" cx="35%" cy="35%">
-      <stop offset="0%" stop-color="#a5d8ff"/>
-      <stop offset="60%" stop-color="#4a9eff"/>
-      <stop offset="100%" stop-color="#1f4f9e"/>
-    </radialGradient>
-    <radialGradient id="hydG" cx="35%" cy="35%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="80%" stop-color="#dbe4f0"/>
-      <stop offset="100%" stop-color="#8ea0bc"/>
-    </radialGradient>
-  </defs>
-  <g stroke="#8aa0bd" stroke-width="2.5" stroke-linecap="round" opacity="0.85">
+  <g fill="none" stroke="#1b1a16" stroke-width="1.8" stroke-linecap="round">
     <line x1="22" y1="22" x2="55" y2="46"/>
     <line x1="55" y1="46" x2="85" y2="46"/>
     <line x1="85" y1="46" x2="118" y2="78"/>
+    <circle cx="22"  cy="22" r="9"/>
+    <circle cx="118" cy="78" r="9"/>
   </g>
-  <circle cx="22"  cy="22" r="10" fill="url(#hydG)" stroke="#7e8da5" stroke-width="0.8"/>
-  <circle cx="55"  cy="46" r="16" fill="url(#oxyG)" stroke="#1d4d96" stroke-width="0.8"/>
-  <circle cx="85"  cy="46" r="16" fill="url(#oxyG)" stroke="#1d4d96" stroke-width="0.8"/>
-  <circle cx="118" cy="78" r="10" fill="url(#hydG)" stroke="#7e8da5" stroke-width="0.8"/>
+  <g fill="none" stroke="#c1531f" stroke-width="1.8">
+    <circle cx="55" cy="46" r="15"/>
+    <circle cx="85" cy="46" r="15"/>
+  </g>
+  <g font-family="'IBM Plex Mono', monospace" font-weight="600" text-anchor="middle">
+    <text x="22"  y="26" font-size="10" fill="#1b1a16">H</text>
+    <text x="118" y="82" font-size="10" fill="#1b1a16">H</text>
+    <text x="55"  y="50" font-size="11" fill="#c1531f">O</text>
+    <text x="85"  y="50" font-size="11" fill="#c1531f">O</text>
+  </g>
 </svg>`;
 
   function build() {
@@ -130,8 +127,7 @@
         .molecule{position:absolute;opacity:0;will-change:transform;
           animation:molDrift var(--dur,40s) ease-in-out var(--delay,0s) infinite,
                     molFadeIn 1.2s ease-out var(--fadeDelay,0s) forwards}
-        .molecule svg{width:100%;height:auto;display:block;
-          filter:drop-shadow(0 0 14px rgba(95,168,255,.18))}
+        .molecule svg{width:100%;height:auto;display:block}
         @keyframes molFadeIn{to{opacity:var(--targetOpacity,.14)}}
         @keyframes molDrift{
           0%,100%{transform:translate(0,0) rotate(var(--rot,0deg))}
@@ -158,7 +154,7 @@
                      transform .46s cubic-bezier(.55,.06,.68,.19);
         }
         body.page-leave .molecule svg{
-          filter:drop-shadow(0 0 22px rgba(95,168,255,.42));
+          filter:drop-shadow(0 0 12px rgba(193,83,31,.22));
           transition:filter .4s ease;
         }
         @media (prefers-reduced-motion: reduce){
