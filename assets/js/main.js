@@ -99,22 +99,22 @@
   // line-art to match the "lab datasheet" theme (ink bonds/H, amber O).
   const moleculeSVG = `
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 100" aria-hidden="true">
-  <g fill="none" stroke="#1b1a16" stroke-width="1.8" stroke-linecap="round">
+  <g fill="none" stroke="#e9e6df" stroke-width="1.8" stroke-linecap="round">
     <line x1="22" y1="22" x2="55" y2="46"/>
     <line x1="55" y1="46" x2="85" y2="46"/>
     <line x1="85" y1="46" x2="118" y2="78"/>
     <circle cx="22"  cy="22" r="9"/>
     <circle cx="118" cy="78" r="9"/>
   </g>
-  <g fill="none" stroke="#c1531f" stroke-width="1.8">
+  <g fill="none" stroke="#e2692c" stroke-width="1.8">
     <circle cx="55" cy="46" r="15"/>
     <circle cx="85" cy="46" r="15"/>
   </g>
   <g font-family="'IBM Plex Mono', monospace" font-weight="600" text-anchor="middle">
-    <text x="22"  y="26" font-size="10" fill="#1b1a16">H</text>
-    <text x="118" y="82" font-size="10" fill="#1b1a16">H</text>
-    <text x="55"  y="50" font-size="11" fill="#c1531f">O</text>
-    <text x="85"  y="50" font-size="11" fill="#c1531f">O</text>
+    <text x="22"  y="26" font-size="10" fill="#e9e6df">H</text>
+    <text x="118" y="82" font-size="10" fill="#e9e6df">H</text>
+    <text x="55"  y="50" font-size="11" fill="#e2692c">O</text>
+    <text x="85"  y="50" font-size="11" fill="#e2692c">O</text>
   </g>
 </svg>`;
 

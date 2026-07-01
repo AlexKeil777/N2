@@ -57,7 +57,7 @@
       flex: 1 1 0;
       width: 100%;
       min-width: 0;
-      background: #fffdf7;
+      background: #0f0f11;
       border: 1px solid var(--border-strong);
       color: var(--text);
       border-radius: var(--radius);
@@ -95,7 +95,7 @@
     .radio-list input{ accent-color: var(--brand); }
     .radio-list label:has(input:checked){
       border-color: var(--brand);
-      background: rgba(193,83,31,.10);
+      background: rgba(226,105,44,.14);
       color: var(--text);
     }
     .check-row{
@@ -127,7 +127,7 @@
       overflow: auto;
     }
     .chart-wrap{
-      background: #fffdf7;
+      background: #0f0f11;
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-sm);
       padding: 8px;
@@ -192,8 +192,8 @@
       display: flex; align-items: center; justify-content: center;
       padding: 24px;
       background:
-        radial-gradient(900px 700px at 12% 10%, rgba(193,83,31,.07), transparent 60%),
-        radial-gradient(900px 700px at 88% 18%, rgba(44,96,85,.05), transparent 60%),
+        radial-gradient(900px 700px at 12% 10%, rgba(226,105,44,.10), transparent 60%),
+        radial-gradient(900px 700px at 88% 18%, rgba(70,184,166,.07), transparent 60%),
         var(--bg);
     }
     .pw-card{
@@ -210,7 +210,7 @@
     .pw-card form{ display: flex; flex-direction: column; gap: 12px; }
     .pw-card input{
       width: 100%; box-sizing: border-box;
-      background: #fffdf7;
+      background: #0f0f11;
       border: 1px solid var(--border-strong);
       color: var(--text);
       border-radius: var(--radius);
@@ -220,7 +220,7 @@
     .pw-card input:focus{
       outline: none;
       border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(193,83,31,.20);
+      box-shadow: 0 0 0 3px rgba(226,105,44,.25);
     }
     .pw-err{ min-height: 1.2em; margin: 0; font-size: 13px; color: var(--warn); }
   </style>
@@ -455,15 +455,15 @@
                 <canvas id="chart-mass" width="640" height="280"></canvas>
               </div>
               <div class="legend">
-                <span><span class="swatch" style="background:#c1531f"></span>H₂O₂ mass (g)</span>
-                <span><span class="swatch" style="background:#2c6055"></span>H₂O mass (g)</span>
-                <span><span class="swatch" style="background:#35507a"></span>Total (g)</span>
+                <span><span class="swatch" style="background:#e2692c"></span>H₂O₂ mass (g)</span>
+                <span><span class="swatch" style="background:#46b8a6"></span>H₂O mass (g)</span>
+                <span><span class="swatch" style="background:#5a86c8"></span>Total (g)</span>
               </div>
               <div class="chart-wrap" style="margin-top:10px">
                 <canvas id="chart-wt" width="640" height="220"></canvas>
               </div>
               <div class="legend">
-                <span><span class="swatch" style="background:#2c6055"></span>Liquid H₂O₂ wt %</span>
+                <span><span class="swatch" style="background:#46b8a6"></span>Liquid H₂O₂ wt %</span>
               </div>
               <div class="note">
                 Initial film: 1 mm depth × 100 cm² (≈ 11 g of 30 wt % solution).
@@ -756,16 +756,16 @@
     }
 
     function drawAxes(ctx, w, h, pad, xMax, yMax, xLabel, yLabel){
-      ctx.strokeStyle = 'rgba(27,26,22,.38)';
+      ctx.strokeStyle = 'rgba(244,242,236,.30)';
       ctx.lineWidth = 1;
-      ctx.fillStyle = 'rgba(27,26,22,.62)';
+      ctx.fillStyle = 'rgba(244,242,236,.60)';
       ctx.font = '11px ui-monospace, Menlo, Consolas, monospace';
 
       // box
       ctx.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
 
       // gridlines: 5 vertical, 5 horizontal
-      ctx.strokeStyle = 'rgba(27,26,22,.10)';
+      ctx.strokeStyle = 'rgba(244,242,236,.08)';
       for (let i = 1; i < 5; i++){
         const x = pad.l + (w - pad.l - pad.r) * i / 5;
         ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, h - pad.b); ctx.stroke();
@@ -774,7 +774,7 @@
       }
 
       // tick labels
-      ctx.fillStyle = 'rgba(27,26,22,.62)';
+      ctx.fillStyle = 'rgba(244,242,236,.60)';
       ctx.textAlign = 'center';
       for (let i = 0; i <= 5; i++){
         const x = pad.l + (w - pad.l - pad.r) * i / 5;
@@ -789,7 +789,7 @@
       }
 
       // axis labels
-      ctx.fillStyle = 'rgba(27,26,22,.78)';
+      ctx.fillStyle = 'rgba(244,242,236,.78)';
       ctx.textAlign = 'center';
       ctx.fillText(xLabel, pad.l + (w - pad.l - pad.r)/2, h - 4);
       ctx.save();
@@ -831,9 +831,9 @@
       f1.ctx.clearRect(0, 0, f1.w, f1.h);
       const pad1 = { l: 56, r: 14, t: 12, b: 28 };
       drawAxes(f1.ctx, f1.w, f1.h, pad1, xMax, yMaxM, 'Time (min)', 'Mass (g)');
-      plotSeries(f1.ctx, tMin, m1g, pad1, f1.w, f1.h, xMax, yMaxM, '#c1531f');
-      plotSeries(f1.ctx, tMin, m2g, pad1, f1.w, f1.h, xMax, yMaxM, '#2c6055');
-      plotSeries(f1.ctx, tMin, mt,  pad1, f1.w, f1.h, xMax, yMaxM, '#35507a');
+      plotSeries(f1.ctx, tMin, m1g, pad1, f1.w, f1.h, xMax, yMaxM, '#e2692c');
+      plotSeries(f1.ctx, tMin, m2g, pad1, f1.w, f1.h, xMax, yMaxM, '#46b8a6');
+      plotSeries(f1.ctx, tMin, mt,  pad1, f1.w, f1.h, xMax, yMaxM, '#5a86c8');
 
       // chart 2: wt%
       const c2 = $('chart-wt');
@@ -841,7 +841,7 @@
       f2.ctx.clearRect(0, 0, f2.w, f2.h);
       const pad2 = { l: 56, r: 14, t: 12, b: 28 };
       drawAxes(f2.ctx, f2.w, f2.h, pad2, xMax, 100, 'Time (min)', 'H₂O₂ wt %');
-      plotSeries(f2.ctx, tMin, wt, pad2, f2.w, f2.h, xMax, 100, '#2c6055');
+      plotSeries(f2.ctx, tMin, wt, pad2, f2.w, f2.h, xMax, 100, '#46b8a6');
     }
 
     // redraw existing simulation on window resize (responsive canvas)
