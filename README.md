@@ -27,9 +27,9 @@ The interactive simulation included in the site visualizes both architectures si
 ├── README.md
 └── assets/
     ├── css/
-    │   └── styles.css                      # Global pharma-clean theme
+    │   └── styles.css                      # "Controlled Document" theme (paper + dark variant)
     ├── js/
-    │   └── main.js                         # Nav + animated H₂O₂ background
+    │   └── main.js                         # Nav, current section, revision stamp
     ├── py/
     │   └── EvapCalculatorAp_v15.py         # Reference Tkinter desktop app
     └── images/
@@ -44,9 +44,10 @@ The interactive simulation included in the site visualizes both architectures si
 ## ✦ Tech stack
 
 - Plain **HTML / CSS / JavaScript** — no build step, no framework
-- **Inter** font via Google Fonts
-- Inline **SVG** for the simulation and the animated molecule background
-- Responsive design with mobile nav, `prefers-reduced-motion` support, and `:focus-visible` accessibility
+- **Fraunces** (headings), **Archivo** (body/UI) and **IBM Plex Mono** (labels and data) via Google Fonts
+- Inline **SVG** for the brand mark and the process simulation
+- Responsive design with a collapsing nav rail, `prefers-reduced-motion` support, and `:focus-visible` accessibility
+- Every text/background pair in the shared theme clears WCAG AA (4.5:1)
 
 ---
 
@@ -55,7 +56,7 @@ The interactive simulation included in the site visualizes both architectures si
 The site is fully static — open it in any browser.
 
 **Quick option** (just double-click `index.html`):
-> Some browsers restrict relative asset loading from `file://`. If images don't show or the molecule background looks broken, use one of the options below.
+> Some browsers restrict relative asset loading from `file://`. If images or fonts don't load, use one of the options below.
 
 **Recommended** — serve it with a local web server. From the project root:
 
@@ -89,32 +90,40 @@ Then open <http://localhost:8080> in your browser.
 ## ✦ Customization
 
 ### Theme & colors
-All design tokens live as CSS custom properties at the top of `assets/css/styles.css`:
+The site is set as a printed engineering datasheet. All design tokens live as CSS
+custom properties at the top of `assets/css/styles.css`:
 
 ```css
 :root{
-  --bg:        #081428;   /* page background */
-  --brand:     #5fa8ff;   /* primary blue */
-  --brand-2:   #5dd6c5;   /* teal accent */
-  --text:      #eef3fb;
-  --radius:    14px;
+  --bg:      #f2ede1;   /* warm paper stock, ruled with a faint graph grid */
+  --panel:   #fbf8f0;   /* sheet laid on the stock */
+  --text:    #1a1612;   /* ink */
+  --muted:   #574c3f;   /* 7.16:1 on stock */
+  --subtle:  #756a5c;   /* 4.53:1 on stock */
+  --brand:   #9c4221;   /* burnt sienna */
+  --brand-2: #1f5f52;   /* pine */
+  --radius:  2px;
   /* …etc */
 }
 ```
 
-Tweak these to retheme the entire site without touching individual rules.
+Tweak these to retheme the entire site without touching individual rules. Contrast
+ratios are noted next to the tokens; keep any replacement at 4.5:1 or better.
 
-### Animated H₂O₂ background
-Density and motion are controlled in `assets/js/main.js`. The relevant block:
+**Dark variant.** A fully tuned dark palette lives under `:root[data-theme="dark"]`
+in the same file. It is not automatic — switch a page by putting the attribute on
+the root element:
 
-```js
-const count = w < 640 ? 7 : w < 1100 ? 11 : 15;   // molecules per viewport
-const size  = rand(70, 170);                       // px
-const dur   = rand(28, 58);                        // s drift duration
-const op    = rand(0.08, 0.18);                    // peak opacity
+```html
+<html lang="en" data-theme="dark">
 ```
 
-Lower `count` or `op` for a more subtle effect; raise them for more atmosphere.
+The simulation page is the one screen that is dark by default; it carries its own
+copy of those values because it is standalone.
+
+**House rules** (documented in the stylesheet header): no gradients, glows, coloured
+shadows or backdrop blur; decoration has to carry information; motion only on state
+change and 160ms or less; uppercase only on small mono field labels.
 
 ### Simulation parameters
 The simulation page (`v4_continuous_vs_batch_animation.html`) exposes user-facing controls (chamber length, conveyor speed, takt time, minimum dwell). All other timing/visual tuning is in the inline `<script>` at the bottom of that file.
@@ -135,8 +144,10 @@ python assets/py/EvapCalculatorAp_v15.py
 - Skip link to main content on every page
 - Mobile nav with proper `aria-expanded` state
 - Focus-visible outlines on all buttons
-- `prefers-reduced-motion` reduces the molecule background to a static fade-in
-- Decorative images (logos, molecule background) have `alt=""` / `aria-hidden`
+- `prefers-reduced-motion` disables animation and collapses transitions site-wide
+- Decorative SVG (the brand mark) carries `aria-hidden="true"`
+- The current nav entry is marked with `aria-current="page"`
+- Escape closes the mobile nav and returns focus to the control
 
 ---
 

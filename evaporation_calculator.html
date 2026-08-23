@@ -26,9 +26,10 @@
     .calc-panel + .calc-panel{ margin-top: 16px; }
     .calc-panel h3{
       margin: 0 0 12px;
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: .04em;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: .1em;
       text-transform: uppercase;
       color: var(--brand);
     }
@@ -57,7 +58,7 @@
       flex: 1 1 0;
       width: 100%;
       min-width: 0;
-      background: #0f0f11;
+      background: var(--panel);
       border: 1px solid var(--border-strong);
       color: var(--text);
       border-radius: var(--radius);
@@ -95,7 +96,7 @@
     .radio-list input{ accent-color: var(--brand); }
     .radio-list label:has(input:checked){
       border-color: var(--brand);
-      background: rgba(226,105,44,.14);
+      background: var(--brand-tint);
       color: var(--text);
     }
     .check-row{
@@ -127,7 +128,7 @@
       overflow: auto;
     }
     .chart-wrap{
-      background: #0f0f11;
+      background: var(--panel);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-sm);
       padding: 8px;
@@ -145,7 +146,7 @@
       display: inline-block;
       width: 12px; height: 12px;
       vertical-align: middle;
-      border-radius: 3px;
+      border-radius: 0;
       margin-right: 6px;
     }
     .note{
@@ -191,17 +192,13 @@
       position: fixed; inset: 0; z-index: 9999;
       display: flex; align-items: center; justify-content: center;
       padding: 24px;
-      background:
-        radial-gradient(900px 700px at 12% 10%, rgba(226,105,44,.10), transparent 60%),
-        radial-gradient(900px 700px at 88% 18%, rgba(70,184,166,.07), transparent 60%),
-        var(--bg);
+      background: var(--bg);
     }
     .pw-card{
       width: min(380px, 100%);
       background: var(--panel);
       border: 1px solid var(--border-strong);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
       padding: 28px 26px;
       text-align: center;
     }
@@ -210,17 +207,17 @@
     .pw-card form{ display: flex; flex-direction: column; gap: 12px; }
     .pw-card input{
       width: 100%; box-sizing: border-box;
-      background: #0f0f11;
+      background: var(--panel);
       border: 1px solid var(--border-strong);
       color: var(--text);
       border-radius: var(--radius);
       padding: 11px 13px;
       font: inherit;
     }
-    .pw-card input:focus{
-      outline: none;
+    .pw-card input:focus-visible{
+      outline: 2px solid var(--brand);
+      outline-offset: 1px;
       border-color: var(--brand);
-      box-shadow: 0 0 0 3px rgba(226,105,44,.25);
     }
     .pw-err{ min-height: 1.2em; margin: 0; font-size: 13px; color: var(--warn); }
   </style>
@@ -288,9 +285,13 @@
 
   <header class="site-header">
     <div class="container">
-      <nav class="nav" aria-label="Main navigation">
+      <nav class="nav" aria-label="Main">
         <a class="brand" href="index.html">
-          <img src="assets/images/N2 icon.jpg" alt="" class="nav-logo">
+          <svg class="nav-logo" viewBox="0 0 400 240" aria-hidden="true">
+            <path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
+                  fill="none" stroke="currentColor" stroke-width="36"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <span>
             N2 Team
             <small>VHP decontamination</small>
@@ -298,31 +299,43 @@
         </a>
 
         <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
-          Menu
+          Index
         </button>
 
         <div class="nav-links" id="navLinks" data-nav-links>
-          <a href="index.html">Home</a>
-          <a href="mission.html">Our Mission</a>
-          <a href="team.html">Meet the Team</a>
+          <a href="index.html">Overview</a>
+          <a href="mission.html">Mission</a>
+          <a href="team.html">Team</a>
+          <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
+          <a href="evaporation_calculator.html">Calculator</a>
+        </div>
+
+        <div class="rail-stamp">
+          Doc. N2-VHP-001<br>
+          Rev. <span data-rev></span><br>
+          Uncontrolled copy
         </div>
       </nav>
     </div>
   </header>
 
   <main id="main">
+    <div class="container">
+      <div class="doc-head">
+        <span><b>N2 Team</b> &middot; Vaporised hydrogen peroxide decontamination</span>
+        <span>&sect;5 Calculator</span>
+      </div>
+    </div>
+
     <section class="hero">
       <div class="container">
-        <div class="card pad-lg">
-          <div class="kicker">Tools</div>
-          <h1>H₂O₂ / H₂O Evaporation Rate Calculator</h1>
-          <p>
-            Free-film evaporation of binary H₂O₂/H₂O liquid into a humid air boundary.
-            Pure-component vapor pressures from Giguère &amp; Maass (H₂O₂) and Tetens
-            (H₂O); non-ideality via a Margules model. Choose between Hertz-Knudsen
-            (perfectly stirred gas) and three boundary-layer flux modes.
-          </p>
-        </div>
+        <h1>H₂O₂ / H₂O evaporation rate</h1>
+        <p class="lede">
+          Free-film evaporation of a binary H₂O₂/H₂O liquid into a humid air boundary.
+          Pure-component vapour pressures come from Giguère and Maass (H₂O₂) and Tetens
+          (H₂O), with non-ideality handled by a Margules model. The flux kernel is either
+          Hertz-Knudsen, for a perfectly stirred gas, or one of three boundary-layer modes.
+        </p>
       </div>
     </section>
 
@@ -455,15 +468,15 @@
                 <canvas id="chart-mass" width="640" height="280"></canvas>
               </div>
               <div class="legend">
-                <span><span class="swatch" style="background:#e2692c"></span>H₂O₂ mass (g)</span>
-                <span><span class="swatch" style="background:#46b8a6"></span>H₂O mass (g)</span>
-                <span><span class="swatch" style="background:#5a86c8"></span>Total (g)</span>
+                <span><span class="swatch" style="background:var(--brand)"></span>H₂O₂ mass (g)</span>
+                <span><span class="swatch" style="background:var(--brand-2)"></span>H₂O mass (g)</span>
+                <span><span class="swatch" style="background:var(--brand-3)"></span>Total (g)</span>
               </div>
               <div class="chart-wrap" style="margin-top:10px">
                 <canvas id="chart-wt" width="640" height="220"></canvas>
               </div>
               <div class="legend">
-                <span><span class="swatch" style="background:#46b8a6"></span>Liquid H₂O₂ wt %</span>
+                <span><span class="swatch" style="background:var(--brand-2)"></span>Liquid H₂O₂ wt %</span>
               </div>
               <div class="note">
                 Initial film: 1 mm depth × 100 cm² (≈ 11 g of 30 wt % solution).
@@ -479,11 +492,12 @@
 
   <footer>
     <div class="container">
-      <div class="tiny">© <span data-year></span> VHP Decontamination Project</div>
+      <div class="tiny">N2 Team &middot; VHP decontamination project &middot; <span data-year></span></div>
       <div class="tiny">
-        <a href="index.html">Home</a> ·
-        <a href="mission.html">Our Mission</a> ·
-        <a href="team.html">Meet the Team</a>
+        <a href="index.html">Overview</a> &middot;
+        <a href="mission.html">Mission</a> &middot;
+        <a href="team.html">Team</a> &middot;
+        <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
       </div>
     </div>
   </footer>
@@ -755,17 +769,33 @@
       return { ctx, w, h };
     }
 
+    // Charts take their ink from the stylesheet, so a theme change
+    // (light paper / dark stock) carries through to the plots.
+    function ink(){
+      const cs = getComputedStyle(document.documentElement);
+      const v  = n => cs.getPropertyValue(n).trim();
+      return {
+        axis:  v('--chart-axis') || 'rgba(26,22,18,.45)',
+        grid:  v('--chart-grid') || 'rgba(26,22,18,.10)',
+        label: v('--muted')      || '#574c3f',
+        s1:    v('--brand')      || '#9c4221',
+        s2:    v('--brand-2')    || '#1f5f52',
+        s3:    v('--brand-3')    || '#2f4a7a'
+      };
+    }
+
     function drawAxes(ctx, w, h, pad, xMax, yMax, xLabel, yLabel){
-      ctx.strokeStyle = 'rgba(244,242,236,.30)';
+      const c = ink();
+      ctx.strokeStyle = c.axis;
       ctx.lineWidth = 1;
-      ctx.fillStyle = 'rgba(244,242,236,.60)';
-      ctx.font = '11px ui-monospace, Menlo, Consolas, monospace';
+      ctx.fillStyle = c.label;
+      ctx.font = '11px "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
 
       // box
       ctx.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);
 
       // gridlines: 5 vertical, 5 horizontal
-      ctx.strokeStyle = 'rgba(244,242,236,.08)';
+      ctx.strokeStyle = c.grid;
       for (let i = 1; i < 5; i++){
         const x = pad.l + (w - pad.l - pad.r) * i / 5;
         ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, h - pad.b); ctx.stroke();
@@ -774,7 +804,7 @@
       }
 
       // tick labels
-      ctx.fillStyle = 'rgba(244,242,236,.60)';
+      ctx.fillStyle = c.label;
       ctx.textAlign = 'center';
       for (let i = 0; i <= 5; i++){
         const x = pad.l + (w - pad.l - pad.r) * i / 5;
@@ -789,7 +819,7 @@
       }
 
       // axis labels
-      ctx.fillStyle = 'rgba(244,242,236,.78)';
+      ctx.fillStyle = c.label;
       ctx.textAlign = 'center';
       ctx.fillText(xLabel, pad.l + (w - pad.l - pad.r)/2, h - 4);
       ctx.save();
@@ -831,9 +861,9 @@
       f1.ctx.clearRect(0, 0, f1.w, f1.h);
       const pad1 = { l: 56, r: 14, t: 12, b: 28 };
       drawAxes(f1.ctx, f1.w, f1.h, pad1, xMax, yMaxM, 'Time (min)', 'Mass (g)');
-      plotSeries(f1.ctx, tMin, m1g, pad1, f1.w, f1.h, xMax, yMaxM, '#e2692c');
-      plotSeries(f1.ctx, tMin, m2g, pad1, f1.w, f1.h, xMax, yMaxM, '#46b8a6');
-      plotSeries(f1.ctx, tMin, mt,  pad1, f1.w, f1.h, xMax, yMaxM, '#5a86c8');
+      plotSeries(f1.ctx, tMin, m1g, pad1, f1.w, f1.h, xMax, yMaxM, ink().s1);
+      plotSeries(f1.ctx, tMin, m2g, pad1, f1.w, f1.h, xMax, yMaxM, ink().s2);
+      plotSeries(f1.ctx, tMin, mt,  pad1, f1.w, f1.h, xMax, yMaxM, ink().s3);
 
       // chart 2: wt%
       const c2 = $('chart-wt');
@@ -841,7 +871,7 @@
       f2.ctx.clearRect(0, 0, f2.w, f2.h);
       const pad2 = { l: 56, r: 14, t: 12, b: 28 };
       drawAxes(f2.ctx, f2.w, f2.h, pad2, xMax, 100, 'Time (min)', 'H₂O₂ wt %');
-      plotSeries(f2.ctx, tMin, wt, pad2, f2.w, f2.h, xMax, 100, '#46b8a6');
+      plotSeries(f2.ctx, tMin, wt, pad2, f2.w, f2.h, xMax, 100, ink().s2);
     }
 
     // redraw existing simulation on window resize (responsive canvas)
