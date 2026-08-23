@@ -56,6 +56,7 @@
   --radius:    2px;
   --radius-sm: 2px;
   --max:       1020px;
+  --col:       620px;    /* the landing column: .pick, and anything aligned to it */
   --measure:   62ch;
 
   /* Type — two faces, no monospace in the interface.
@@ -306,7 +307,7 @@ html.is-leaving .brand-watermark{
 
 /* ============================================================
    N2 mark, drifting faintly behind the page
-   Injected by main.js on pages carrying the shared header.
+   Injected by main.js on every page that loads this stylesheet.
    ============================================================ */
 .brand-watermark{
   position: fixed;
@@ -445,6 +446,8 @@ html.is-leaving .brand-watermark{
 
 @media (min-width: 761px){
   body{ padding-left: 210px; }
+  /* index.html carries no rail — its .pick list is the navigation */
+  body.no-rail{ padding-left: 0; }
 }
 
 /* ---------- Mobile: rail folds into a top bar ---------- */
@@ -594,7 +597,7 @@ strong{ color: var(--text); font-weight: 600; }
    ============================================================ */
 .pick{
   width: 100%;
-  max-width: 620px;
+  max-width: var(--col);
   margin: var(--s-5) auto 0;
   text-align: left;
   border-top: 1px solid var(--border);

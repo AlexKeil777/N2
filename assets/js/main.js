@@ -67,7 +67,10 @@
 </svg>`;
 
   function buildMarks() {
-    if (!document.querySelector('.site-header')) return;    // shared-header pages only
+    // The mark styles live in styles.css. On a page that doesn't load it
+    // (the self-contained simulation) these would drop into the flow as
+    // raw SVGs, so gate on the stylesheet, not on the header.
+    if (!document.querySelector('link[href*="styles.css"]')) return;
     if (document.querySelector('.brand-watermark')) return; // don't double-inject
 
     const layer = document.createElement('div');

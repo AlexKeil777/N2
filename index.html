@@ -9,46 +9,19 @@
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
-<body>
+<!-- no-rail: this page carries no left rail. The .pick list below is
+     the navigation, so the rail and the footer menu were the same
+     five choices offered three times over. -->
+<body class="no-rail">
 <a class="skip-link" href="#main">Skip to content</a>
-
-<header class="site-header">
-  <div class="container">
-    <nav class="nav" aria-label="Main">
-      <a class="brand" href="index.html">
-        <svg class="nav-logo" viewBox="0 0 400 240" aria-hidden="true">
-          <path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
-                fill="none" stroke="currentColor" stroke-width="36"
-                stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span>
-          N2 Team
-          <small>VHP decontamination</small>
-        </span>
-      </a>
-
-      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
-        Menu
-      </button>
-
-      <div class="nav-links" id="navLinks" data-nav-links>
-        <a href="index.html">Home</a>
-        <a href="mission.html">Mission</a>
-        <a href="team.html">Team</a>
-        <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
-        <a href="evaporation_calculator.html">Calculator</a>
-      </div>
-    </nav>
-  </div>
-</header>
 
 <main id="main">
 
   <section class="splash">
     <div class="container">
 
-      <!-- Draws itself in on load, then holds. Decorative: the wordmark
-           is already in the header and in the page title. -->
+      <!-- Draws itself in on load, then holds. Decorative: the name is
+           carried by the page title and the footer. -->
       <div class="hero-mark" aria-hidden="true">
         <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
           <path pathLength="1000"
@@ -147,12 +120,6 @@
 <footer>
   <div class="container">
     <div class="tiny">N2 Team &middot; <span data-year></span></div>
-    <div class="tiny">
-      <a href="mission.html">Mission</a> &middot;
-      <a href="team.html">Team</a> &middot;
-      <a href="v4_continuous_vs_batch_animation.html">Simulation</a> &middot;
-      <a href="evaporation_calculator.html">Calculator</a>
-    </div>
   </div>
 </footer>
 
@@ -214,12 +181,18 @@
   }
 
   @media (max-width: 760px){
-    .splash{ min-height: 0; padding-top: var(--s-5); }
+    .splash{ min-height: 0; padding-top: var(--s-6); }
     .hero-mark{ width: min(200px, 52vw); }
   }
 
   /* ---------- contact ---------- */
-  .contact-block{ max-width: 620px; }
+  /* Same column as the .pick list above, so the form's left edge lands
+     exactly under “Home” instead of drifting out to the container. */
+  .contact-block{
+    width: 100%;
+    max-width: var(--col);
+    margin-inline: auto;
+  }
   .contact-form{
     display: flex;
     flex-direction: column;
@@ -285,6 +258,14 @@
   }
   .contact-status.ok  { color: var(--brand-2); }
   .contact-status.err { color: var(--warn); }
+
+  /* The footer line sits in the same column too. */
+  .no-rail footer > .container{
+    width: min(var(--col), calc(100% - 56px));
+  }
+  @media (max-width: 760px){
+    .no-rail footer > .container{ width: calc(100% - 40px); }
+  }
 
   /* honeypot */
   .hp{

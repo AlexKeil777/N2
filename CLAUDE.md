@@ -17,7 +17,7 @@ Do not open HTML files via `file://` protocol — browser asset-loading restrict
 
 ## Architecture
 
-**Pages**: `index.html`, `mission.html`, `team.html`, `v4_continuous_vs_batch_animation.html`, and `evaporation_calculator.html`. Each page follows the same structure: skip-link → `<header>` with nav → `<main>` → `<footer>`.
+**Pages**: `index.html`, `mission.html`, `team.html`, `v4_continuous_vs_batch_animation.html`, and `evaporation_calculator.html`. Each page follows the same structure: skip-link → `<header>` with nav → `<main>` → `<footer>`. `index.html` is the exception — it carries **no rail and no footer menu**, because its `.pick` list is the navigation; offering the same five choices three times over was the redundancy that justified removing them. It marks itself `<body class="no-rail">`, which drops the 210px rail offset.
 
 **Styles** (`assets/css/styles.css`): Single file using CSS custom properties in `:root` for all theme colors, type, spacing and motion. Pitch-black minimalist theme — true `#000000` stock, warm white ink (`#f2efe9`), a single burnt-amber accent (`#e0742f`), hairline rules, 2px radius, and a lot of space. No background texture, no grid.
 
@@ -47,13 +47,13 @@ Breakpoints: 760px (nav rail folds into a top bar, watermark layer hidden), plus
 
 **JavaScript** (`assets/js/main.js`): Mobile nav toggle (`aria-expanded`, Escape to close), current-page detection by pathname (`.active` + `aria-current`, applied to both `.nav-links a` and `.pick-row`), year stamping via `[data-year]`, injection of the drifting N2 mark layer, and the departure half of the vapour transition (described above). Internal links are also prefetched on hover so the swap lands the moment the animation ends.
 
-The mark layer (`.brand-watermark` / `.n2-mark`) puts 3–4 copies of the brand mark behind the page, drawn as **thin outlines** (stroke-width 10) at 7.5–12.5% opacity. That combination matters: earlier versions used a thick stroke at low opacity, which rendered as large dark-amber masses and lifted the whole page off black. Thin bright lines read as a drawing; thick dim ones read as grey background. Each draws itself in, holds, fades and repeats on a 13–21s cycle with a negative delay so the field is already populated at load. Styling and the `n2-draw` keyframes live in `styles.css`; it is injected only on pages carrying `.site-header`, and hidden below 760px and under `prefers-reduced-motion`. Keep it sparse — it is texture, not an animation competing with the content.
+The mark layer (`.brand-watermark` / `.n2-mark`) puts 3–4 copies of the brand mark behind the page, drawn as **thin outlines** (stroke-width 10) at 7.5–12.5% opacity. That combination matters: earlier versions used a thick stroke at low opacity, which rendered as large dark-amber masses and lifted the whole page off black. Thin bright lines read as a drawing; thick dim ones read as grey background. Each draws itself in, holds, fades and repeats on a 13–21s cycle with a negative delay so the field is already populated at load. Styling and the `n2-draw` keyframes live in `styles.css`; it is injected on every page that loads `styles.css` (the guard checks for the stylesheet link, not the header — on the self-contained simulation page the marks would otherwise drop into the flow as unstyled SVGs), and hidden below 760px and under `prefers-reduced-motion`. Keep it sparse — it is texture, not an animation competing with the content.
 
 The landing page has its own larger version: `.hero-mark` in `index.html`, drawn once over 2.6s on load and then held.
 
 Removed on purpose, and worth not re-adding: the drifting H₂O₂ molecule layer, and the blur/scale page transition that delayed every internal navigation by 460ms.
 
-The shared header is a fixed vertical left rail with plain sentence-case links; the current page is marked by a short amber rule bled into the rail margin. It collapses to a top bar ≤760px. Layout lives entirely in `styles.css`; page markup is just `.brand`/`.nav-toggle`/`.nav-links`.
+The shared header is a fixed vertical left rail with plain sentence-case links; the current page is marked by a short amber rule bled into the rail margin. It collapses to a top bar ≤760px. Layout lives entirely in `styles.css`; page markup is just `.brand`/`.nav-toggle`/`.nav-links`. Every page carries it except `index.html`.
 
 **Simulation page** (`v4_continuous_vs_batch_animation.html`): Self-contained — inline CSS and `<script>`, plus the Google Fonts link (its only external dependency). Animates continuous vs. batch VHP processes side-by-side with user controls (chamber length, conveyor speed, takt time, dwell). Edit simulation parameters in the inline `<script>` block at the bottom of that file. It carries its own `:root` copy of the shared dark tokens; if the shared tokens change, mirror them here.
 
@@ -63,10 +63,11 @@ The shared header is a fixed vertical left rail with plain sentence-case links; 
 
 ## Key Conventions
 
-- Design tokens (colors, spacing, type, motion) live exclusively in the `:root` blocks of `styles.css`. Do not hard-code colors elsewhere. The spacing scale is `--s-1` through `--s-7`; use it rather than inventing one-off pixel values, but vary it (tight within a group, generous between sections) instead of applying one value everywhere.
-- New pages include the skip-link (`<a class="skip-link" href="#main">`), the shared `<header>` rail, and the standard `<footer>`. Add the page to `.nav-links` in *every* page's rail so navigation stays consistent.
+- Design tokens (colors, spacing, type, motion, and the `--max` / `--col` widths) live exclusively in the `:root` blocks of `styles.css`. Do not hard-code colors elsewhere. The spacing scale is `--s-1` through `--s-7`; use it rather than inventing one-off pixel values, but vary it (tight within a group, generous between sections) instead of applying one value everywhere.
+- New pages include the skip-link (`<a class="skip-link" href="#main">`), the shared `<header>` rail, and the standard `<footer>`. Add the page to `.nav-links` in *every* page's rail **and** to the `.pick` list on `index.html`, so navigation stays consistent.
 - Structure content with `.sec` plus hairline rules and tables, not by wrapping each block in a `.card`.
 - Buttons carry text labels only. No dingbat or emoji glyphs as icons.
 - `index.html` stays a single-message landing page: the drawn mark, one headline, one line, the `.pick` list of destinations, and the contact form below. Do not grow it into a feature tour. The whole splash is tuned to fit one 900px viewport — if you add to it, re-check that the last choice is still above the fold.
+- One column runs the whole landing page. `--col` (620px) sizes the `.pick` list, the contact block and the footer line, so their left edges stack exactly. Use the token, not a repeated `620px`.
 - Decorative images use `alt=""` and `aria-hidden="true"`; interactive elements need visible `:focus-visible` styles.
 - External dependencies: only Google Fonts CDN (Archivo, Fraunces). Keep it that way — no npm, no frameworks.
