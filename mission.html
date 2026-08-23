@@ -27,21 +27,15 @@
       </a>
 
       <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
-        Index
+        Menu
       </button>
 
       <div class="nav-links" id="navLinks" data-nav-links>
-        <a href="index.html">Overview</a>
+        <a href="index.html">Home</a>
         <a href="mission.html">Mission</a>
         <a href="team.html">Team</a>
         <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
         <a href="evaporation_calculator.html">Calculator</a>
-      </div>
-
-      <div class="rail-stamp">
-        Doc. N2-VHP-001<br>
-        Rev. <span data-rev></span><br>
-        Uncontrolled copy
       </div>
     </nav>
   </div>
@@ -49,20 +43,13 @@
 
 <main id="main">
 
-  <div class="container">
-    <div class="doc-head">
-      <span><b>N2 Team</b> &middot; Vaporised hydrogen peroxide decontamination</span>
-      <span>&sect;2 Mission</span>
-    </div>
-  </div>
-
   <section class="hero">
     <div class="container">
       <h1>Two changes to the VHP cycle.</h1>
       <p class="lede">
-        A VHP cycle is usually held up by two things: a continuous tunnel that couples every
-        station to every other one, and an aeration phase that has to run long enough to get
-        residual peroxide down. We work on both.
+        A cycle is usually held up by two things: a continuous tunnel that couples every station
+        to every other one, and an aeration phase that has to run long enough to get residual
+        peroxide down. We work on both.
       </p>
     </div>
   </section>
@@ -70,120 +57,102 @@
   <section class="section">
     <div class="container">
 
-      <!-- ---------------------------------------------------------- -->
       <div class="sec">
-        <div class="sec-num">2.1</div>
-        <div class="sec-body">
-          <h2>Modular batch, instead of a continuous tunnel</h2>
-          <p>
-            A continuous tunnel makes one long chain out of the whole line. Every station depends
-            on the containment flow of its neighbours, so an interruption anywhere stops
-            everything, and throughput can only be changed by rebuilding the tunnel. We break the
-            line into independent modules that hold sterility assurance on their own.
-          </p>
+        <h2>Modular batch, instead of a continuous tunnel</h2>
+        <p>
+          A continuous tunnel makes one long chain out of the whole line. Every station depends on
+          the containment flow of its neighbours, so an interruption anywhere stops everything, and
+          throughput can only be changed by rebuilding the tunnel. We break the line into
+          independent modules that hold sterility assurance on their own.
+        </p>
 
-          <ul class="list">
-            <li>Modules decouple their cycles, so one stopping does not stop the rest of the line.</li>
-            <li>Throughput is set by module count. Add chambers to scale up, remove them to scale down.</li>
-            <li>An interruption is handled inside a single module rather than across the whole tunnel.</li>
-          </ul>
+        <ul class="list">
+          <li>Modules decouple their cycles, so one stopping does not stop the rest of the line.</li>
+          <li>Throughput is set by module count. Add chambers to scale up, remove them to scale down.</li>
+          <li>An interruption is handled inside a single module rather than across the whole tunnel.</li>
+        </ul>
 
-          <div class="cta-row">
-            <a class="btn primary" href="v4_continuous_vs_batch_animation.html">Run the side-by-side simulation</a>
-          </div>
+        <div class="cta-row">
+          <a class="btn primary" href="v4_continuous_vs_batch_animation.html">Run the simulation</a>
         </div>
       </div>
 
-      <!-- ---------------------------------------------------------- -->
       <div class="sec">
-        <div class="sec-num">2.2</div>
-        <div class="sec-body">
-          <h2>Aeration, which is where the time goes</h2>
-          <p>
-            Aeration is normally the bottleneck of the cycle. Peroxide has to desorb from surfaces
-            and be carried out of the chamber, and until residual H&#8322;O&#8322; is low enough
-            the load cannot be released. Shortening that phase without loosening the release limit
-            is an airflow and thermodynamics problem, so that is how we treat it.
-          </p>
+        <h2>Aeration, which is where the time goes</h2>
+        <p>
+          Aeration is normally the bottleneck. Peroxide has to desorb from surfaces and be carried
+          out of the chamber, and until residual H&#8322;O&#8322; is low enough the load cannot be
+          released. Shortening that phase without loosening the release limit is an airflow and
+          thermodynamics problem, so that is how we treat it.
+        </p>
 
-          <ul class="list">
-            <li>Airflow, temperature and moisture tuned to accelerate peroxide desorption.</li>
-            <li>Chamber geometry designed for the aeration phase rather than inherited from the gassing phase.</li>
-            <li>Evaporation modelled from vapour pressure and activity coefficients, not from a fitted curve.</li>
-          </ul>
+        <ul class="list">
+          <li>Airflow, temperature and moisture tuned to accelerate peroxide desorption.</li>
+          <li>Chamber geometry designed for the aeration phase rather than inherited from gassing.</li>
+          <li>Evaporation modelled from vapour pressure and activity coefficients, not a fitted curve.</li>
+        </ul>
 
-          <div class="cta-row">
-            <a class="btn primary" href="evaporation_calculator.html">Open the evaporation calculator</a>
-            <a class="btn secondary" href="assets/images/video_30sec.mp4" target="_blank" rel="noopener">Watch the 30&nbsp;s clip</a>
-          </div>
+        <div class="cta-row">
+          <a class="btn primary" href="evaporation_calculator.html">Open the calculator</a>
+          <a class="btn secondary" href="assets/images/video_30sec.mp4" target="_blank" rel="noopener">Watch the 30&nbsp;s clip</a>
         </div>
       </div>
 
-      <!-- ---------------------------------------------------------- -->
       <div class="sec">
-        <div class="sec-num">2.3</div>
-        <div class="sec-body">
-          <h2>Case study: tiramisu spoilage</h2>
-          <p>
-            To test the reasoning on something with a measurable outcome, we modelled microbial
-            spoilage in tiramisu and traced how decontamination parameters move the shelf life.
-            The tool, its user guide, the validation plan and the test results are all published
-            below.
-          </p>
+        <h2>Case study: tiramisu spoilage</h2>
+        <p>
+          To test the reasoning on something with a measurable outcome, we modelled microbial
+          spoilage in tiramisu and traced how decontamination parameters move the shelf life.
+        </p>
 
-          <table class="docref">
-            <tbody>
-              <tr>
-                <td>Tool</td>
-                <td>
-                  <a class="ref" href="Tiramisu_Calculator_v1_3.html">Tiramisu spoilage calculator, v1.3</a>
-                  <span class="desc">Interactive model of microbial reduction and shelf life.</span>
-                </td>
-                <td><a class="ref" href="Tiramisu_Calculator_v1_3.html">Open</a></td>
-              </tr>
-              <tr>
-                <td>Guide</td>
-                <td>
-                  <a class="ref" href="user_guide.html">User guide</a>
-                  <span class="desc">What each input means and how to read the output.</span>
-                </td>
-                <td><a class="ref" href="user_guide.html">Read</a></td>
-              </tr>
-              <tr>
-                <td>Plan</td>
-                <td>
-                  <a class="ref" href="validation_plan.html">Validation plan</a>
-                  <span class="desc">What we set out to test, and the acceptance criteria.</span>
-                </td>
-                <td><a class="ref" href="validation_plan.html">Read</a></td>
-              </tr>
-              <tr>
-                <td>Results</td>
-                <td>
-                  <a class="ref" href="validation%20plan%20da%20gpt.html">Test results</a>
-                  <span class="desc">What came back when the plan was executed.</span>
-                </td>
-                <td><a class="ref" href="validation%20plan%20da%20gpt.html">Read</a></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <table class="docref">
+          <tbody>
+            <tr>
+              <td>
+                <a class="ref" href="Tiramisu_Calculator_v1_3.html">Tiramisu spoilage calculator</a>
+                <span class="desc">Interactive model of microbial reduction and shelf life.</span>
+              </td>
+              <td><a class="ref" href="Tiramisu_Calculator_v1_3.html">Open</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="ref" href="user_guide.html">User guide</a>
+                <span class="desc">What each input means and how to read the output.</span>
+              </td>
+              <td><a class="ref" href="user_guide.html">Read</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="ref" href="validation_plan.html">Validation plan</a>
+                <span class="desc">What we set out to test, and the acceptance criteria.</span>
+              </td>
+              <td><a class="ref" href="validation_plan.html">Read</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="ref" href="validation%20plan%20da%20gpt.html">Test results</a>
+                <span class="desc">What came back when the plan was executed.</span>
+              </td>
+              <td><a class="ref" href="validation%20plan%20da%20gpt.html">Read</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="small-note">
+          These four open in their own light-paper styling, kept from when they were written.
+        </p>
       </div>
 
-      <!-- ---------------------------------------------------------- -->
       <div class="sec">
-        <div class="sec-num">2.4</div>
-        <div class="sec-body">
-          <h2>Where this goes next</h2>
-          <p>
-            The two threads meet in one system: modular chambers that can be added or removed to
-            set throughput, each running an aeration phase short enough that it stops being the
-            constraint. That is the configuration we are validating now.
-          </p>
-          <div class="cta-row">
-            <a class="btn primary" href="team.html">See who is working on it</a>
-            <a class="btn" href="index.html#contact">Contact the team</a>
-          </div>
+        <h2>Where this goes next</h2>
+        <p>
+          The two threads meet in one system: modular chambers that can be added or removed to set
+          throughput, each running an aeration phase short enough that it stops being the
+          constraint. That is the configuration we are validating now.
+        </p>
+        <div class="cta-row">
+          <a class="btn primary" href="team.html">See who is working on it</a>
+          <a class="btn" href="index.html#contact">Get in touch</a>
         </div>
       </div>
 
@@ -193,9 +162,9 @@
 
 <footer class="footer">
   <div class="container">
-    <div class="tiny">N2 Team &middot; VHP decontamination project &middot; <span data-year></span></div>
+    <div class="tiny">N2 Team &middot; <span data-year></span></div>
     <div class="tiny">
-      <a href="index.html">Overview</a> &middot;
+      <a href="index.html">Home</a> &middot;
       <a href="team.html">Team</a> &middot;
       <a href="v4_continuous_vs_batch_animation.html">Simulation</a> &middot;
       <a href="evaporation_calculator.html">Calculator</a>

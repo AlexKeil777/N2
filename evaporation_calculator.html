@@ -26,11 +26,8 @@
     .calc-panel + .calc-panel{ margin-top: 16px; }
     .calc-panel h3{
       margin: 0 0 12px;
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: .1em;
-      text-transform: uppercase;
+      font-size: 15px;
+      font-weight: 600;
       color: var(--brand);
     }
     .row{
@@ -63,7 +60,8 @@
       color: var(--text);
       border-radius: var(--radius);
       padding: 8px 10px;
-      font: inherit;
+      font-family: inherit;
+      font-size: 15px;
       font-variant-numeric: tabular-nums;
     }
     .field input[type="number"]:focus{
@@ -119,6 +117,8 @@
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-sm);
       padding: 12px 14px;
+      /* the one place a monospaced face is justified: this is a
+         preformatted numeric dump whose columns must line up */
       font-family: var(--mono);
       font-size: 12.5px;
       line-height: 1.55;
@@ -167,22 +167,18 @@
       padding: 10px 12px;
     }
     .kpi .label{
-      font-size: 11.5px;
-      letter-spacing: .04em;
-      text-transform: uppercase;
+      font-size: 13px;
       color: var(--muted);
     }
     .kpi .value{
-      font-family: var(--mono);
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 600;
       color: var(--text);
       margin-top: 2px;
       font-variant-numeric: tabular-nums;
     }
     .kpi .sub{
-      font-family: var(--mono);
-      font-size: 11.5px;
+      font-size: 12.5px;
       color: var(--subtle);
     }
     /* ---- password gate ---- */
@@ -299,34 +295,22 @@
         </a>
 
         <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
-          Index
+          Menu
         </button>
 
         <div class="nav-links" id="navLinks" data-nav-links>
-          <a href="index.html">Overview</a>
+          <a href="index.html">Home</a>
           <a href="mission.html">Mission</a>
           <a href="team.html">Team</a>
           <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
           <a href="evaporation_calculator.html">Calculator</a>
         </div>
 
-        <div class="rail-stamp">
-          Doc. N2-VHP-001<br>
-          Rev. <span data-rev></span><br>
-          Uncontrolled copy
-        </div>
       </nav>
     </div>
   </header>
 
   <main id="main">
-    <div class="container">
-      <div class="doc-head">
-        <span><b>N2 Team</b> &middot; Vaporised hydrogen peroxide decontamination</span>
-        <span>&sect;5 Calculator</span>
-      </div>
-    </div>
-
     <section class="hero">
       <div class="container">
         <h1>H₂O₂ / H₂O evaporation rate</h1>
@@ -494,7 +478,7 @@
     <div class="container">
       <div class="tiny">N2 Team &middot; VHP decontamination project &middot; <span data-year></span></div>
       <div class="tiny">
-        <a href="index.html">Overview</a> &middot;
+        <a href="index.html">Home</a> &middot;
         <a href="mission.html">Mission</a> &middot;
         <a href="team.html">Team</a> &middot;
         <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
@@ -775,12 +759,12 @@
       const cs = getComputedStyle(document.documentElement);
       const v  = n => cs.getPropertyValue(n).trim();
       return {
-        axis:  v('--chart-axis') || 'rgba(26,22,18,.45)',
-        grid:  v('--chart-grid') || 'rgba(26,22,18,.10)',
-        label: v('--muted')      || '#574c3f',
-        s1:    v('--brand')      || '#9c4221',
-        s2:    v('--brand-2')    || '#1f5f52',
-        s3:    v('--brand-3')    || '#2f4a7a'
+        axis:  v('--chart-axis') || 'rgba(240,236,229,.38)',
+        grid:  v('--chart-grid') || 'rgba(240,236,229,.08)',
+        label: v('--muted')      || '#a8a196',
+        s1:    v('--brand')      || '#e0742f',
+        s2:    v('--brand-2')    || '#4fc0ad',
+        s3:    v('--brand-3')    || '#7fa8e0'
       };
     }
 
@@ -789,7 +773,7 @@
       ctx.strokeStyle = c.axis;
       ctx.lineWidth = 1;
       ctx.fillStyle = c.label;
-      ctx.font = '11px "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace';
+      ctx.font = '11px ui-monospace, Menlo, Consolas, monospace';
 
       // box
       ctx.strokeRect(pad.l, pad.t, w - pad.l - pad.r, h - pad.t - pad.b);

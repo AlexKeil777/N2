@@ -1,108 +1,105 @@
 /* ============================================================
-   N2 Team — "Controlled Document" theme
+   N2 Team — minimalist dark theme
    ------------------------------------------------------------
-   The site is set as a printed engineering datasheet: warm paper
-   stock, ruled grid, ink hierarchy, mono field labels. The four
-   case-study pages (Tiramisu calculator, user guide, validation
-   plans) already used this cream/sienna/Fraunces palette; the
-   shared shell now matches them instead of running its own theme.
+   Flat near-black stock, one warm accent, generous space, and
+   almost nothing else. The only decoration is the N2 mark:
+   drawn large and centred on the landing page, and drifting
+   faintly behind the content elsewhere.
 
    Rules of the house:
      - no gradients, no glows, no coloured shadows, no blur
-     - decoration must carry information (rules, numbers, units)
-     - motion only on state change (hover / focus), <= 160ms
+     - no monospaced type in the interface (see --mono below)
+     - no section numbering, no badges above headings
+     - motion only on load-in or state change, and kept quiet
      - every text/background pair clears WCAG AA (4.5:1)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
 
 :root{
-  /* Paper stock */
-  --bg:        #f2ede1;
-  --bg-2:      #e9e1d0;
-  --panel:     #fbf8f0;   /* sheet laid on the stock */
-  --panel-2:   #f4eee1;
+  /* Stock — warm near-black, never neutral #000 */
+  --bg:        #0d0c0b;
+  --bg-2:      #141312;
+  --panel:     #161514;
+  --panel-2:   #1d1b19;
 
   /* Ink */
-  --text:      #1a1612;
-  --muted:     #574c3f;   /* 7.16:1 on stock */
-  --subtle:    #756a5c;   /* 4.53:1 on stock */
+  --text:      #f0ece5;   /* 16.60:1 */
+  --muted:     #a8a196;   /*  7.63:1 */
+  --subtle:    #8d8579;   /*  5.36:1 */
 
-  /* Marking inks — burnt sienna primary, pine secondary */
-  --brand:     #9c4221;
-  --brand-deep:#7a3318;
-  --brand-2:   #1f5f52;
-  --warn:      #a32d18;
-  --on-brand:  #fbf8f0;   /* type set on a solid ink block */
-  --brand-3:   #2f4a7a;   /* third plotted series only */
+  /* One accent carries the whole site. The second and third exist
+     only for the calculator's plotted series. */
+  --brand:      #e0742f;  /*  6.24:1 */
+  --brand-deep: #f0995e;
+  --brand-2:    #4fc0ad;
+  --brand-3:    #7fa8e0;
+  --warn:       #e5624a;
+  --on-brand:   #0d0c0b;  /* ink laid on a solid accent block */
+  --brand-tint: rgba(224,116,47,.13);
 
   /* Chart ink — canvases read these so plots follow the theme */
-  --brand-tint: rgba(156,66,33,.10);   /* selected-state wash */
-  --chart-axis: rgba(26,22,18,.45);
-  --chart-grid: rgba(26,22,18,.10);
+  --chart-axis: rgba(240,236,229,.38);
+  --chart-grid: rgba(240,236,229,.08);
 
   /* Rules */
-  --border:        rgba(26,22,18,.17);
-  --border-strong: rgba(26,22,18,.38);
+  --border:        rgba(240,236,229,.13);
+  --border-strong: rgba(240,236,229,.28);
   --shadow:        none;
   --shadow-lift:   none;
 
   /* Geometry */
   --radius:    2px;
   --radius-sm: 2px;
-  --max:       1080px;
-  --measure:   66ch;      /* prose line length */
+  --max:       1020px;
+  --measure:   62ch;
 
-  /* Type */
+  /* Type — two faces, no monospace in the interface.
+     --mono exists only for preformatted numeric output where
+     columns genuinely have to line up (the calculator's results
+     dump and its canvas tick labels). Never use it for chrome. */
   --display: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --sans:    "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
-  /* Spacing scale — applied deliberately, not uniformly */
+  /* Spacing scale — used deliberately, not uniformly */
   --s-1: 4px;  --s-2: 8px;  --s-3: 14px; --s-4: 22px;
   --s-5: 36px; --s-6: 58px; --s-7: 92px;
 
-  /* Motion — state change only */
+  /* Motion */
   --ease:   cubic-bezier(.22,.61,.36,1);
-  --t-fast: .12s var(--ease);
-  --t-med:  .16s var(--ease);
-
-  /* Ruled grid */
-  --rule-minor: rgba(26,22,18,.045);
-  --rule-major: rgba(26,22,18,.075);
+  --t-fast: .13s var(--ease);
+  --t-med:  .18s var(--ease);
 }
 
 /* ------------------------------------------------------------
-   Dark variant — kept fully tuned, contrast-checked, and NOT
-   automatic. Turn it on per page with <html data-theme="dark">.
-   Warm stock rather than neutral black; no glows either way.
+   Light variant — kept fully tuned and contrast-checked, but not
+   automatic. Switch a page with <html data-theme="light">.
+   Matches the cream stock the case-study documents use.
    ------------------------------------------------------------ */
-:root[data-theme="dark"]{
-  --bg:        #12100e;
-  --bg-2:      #1a1714;
-  --panel:     #1c1916;
-  --panel-2:   #252118;
+:root[data-theme="light"]{
+  --bg:        #f2ede1;
+  --bg-2:      #e9e1d0;
+  --panel:     #fbf8f0;
+  --panel-2:   #f4eee1;
 
-  --text:      #f2ece0;
-  --muted:     #b0a693;   /* 7.88:1 */
-  --subtle:    #948a78;   /* 5.57:1 */
+  --text:      #1a1612;
+  --muted:     #574c3f;   /* 7.16:1 */
+  --subtle:    #756a5c;   /* 4.53:1 */
 
-  --brand:     #e0742f;   /* 6.06:1 */
-  --brand-deep:#f0995e;
-  --brand-2:   #4fc0ad;   /* 8.57:1 */
-  --warn:      #e5624a;
-  --on-brand:  #12100e;
-  --brand-3:   #7fa8e0;
+  --brand:      #9c4221;  /* 5.59:1 */
+  --brand-deep: #7a3318;
+  --brand-2:    #1f5f52;
+  --brand-3:    #2f4a7a;
+  --warn:       #a32d18;
+  --on-brand:   #fbf8f0;
+  --brand-tint: rgba(156,66,33,.10);
 
-  --brand-tint: rgba(224,116,47,.14);
-  --chart-axis: rgba(242,236,224,.40);
-  --chart-grid: rgba(242,236,224,.09);
+  --chart-axis: rgba(26,22,18,.45);
+  --chart-grid: rgba(26,22,18,.10);
 
-  --border:        rgba(242,236,224,.16);
-  --border-strong: rgba(242,236,224,.34);
-
-  --rule-minor: rgba(242,236,224,.038);
-  --rule-major: rgba(242,236,224,.065);
+  --border:        rgba(26,22,18,.17);
+  --border-strong: rgba(26,22,18,.38);
 }
 
 *{ box-sizing: border-box; }
@@ -112,23 +109,14 @@ body{
   font-family: var(--sans);
   font-size: 16px;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.62;
   color: var(--text);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-
-  /* Engineering paper: 26px minor rule, 130px major rule. No gradients. */
-  background-color: var(--bg);
-  background-image:
-    linear-gradient(var(--rule-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--rule-major) 1px, transparent 1px),
-    linear-gradient(var(--rule-minor) 1px, transparent 1px),
-    linear-gradient(90deg, var(--rule-minor) 1px, transparent 1px);
-  background-size: 130px 130px, 130px 130px, 26px 26px, 26px 26px;
-  background-position: 0 0;
 }
 
 main{ flex: 1 0 auto; }
@@ -146,6 +134,9 @@ a{ color: inherit; text-decoration: none; }
 
 ::selection{ background: var(--brand); color: var(--on-brand); }
 
+/* Real content sits above the drifting mark layer */
+.site-header, main, footer, .footer{ position: relative; z-index: 1; }
+
 /* ============================================================
    Skip link
    ============================================================ */
@@ -158,25 +149,68 @@ a{ color: inherit; text-decoration: none; }
   padding: 10px 13px;
   background: var(--panel); color: var(--text);
   border: 1px solid var(--brand);
-  font-family: var(--mono); font-size: 13px;
+  font-size: 14px;
   z-index: 9999;
 }
 
 /* ============================================================
-   Header — fixed left rail, set as a document index
+   N2 mark, drifting faintly behind the page
+   Injected by main.js on pages carrying the shared header.
+   ============================================================ */
+.brand-watermark{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.n2-mark{
+  position: absolute;
+  width: var(--size, 380px);
+}
+.n2-mark svg{ width: 100%; height: auto; display: block; }
+.n2-mark path{
+  stroke: var(--brand);
+  stroke-dasharray: 1000;      /* the path carries pathLength="1000" */
+  stroke-dashoffset: 1000;
+  opacity: 0;
+  will-change: stroke-dashoffset, opacity;
+  animation: n2-draw var(--dur, 15s) var(--ease) var(--delay, 0s) infinite;
+}
+@keyframes n2-draw{
+  0%   { stroke-dashoffset: 1000; opacity: 0; }
+  10%  { opacity: var(--peak, .07); }
+  45%  { stroke-dashoffset: 0; opacity: var(--peak, .07); }   /* drawn */
+  72%  { stroke-dashoffset: 0; opacity: var(--peak, .07); }   /* hold */
+  90%  { stroke-dashoffset: 0; opacity: 0; }                  /* fade */
+  100% { stroke-dashoffset: 1000; opacity: 0; }               /* loop */
+}
+@media (max-width: 760px){
+  .brand-watermark{ display: none; }
+}
+@media (prefers-reduced-motion: reduce){
+  .n2-mark path{
+    animation: none;
+    stroke-dashoffset: 0;
+    opacity: var(--peak, .06);
+  }
+}
+
+/* ============================================================
+   Header — fixed left rail
    ============================================================ */
 .site-header{
   position: fixed;
   top: 0; left: 0; bottom: 0;
-  width: 224px;
+  width: 210px;
   z-index: 60;
-  border-right: 1px solid var(--border);
   background: var(--bg);
+  border-right: 1px solid var(--border);
 }
 .site-header > .container{
   width: 100%; height: 100%;
   margin: 0;
-  padding: 30px 24px 26px 30px;
+  padding: 32px 22px 30px 30px;
   display: block;
 }
 
@@ -189,99 +223,66 @@ a{ color: inherit; text-decoration: none; }
 }
 
 .brand{
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 11px;
   margin-bottom: var(--s-6);
   font-weight: 600;
+  font-size: 15px;
   letter-spacing: -.005em;
+  transition: opacity var(--t-fast);
 }
-.brand span{ display:flex; flex-direction:column; line-height:1.1; }
+.brand:hover{ opacity: .78; }
+.brand span{ display:flex; flex-direction:column; line-height:1.15; }
 .brand small{
-  font-family: var(--mono);
   font-weight: 400;
-  font-size: 10px;
+  font-size: 11px;
   color: var(--subtle);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  margin-top: 4px;
+  letter-spacing: .01em;
+  margin-top: 3px;
 }
 .nav-logo{
-  height: 26px; width: auto;
+  height: 25px; width: auto;
   display: block;
   color: var(--text);
-  border-radius: 1px;
 }
 
-/* Index entries: section number + title, ruled like a table of contents */
 .nav-links{
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0;
+  gap: 2px;
   margin: 0 0 auto;
   width: 100%;
-  counter-reset: navitem;
-  border-top: 1px solid var(--border);
 }
 .nav-links a{
   position: relative;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 11px 2px 11px 0;
-  border-bottom: 1px solid var(--border);
+  display: block;
+  padding: 9px 0;
   color: var(--muted);
-  font-family: var(--mono);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 400;
-  letter-spacing: .005em;
-  transition: color var(--t-fast);
-}
-.nav-links a::before{
-  counter-increment: navitem;
-  content: counter(navitem, decimal-leading-zero);
-  flex: 0 0 auto;
-  color: var(--subtle);
-  font-size: 11px;
   transition: color var(--t-fast);
 }
 .nav-links a:hover,
 .nav-links a:focus-visible{ color: var(--text); }
-.nav-links a:hover::before,
-.nav-links a:focus-visible::before{ color: var(--brand); }
-.nav-links a.active{ color: var(--brand); font-weight: 500; }
-.nav-links a.active::before{ color: var(--brand); }
-/* current-section marker bled into the rail margin */
+.nav-links a.active{ color: var(--brand); }
+/* the only marker: a short rule bled into the rail margin */
 .nav-links a.active::after{
   content:"";
-  position:absolute; left:-30px; top:0; bottom:-1px;
-  width: 3px;
+  position:absolute; left:-30px; top:50%;
+  width: 18px; height: 1px;
   background: var(--brand);
 }
-.nav-links a:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
-
-/* Rail footer: document control stamp */
-.rail-stamp{
-  font-family: var(--mono);
-  font-size: 10px;
-  line-height: 1.75;
-  color: var(--subtle);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-  margin-top: var(--s-5);
-}
+.nav-links a:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
 
 .nav-toggle{
   display: none;
   border: 1px solid var(--border-strong);
   background: transparent;
   color: var(--text);
-  padding: 7px 12px;
+  padding: 7px 13px;
   border-radius: var(--radius);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: .06em;
+  font-family: inherit;
+  font-size: 14px;
   cursor: pointer;
   transition: border-color var(--t-fast), color var(--t-fast);
 }
@@ -289,7 +290,7 @@ a{ color: inherit; text-decoration: none; }
 .nav-toggle:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
 
 @media (min-width: 761px){
-  body{ padding-left: 224px; }
+  body{ padding-left: 210px; }
 }
 
 /* ---------- Mobile: rail folds into a top bar ---------- */
@@ -301,7 +302,7 @@ a{ color: inherit; text-decoration: none; }
     width: auto; height: auto;
     background: var(--bg);
     border-right: 0;
-    border-bottom: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border);
   }
   .site-header > .container{
     height: auto; margin: 0 auto; padding: 0;
@@ -311,78 +312,24 @@ a{ color: inherit; text-decoration: none; }
     align-items: center;
     justify-content: space-between;
     height: auto;
-    padding: 13px 0;
+    padding: 14px 0;
     gap: 16px;
   }
   .brand{ margin-bottom: 0; }
   .nav-toggle{ display: inline-flex; }
-  .rail-stamp{ display: none; }
   .nav-links{
     position: absolute; top: 100%; left: 0; right: 0;
     margin: 0;
+    gap: 0;
     background: var(--bg);
-    border-top: 1px solid var(--border-strong);
-    border-bottom: 1px solid var(--border-strong);
-    padding: 0 20px 6px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 6px 20px 14px;
     display: none;
   }
   .nav-links.open{ display: flex; }
-  .nav-links a{ padding: 13px 0; }
-  .nav-links a.active::after{ left: -20px; width: 2px; }
-}
-
-/* ============================================================
-   Document furniture — running heads, rules, section numbers
-   ============================================================ */
-
-/* Running head at the top of every page: who / what / revision */
-.doc-head{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px var(--s-4);
-  padding: var(--s-5) 0 var(--s-2);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  color: var(--subtle);
-  border-bottom: 1px solid var(--border-strong);
-}
-.doc-head b{ color: var(--muted); font-weight: 500; }
-
-/* A numbered section: number sits in the margin beside the heading */
-.sec{
-  display: flex;
-  align-items: baseline;
-  gap: var(--s-3);
-  border-top: 1px solid var(--border-strong);
-  padding-top: var(--s-3);
-  margin-top: var(--s-6);
-}
-.sec-num{
-  flex: 0 0 auto;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--brand);
-  letter-spacing: .06em;
-  padding-top: .5em;
-  min-width: 3.4em;
-}
-.sec-body{ flex: 1 1 auto; min-width: 0; }
-@media (max-width: 560px){
-  .sec{ flex-direction: column; gap: var(--s-1); }
-  .sec-num{ padding-top: 0; }
-}
-
-/* Plain hairline */
-.hr{
-  height: 0;
-  border: 0;
-  border-top: 1px solid var(--border);
-  margin: var(--s-4) 0;
+  .nav-links a{ padding: 12px 0; }
+  .nav-links a.active::after{ left: -20px; width: 12px; }
 }
 
 /* ============================================================
@@ -396,16 +343,14 @@ h1, h2, h3{
 h1, h2{
   font-family: var(--display);
   font-weight: 600;
-  letter-spacing: -.012em;
+  letter-spacing: -.014em;
 }
-h1{ font-size: clamp(34px, 4.6vw, 56px); line-height: 1.06; }
-h2{ font-size: clamp(23px, 2.6vw, 31px); line-height: 1.16; }
+h1{ font-size: clamp(34px, 4.4vw, 54px); line-height: 1.07; }
+h2{ font-size: clamp(22px, 2.4vw, 29px); line-height: 1.18; }
 h3{
-  font-family: var(--sans);
   font-size: 16px;
   font-weight: 600;
-  line-height: 1.35;
-  letter-spacing: 0;
+  line-height: 1.4;
   margin-bottom: var(--s-2);
 }
 
@@ -418,13 +363,12 @@ p{
 p:last-child{ margin-bottom: 0; }
 strong{ color: var(--text); font-weight: 600; }
 
-/* Opening paragraph — larger, set in the display face */
+/* Opening paragraph */
 .lede{
-  font-family: var(--display);
-  font-size: clamp(17px, 1.8vw, 21px);
-  line-height: 1.5;
+  font-size: clamp(17px, 1.7vw, 19px);
+  line-height: 1.6;
   color: var(--muted);
-  max-width: 58ch;
+  max-width: 56ch;
 }
 
 .small-note{
@@ -435,35 +379,41 @@ strong{ color: var(--text); font-weight: 600; }
 }
 
 .tiny{
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: .05em;
+  font-size: 13px;
   color: var(--subtle);
 }
 .tiny a{ color: var(--muted); transition: color var(--t-fast); }
 .tiny a:hover{ color: var(--brand); }
 
-code.inline{
-  font-family: var(--mono);
-  font-size: .9em;
-  padding: 1px 5px;
-  border: 1px solid var(--border);
-  background: var(--panel-2);
-  color: var(--brand-deep);
+/* Aligned figures without resorting to a monospaced face */
+.fig{ font-variant-numeric: tabular-nums; }
+
+/* Plain hairline */
+.hr{
+  height: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--s-4) 0;
 }
 
-/* Figures set in mono so columns of numbers line up */
-.fig{ font-family: var(--mono); font-variant-numeric: tabular-nums; }
+/* ============================================================
+   Section — a heading over a hairline, no numbering
+   ============================================================ */
+.sec{
+  border-top: 1px solid var(--border);
+  padding-top: var(--s-4);
+  margin-top: var(--s-6);
+}
+.sec:first-child{ border-top: 0; margin-top: 0; padding-top: 0; }
 
 /* ============================================================
-   Lists — hairline-ruled rows, not bulleted card filler
+   Lists — hairline-ruled rows
    ============================================================ */
 .list{
   margin: var(--s-3) 0 0;
   padding: 0;
   list-style: none;
   max-width: var(--measure);
-  border-top: 1px solid var(--border);
 }
 .list li{
   position: relative;
@@ -471,9 +421,10 @@ code.inline{
   padding: var(--s-2) 0 var(--s-2) var(--s-4);
   border-bottom: 1px solid var(--border);
   color: var(--muted);
-  font-size: 15px;
+  font-size: 15.5px;
   line-height: 1.55;
 }
+.list li:first-child{ border-top: 1px solid var(--border); }
 .list li::before{
   content: "";
   position: absolute;
@@ -483,178 +434,102 @@ code.inline{
 }
 
 /* ============================================================
-   Specification table — replaces the three-up "stat banner"
+   Reference index — title, one line of context, one link
    ============================================================ */
-.spec{
-  width: 100%;
-  border-collapse: collapse;
-  border-top: 1px solid var(--border-strong);
-  border-bottom: 1px solid var(--border-strong);
-  margin: var(--s-4) 0 0;
-  font-size: 15px;
-}
-.spec th,
-.spec td{
-  text-align: left;
-  vertical-align: baseline;
-  padding: var(--s-3) var(--s-3) var(--s-3) 0;
-  border-bottom: 1px solid var(--border);
-}
-.spec tr:last-child th,
-.spec tr:last-child td{ border-bottom: 0; }
-.spec th{
-  font-family: var(--mono);
-  font-weight: 400;
-  font-size: 11.5px;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  color: var(--subtle);
-  width: 46%;
-  padding-top: calc(var(--s-3) + 3px);
-}
-.spec td{ color: var(--text); font-weight: 500; }
-.spec td .unit{
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-weight: 400;
-  color: var(--subtle);
-  margin-left: 6px;
-}
-.spec .val{
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--brand);
-  margin-right: 4px;
-}
-@media (max-width: 560px){
-  .spec th{ width: 50%; font-size: 11px; }
-}
-
-/* Reference table — a document index (kind / title / link) */
 .docref{
   width: 100%;
   border-collapse: collapse;
-  border-top: 1px solid var(--border-strong);
   margin-top: var(--s-4);
-  font-size: 15px;
+  font-size: 16px;
 }
 .docref tr{ border-bottom: 1px solid var(--border); }
-.docref tr:last-child{ border-bottom: 1px solid var(--border-strong); }
+.docref tr:first-child{ border-top: 1px solid var(--border); }
 .docref td{ padding: var(--s-3) var(--s-3) var(--s-3) 0; vertical-align: baseline; }
-.docref td:first-child{
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--subtle);
-  white-space: nowrap;
-  width: 1%;
-  padding-right: var(--s-4);
-}
-.docref td:last-child{ text-align: right; width: 1%; white-space: nowrap; }
+.docref td:last-child{ text-align: right; width: 1%; white-space: nowrap; padding-right: 0; }
 .docref a.ref{
-  color: var(--brand);
+  color: var(--text);
   font-weight: 500;
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--t-fast);
+  transition: color var(--t-fast);
 }
-.docref a.ref:hover{ border-bottom-color: var(--brand); }
-.docref a.ref:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
+.docref a.ref:hover{ color: var(--brand); }
+.docref td:last-child a.ref{ color: var(--brand); font-weight: 400; font-size: 15px; }
+.docref a.ref:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
 .docref .desc{
-  color: var(--muted);
-  font-size: 14px;
+  color: var(--subtle);
+  font-size: 14.5px;
   display: block;
   margin-top: 3px;
-  max-width: 54ch;
+  max-width: 52ch;
 }
-@media (max-width: 640px){
-  .docref td:first-child{ display: none; }
+@media (max-width: 620px){
   .docref tr{ display: block; padding: var(--s-2) 0; }
   .docref td{ display: block; padding: 2px 0; }
-  .docref td:last-child{ text-align: left; padding-bottom: var(--s-3); }
+  .docref td:last-child{ text-align: left; padding-top: var(--s-2); }
 }
 
 /* ============================================================
-   Roster — team as a ruled contributor list, not identical cards
+   Roster — a ruled list of people
    ============================================================ */
-.roster{
-  border-top: 1px solid var(--border-strong);
-  margin-top: var(--s-4);
-}
+.roster{ margin-top: var(--s-4); }
 .roster-row{
   display: grid;
-  grid-template-columns: 3.4em minmax(0, 1.1fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
   align-items: baseline;
   gap: var(--s-3);
   padding: var(--s-4) 0;
   border-bottom: 1px solid var(--border);
 }
-.roster-row .idx{
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--subtle);
-}
+.roster-row:first-child{ border-top: 1px solid var(--border); }
 .roster-row .who{
   font-family: var(--display);
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 600;
   color: var(--text);
-  letter-spacing: -.01em;
+  letter-spacing: -.012em;
   line-height: 1.2;
 }
 .roster-row .what{
-  font-family: var(--mono);
-  font-size: 12.5px;
-  letter-spacing: .05em;
-  text-transform: uppercase;
+  font-size: 15px;
   color: var(--muted);
 }
 .roster-row .contact a{
-  font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 15px;
   color: var(--brand);
-  border-bottom: 1px solid transparent;
-  transition: border-color var(--t-fast);
+  transition: opacity var(--t-fast);
 }
-.roster-row .contact a:hover{ border-bottom-color: var(--brand); }
-.roster-row .contact a:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
+.roster-row .contact a:hover{ opacity: .75; }
+.roster-row .contact a:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
 .roster-row .contact .none{
-  font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: 15px;
   color: var(--subtle);
 }
 @media (max-width: 720px){
   .roster-row{
-    grid-template-columns: 3.4em 1fr;
-    row-gap: var(--s-2);
+    grid-template-columns: 1fr;
+    row-gap: var(--s-1);
   }
-  .roster-row .what,
-  .roster-row .contact{ grid-column: 2; }
 }
 
 /* ============================================================
-   Buttons — flat, mono, sentence case, no icons
+   Buttons
    ============================================================ */
 .btn{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 15px;
+  padding: 11px 20px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
   background: transparent;
   color: var(--text);
-  font-family: var(--mono);
-  font-size: 13px;
+  font-family: inherit;
+  font-size: 15px;
   font-weight: 500;
-  letter-spacing: .01em;
   cursor: pointer;
   transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
 }
 .btn:hover{ border-color: var(--brand); color: var(--brand); }
-.btn:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
+.btn:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
 
 .btn.primary{
   background: var(--brand);
@@ -685,11 +560,11 @@ code.inline{
   margin-top: var(--s-4);
 }
 
-/* Inline link that reads as a document cross-reference */
+/* Inline cross-reference link */
 .xref{
   color: var(--brand);
   font-weight: 500;
-  border-bottom: 1px solid var(--border-strong);
+  border-bottom: 1px solid transparent;
   transition: border-color var(--t-fast);
 }
 .xref:hover{ border-bottom-color: var(--brand); }
@@ -701,7 +576,7 @@ code.inline{
 .card{
   position: relative;
   background: var(--panel);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   transition: border-color var(--t-med);
 }
@@ -715,14 +590,14 @@ code.inline{
 /* ============================================================
    Layout blocks
    ============================================================ */
-.hero{ padding: var(--s-5) 0 0; }
-.section{ padding: 0 0 var(--s-7); }
+.hero{ padding: var(--s-6) 0 0; }
+.section{ padding: var(--s-6) 0 var(--s-7); }
 
 /* ============================================================
-   Footer — a document colophon
+   Footer
    ============================================================ */
 .footer, footer{
-  border-top: 1px solid var(--border-strong);
+  border-top: 1px solid var(--border);
   padding: var(--s-4) 0 var(--s-5);
   margin-top: 0;
   color: var(--muted);
@@ -740,13 +615,11 @@ code.inline{
    Forms
    ============================================================ */
 .field-label{
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: .11em;
-  text-transform: uppercase;
-  color: var(--subtle);
+  font-size: 14px;
+  color: var(--muted);
 }
 
 @media (prefers-reduced-motion: reduce){
-  *{ animation: none !important; transition-duration: .01ms !important; }
+  *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+     transition-duration: .01ms !important; }
 }

@@ -27,9 +27,9 @@ The interactive simulation included in the site visualizes both architectures si
 ├── README.md
 └── assets/
     ├── css/
-    │   └── styles.css                      # "Controlled Document" theme (paper + dark variant)
+    │   └── styles.css                      # Minimalist dark theme (+ light variant)
     ├── js/
-    │   └── main.js                         # Nav, current section, revision stamp
+    │   └── main.js                         # Nav, current page, drifting N2 mark layer
     ├── py/
     │   └── EvapCalculatorAp_v15.py         # Reference Tkinter desktop app
     └── images/
@@ -44,8 +44,8 @@ The interactive simulation included in the site visualizes both architectures si
 ## ✦ Tech stack
 
 - Plain **HTML / CSS / JavaScript** — no build step, no framework
-- **Fraunces** (headings), **Archivo** (body/UI) and **IBM Plex Mono** (labels and data) via Google Fonts
-- Inline **SVG** for the brand mark and the process simulation
+- **Fraunces** (headings) and **Archivo** (body/UI) via Google Fonts. No monospaced type in the interface
+- Inline **SVG** for the brand mark, the drifting background marks, and the process simulation
 - Responsive design with a collapsing nav rail, `prefers-reduced-motion` support, and `:focus-visible` accessibility
 - Every text/background pair in the shared theme clears WCAG AA (4.5:1)
 
@@ -90,18 +90,17 @@ Then open <http://localhost:8080> in your browser.
 ## ✦ Customization
 
 ### Theme & colors
-The site is set as a printed engineering datasheet. All design tokens live as CSS
-custom properties at the top of `assets/css/styles.css`:
+Minimalist dark: flat warm near-black stock, one amber accent, a lot of space. All
+design tokens live as CSS custom properties at the top of `assets/css/styles.css`:
 
 ```css
 :root{
-  --bg:      #f2ede1;   /* warm paper stock, ruled with a faint graph grid */
-  --panel:   #fbf8f0;   /* sheet laid on the stock */
-  --text:    #1a1612;   /* ink */
-  --muted:   #574c3f;   /* 7.16:1 on stock */
-  --subtle:  #756a5c;   /* 4.53:1 on stock */
-  --brand:   #9c4221;   /* burnt sienna */
-  --brand-2: #1f5f52;   /* pine */
+  --bg:      #0d0c0b;   /* warm near-black, never neutral #000 */
+  --panel:   #161514;
+  --text:    #f0ece5;   /* 16.60:1 */
+  --muted:   #a8a196;   /*  7.63:1 */
+  --subtle:  #8d8579;   /*  5.36:1 */
+  --brand:   #e0742f;   /*  6.24:1 — the one accent */
   --radius:  2px;
   /* …etc */
 }
@@ -110,20 +109,28 @@ custom properties at the top of `assets/css/styles.css`:
 Tweak these to retheme the entire site without touching individual rules. Contrast
 ratios are noted next to the tokens; keep any replacement at 4.5:1 or better.
 
-**Dark variant.** A fully tuned dark palette lives under `:root[data-theme="dark"]`
-in the same file. It is not automatic — switch a page by putting the attribute on
-the root element:
+**Light variant.** The cream/sienna paper palette is kept under
+`:root[data-theme="light"]` in the same file. It is not automatic — switch a page
+by putting the attribute on the root element:
 
 ```html
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 ```
 
-The simulation page is the one screen that is dark by default; it carries its own
-copy of those values because it is standalone.
-
 **House rules** (documented in the stylesheet header): no gradients, glows, coloured
-shadows or backdrop blur; decoration has to carry information; motion only on state
-change and 160ms or less; uppercase only on small mono field labels.
+shadows or backdrop blur; no monospaced type in the interface; no section numbering
+or badges above headings; motion only on load-in or state change.
+
+### The N2 mark
+Two places, both driven by the same path with `pathLength="1000"` and a
+`stroke-dashoffset` draw:
+
+- **Landing page** — `.hero-mark` in `index.html`. Large and centred, draws itself
+  once over 2.6s on load, then holds.
+- **Every other page** — `.brand-watermark` injected by `assets/js/main.js`. Three or
+  four large, very faint copies that draw, hold, fade and repeat on a 13–21s cycle.
+  Tune `count`, the `--size` range and `--peak` opacity there. Hidden below 760px and
+  under `prefers-reduced-motion`.
 
 ### Simulation parameters
 The simulation page (`v4_continuous_vs_batch_animation.html`) exposes user-facing controls (chamber length, conveyor speed, takt time, minimum dwell). All other timing/visual tuning is in the inline `<script>` at the bottom of that file.

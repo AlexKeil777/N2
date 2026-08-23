@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>N2 Team — VHP decontamination</title>
-  <meta name="description" content="The N2 Team works on vaporised hydrogen peroxide decontamination: modular batch chambers in place of continuous tunnels, and a rebuilt aeration phase that clears residual peroxide up to 10x faster.">
+  <meta name="description" content="N2 Team. Vaporised hydrogen peroxide decontamination, rebuilt around modular batch chambers and a faster aeration phase.">
   <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
@@ -27,21 +27,15 @@
       </a>
 
       <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
-        Index
+        Menu
       </button>
 
       <div class="nav-links" id="navLinks" data-nav-links>
-        <a href="index.html">Overview</a>
+        <a href="index.html">Home</a>
         <a href="mission.html">Mission</a>
         <a href="team.html">Team</a>
         <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
         <a href="evaporation_calculator.html">Calculator</a>
-      </div>
-
-      <div class="rail-stamp">
-        Doc. N2-VHP-001<br>
-        Rev. <span data-rev></span><br>
-        Uncontrolled copy
       </div>
     </nav>
   </div>
@@ -49,129 +43,83 @@
 
 <main id="main">
 
-  <div class="container">
-    <div class="doc-head">
-      <span><b>N2 Team</b> · Vaporised hydrogen peroxide decontamination</span>
-      <span>&sect;1 Overview</span>
-    </div>
-  </div>
-
-  <section class="hero">
+  <section class="splash">
     <div class="container">
-      <h1 class="home-title">
-        Decontaminate up to <span class="fig">10&times;</span> faster than legacy VHP systems.
+
+      <!-- Drawn in on load, then held. Decorative: the wordmark is
+           already in the header and in the page title. -->
+      <div class="hero-mark" aria-hidden="true">
+        <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+          <path pathLength="1000"
+                d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
+                fill="none" stroke-width="36"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <h1 class="splash-title">
+        Decontaminate up to <span class="fig">10&times;</span> faster
+        than legacy VHP systems.
       </h1>
 
-      <p class="lede">
-        We are the N2 Team, vaporised hydrogen peroxide decontamination specialists with decades
-        of combined plant experience. Our work moves VHP off continuous tunnels onto modular batch
-        chambers, and rebuilds the aeration phase, which is normally what decides how long a cycle
-        actually takes.
+      <p class="splash-line">
+        Vaporised hydrogen peroxide decontamination, rebuilt around modular
+        batch chambers and a much shorter aeration phase.
       </p>
 
-      <div class="cta-row">
-        <a class="btn primary" href="mission.html">Read how it works</a>
-        <a class="btn" href="#contact">Contact the team</a>
+      <div class="cta-row splash-cta">
+        <a class="btn primary" href="mission.html">How it works</a>
+        <a class="btn" href="#contact">Get in touch</a>
       </div>
+
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" id="contact">
     <div class="container">
+      <div class="contact-block">
+        <h2>Get in touch</h2>
+        <p>Questions, collaboration or partnership. We normally reply within a few working days.</p>
 
-      <div class="sec">
-        <div class="sec-num">1.1</div>
-        <div class="sec-body">
-          <h2>Key figures</h2>
+        <form id="contact-form"
+              class="contact-form"
+              action="https://formsubmit.co/keil.alex@outlook.com"
+              method="POST">
+          <input type="hidden" name="_subject" value="New contact via N2 website">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <!-- Honeypot: bots fill this, people never see it. -->
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
 
-          <table class="spec">
-            <tbody>
-              <tr>
-                <th scope="row">Aeration, against legacy</th>
-                <td><span class="val">10&times;</span><span class="unit">faster, target</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Process architecture</th>
-                <td>Modular batch chambers<span class="unit">not a continuous tunnel</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Sterility assurance</th>
-                <td>Pharma grade<span class="unit">maintained across modules</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Throughput scaling</th>
-                <td>By module count<span class="unit">add or remove chambers</span></td>
-              </tr>
-              <tr>
-                <th scope="row">Project stage</th>
-                <td>Concept validation<span class="unit">simulation and test plan published</span></td>
-              </tr>
-            </tbody>
-          </table>
-
-          <p class="small-note">
-            Figures are project targets from our own simulation and validation work, not
-            certified vendor specifications. The
-            <a class="xref" href="mission.html">mission page</a> sets out the method behind them.
-          </p>
-        </div>
-      </div>
-
-      <div class="sec" id="contact">
-        <div class="sec-num">1.2</div>
-        <div class="sec-body">
-          <h2>Contact</h2>
-          <p>
-            For questions, collaboration or partnership, send a message here. We normally reply
-            within a few working days.
-          </p>
-
-          <form id="contact-form"
-                class="contact-form"
-                action="https://formsubmit.co/keil.alex@outlook.com"
-                method="POST">
-            <input type="hidden" name="_subject" value="New contact via N2 website">
-            <input type="hidden" name="_template" value="table">
-            <input type="hidden" name="_captcha" value="false">
-            <!-- Honeypot: bots fill this, people never see it. -->
-            <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
-
-            <div class="contact-row">
-              <div class="contact-field">
-                <label class="field-label" for="cf-name">Name</label>
-                <input id="cf-name" name="name" type="text" required autocomplete="name">
-              </div>
-              <div class="contact-field">
-                <label class="field-label" for="cf-email">Email</label>
-                <input id="cf-email" name="email" type="email" required autocomplete="email">
-              </div>
-            </div>
-
+          <div class="contact-row">
             <div class="contact-field">
-              <label class="field-label" for="cf-subject">Subject <span class="optional">(optional)</span></label>
-              <input id="cf-subject" name="subject" type="text" autocomplete="off">
+              <label class="field-label" for="cf-name">Name</label>
+              <input id="cf-name" name="name" type="text" required autocomplete="name">
             </div>
-
             <div class="contact-field">
-              <label class="field-label" for="cf-message">Message</label>
-              <textarea id="cf-message" name="message" rows="6" required></textarea>
+              <label class="field-label" for="cf-email">Email</label>
+              <input id="cf-email" name="email" type="email" required autocomplete="email">
             </div>
+          </div>
 
-            <div class="contact-actions">
-              <button class="btn primary" type="submit" id="cf-submit">Send message</button>
-              <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
-            </div>
-          </form>
-        </div>
+          <div class="contact-field">
+            <label class="field-label" for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" rows="5" required></textarea>
+          </div>
+
+          <div class="contact-actions">
+            <button class="btn primary" type="submit" id="cf-submit">Send message</button>
+            <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
+          </div>
+        </form>
       </div>
-
     </div>
   </section>
 </main>
 
 <footer>
   <div class="container">
-    <div class="tiny">N2 Team &middot; VHP decontamination project &middot; <span data-year></span></div>
+    <div class="tiny">N2 Team &middot; <span data-year></span></div>
     <div class="tiny">
       <a href="mission.html">Mission</a> &middot;
       <a href="team.html">Team</a> &middot;
@@ -182,29 +130,69 @@
 </footer>
 
 <style>
-  /* ---- page 1 specifics ---- */
-  .home-title{
-    max-width: 20ch;
-    margin-bottom: var(--s-4);
+  /* ---------- landing splash ---------- */
+  .splash{
+    min-height: calc(100vh - 190px);
+    display: flex;
+    align-items: center;
+    padding: var(--s-6) 0 var(--s-7);
   }
-  /* The claim is a measured figure, so it is set in the data face
-     rather than given a highlighter swipe. */
-  .home-title .fig{
-    font-weight: 500;
-    color: var(--brand);
-    font-size: .88em;
-    letter-spacing: -.02em;
+  .splash > .container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
-  /* ---- contact form ---- */
+  /* The mark draws itself once, then stays. */
+  .hero-mark{
+    width: min(360px, 54vw);
+    margin-bottom: var(--s-5);
+  }
+  .hero-mark svg{ width: 100%; height: auto; display: block; overflow: visible; }
+  .hero-mark path{
+    stroke: var(--brand);
+    stroke-dasharray: 1000;      /* the path carries pathLength="1000" */
+    stroke-dashoffset: 1000;
+    opacity: 0;
+    animation: hero-draw 2.6s var(--ease) .25s forwards;
+  }
+  @keyframes hero-draw{
+    0%  { stroke-dashoffset: 1000; opacity: 0; }
+    12% { opacity: 1; }
+    100%{ stroke-dashoffset: 0;    opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-mark path{ animation: none; stroke-dashoffset: 0; opacity: 1; }
+  }
+
+  .splash-title{
+    max-width: 17ch;
+    margin: 0 0 var(--s-4);
+  }
+  /* A measured figure, not a highlighted marketing word. */
+  .splash-title .fig{ color: var(--brand); }
+
+  .splash-line{
+    max-width: 52ch;
+    font-size: clamp(16px, 1.6vw, 18px);
+    color: var(--muted);
+    margin: 0;
+  }
+  .splash-cta{ margin-top: var(--s-5); justify-content: center; }
+
+  @media (max-width: 760px){
+    .splash{ min-height: calc(100vh - 240px); }
+    .hero-mark{ width: min(260px, 62vw); }
+  }
+
+  /* ---------- contact ---------- */
+  .contact-block{ max-width: 620px; }
   .contact-form{
     display: flex;
     flex-direction: column;
     gap: var(--s-3);
-    max-width: 620px;
     margin-top: var(--s-4);
-    padding-top: var(--s-4);
-    border-top: 1px solid var(--border);
   }
   .contact-row{
     display: grid;
@@ -220,7 +208,6 @@
     gap: 5px;
     min-width: 0;
   }
-  .contact-field .optional{ color: var(--subtle); }
   .contact-field input,
   .contact-field textarea{
     width: 100%;
@@ -230,12 +217,12 @@
     color: var(--text);
     border-radius: var(--radius);
     padding: 10px 12px;
-    font-family: var(--sans);
+    font-family: inherit;
     font-size: 15px;
     line-height: 1.45;
     transition: border-color var(--t-fast);
   }
-  .contact-field textarea{ resize: vertical; min-height: 128px; }
+  .contact-field textarea{ resize: vertical; min-height: 118px; }
   .contact-field input:hover,
   .contact-field textarea:hover{ border-color: var(--muted); }
   .contact-field input:focus-visible,
@@ -259,8 +246,7 @@
   /* Status is reported in place, next to the control that caused it. */
   .contact-status{
     margin: 0;
-    font-family: var(--mono);
-    font-size: 12.5px;
+    font-size: 14px;
     color: var(--muted);
   }
   .contact-status.ok  { color: var(--brand-2); }

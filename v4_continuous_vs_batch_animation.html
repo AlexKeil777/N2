@@ -6,42 +6,34 @@
   <title>Continuous vs. batch — N2 Team</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap">
   <style>
     /* Self-contained page. It carries its own copy of the site's dark
        variant so it stays standalone, but the values are the same ones
        declared in assets/css/styles.css. This is the instrument screen
        of the document set: dark stock, same inks, same faces. */
     :root{
-      --bg:#12100e; --panel:#1c1916; --panel-2:#252118;
-      --fg:#f2ece0; --muted:#b0a693; --subtle:#948a78;
+      --bg:#0d0c0b; --panel:#161514; --panel-2:#1d1b19;
+      --fg:#f0ece5; --muted:#a8a196; --subtle:#8d8579;
       --accent:#e0742f; --accent-2:#4fc0ad; --accent-3:#7fa8e0;
-      --border:rgba(242,236,224,.16); --border-strong:rgba(242,236,224,.34);
-      --rule-minor:rgba(242,236,224,.038); --rule-major:rgba(242,236,224,.065);
+      --border:rgba(240,236,229,.13); --border-strong:rgba(240,236,229,.28);
       --display:"Fraunces","Iowan Old Style",Georgia,serif;
       --sans:"Archivo",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
-      --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
       --belt-height:24px; --speed-pps:90; --processing-time:2.4;
     }
     *{box-sizing:border-box}
     html,body{
       height:100%;margin:0;
       font-family:var(--sans);color:var(--fg);
-      background-color:var(--bg);
-      background-image:
-        linear-gradient(var(--rule-major) 1px, transparent 1px),
-        linear-gradient(90deg, var(--rule-major) 1px, transparent 1px),
-        linear-gradient(var(--rule-minor) 1px, transparent 1px),
-        linear-gradient(90deg, var(--rule-minor) 1px, transparent 1px);
-      background-size:130px 130px,130px 130px,26px 26px,26px 26px;
+      background:var(--bg);
     }
     .wrap{min-height:100dvh;display:grid;grid-template-rows:auto auto 1fr auto;gap:14px;padding:22px 26px 26px;position:relative;z-index:1}
 
     /* Running head, so the page is not a dead end */
     .doc-head{
       display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 22px;
-      padding-bottom:8px;border-bottom:1px solid var(--border-strong);
-      font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--subtle);
+      padding-bottom:10px;border-bottom:1px solid var(--border);
+      font-size:14px;color:var(--subtle);
     }
     .doc-head b{color:var(--muted);font-weight:500}
     .doc-head a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
@@ -58,7 +50,7 @@
     .scene .btn{
       padding:7px 13px;background:transparent;color:var(--fg);
       border:1px solid var(--border-strong);border-radius:2px;cursor:pointer;
-      font-family:var(--mono);font-size:12.5px;font-weight:500;
+      font-family:var(--sans);font-size:14px;font-weight:500;
       transition:border-color .12s ease,color .12s ease,background .12s ease;
     }
     .scene .btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -68,23 +60,23 @@
     .hud{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:13px;
       padding-top:12px;border-top:1px solid var(--border)}
     .hud label{display:inline-flex;align-items:center;gap:8px;
-      font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--subtle)}
+      font-size:13.5px;color:var(--muted)}
     .hud input{
       width:88px;background:var(--panel);color:var(--fg);
       border:1px solid var(--border-strong);border-radius:2px;padding:6px 8px;
-      font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;
+      font-family:var(--sans);font-size:14px;font-variant-numeric:tabular-nums;
     }
     .hud input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
 
     /* Scoreboard: a read-out, so it is ruled and set in the data face */
     .scoreboard{display:flex;justify-content:center;align-items:center;margin:4px 0}
     .score-panel{background:var(--panel);border:1px solid var(--border-strong);border-radius:2px;padding:10px 20px;text-align:center}
-    .score{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:5px;font-weight:600;line-height:1.15}
+    .score{font-variant-numeric:tabular-nums;letter-spacing:3px;font-weight:600;line-height:1.15}
     .score.top{color:var(--accent);font-size:26px}
     .score.bottom{color:var(--accent-2);font-size:26px;margin-top:4px}
 
     .score-labels{margin-right:16px;text-align:right}
-    .score-labels .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;line-height:1.15}
+    .score-labels .lbl{font-size:14px;font-weight:500;line-height:1.15}
     .score-labels .top{color:var(--accent)}
     .score-labels .bottom{color:var(--accent-2);margin-top:12px}
 
@@ -96,8 +88,8 @@
 <body>
   <div class="wrap">
     <div class="doc-head">
-      <span><b>N2 Team</b> &middot; Vaporised hydrogen peroxide decontamination</span>
-      <span><a href="mission.html">&larr; Back to &sect;2 Mission</a> &nbsp;&middot;&nbsp; &sect;4 Simulation</span>
+      <span><b>N2 Team</b> &middot; VHP decontamination</span>
+      <span><a href="mission.html">&larr; Back to the mission</a></span>
     </div>
 
     <div>
