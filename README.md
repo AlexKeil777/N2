@@ -90,17 +90,17 @@ Then open <http://localhost:8080> in your browser.
 ## ✦ Customization
 
 ### Theme & colors
-Minimalist dark: flat warm near-black stock, one amber accent, a lot of space. All
-design tokens live as CSS custom properties at the top of `assets/css/styles.css`:
+Pitch black, one amber accent, a lot of space. All design tokens live as CSS
+custom properties at the top of `assets/css/styles.css`:
 
 ```css
 :root{
-  --bg:      #0d0c0b;   /* warm near-black, never neutral #000 */
-  --panel:   #161514;
-  --text:    #f0ece5;   /* 16.60:1 */
-  --muted:   #a8a196;   /*  7.63:1 */
-  --subtle:  #8d8579;   /*  5.36:1 */
-  --brand:   #e0742f;   /*  6.24:1 — the one accent */
+  --bg:      #000000;   /* pitch black */
+  --panel:   #0b0b0b;
+  --text:    #f2efe9;   /* 18.30:1 — warm white, so black never reads dead */
+  --muted:   #a29b90;   /*  7.63:1 */
+  --subtle:  #857e73;   /*  5.23:1 */
+  --brand:   #e0742f;   /*  6.71:1 — the one accent */
   --radius:  2px;
   /* …etc */
 }
@@ -119,7 +119,17 @@ by putting the attribute on the root element:
 
 **House rules** (documented in the stylesheet header): no gradients, glows, coloured
 shadows or backdrop blur; no monospaced type in the interface; no section numbering
-or badges above headings; motion only on load-in or state change.
+or badges above headings; every transition soft (300–500ms on a long ease).
+
+### The vapour transition
+Leaving a page, everything printed on the black boils off — headings come apart into
+individual letters that rise, spread, tilt and blur away, while paragraphs, buttons,
+list rows and nav entries lift and thin out on their own randomised delays. Arriving,
+the page condenses back out of the black.
+
+Arrival is pure CSS (`vapor-in`). Departure is driven by `assets/js/main.js`: see
+`ATOM_SELECTOR`, `SPLIT_SELECTOR` and the `SPREAD` / `NAV_AT` timings at the top of
+the vapour section. It is skipped entirely under `prefers-reduced-motion`.
 
 ### The N2 mark
 Two places, both driven by the same path with `pathLength="1000"` and a
@@ -128,9 +138,13 @@ Two places, both driven by the same path with `pathLength="1000"` and a
 - **Landing page** — `.hero-mark` in `index.html`. Large and centred, draws itself
   once over 2.6s on load, then holds.
 - **Every other page** — `.brand-watermark` injected by `assets/js/main.js`. Three or
-  four large, very faint copies that draw, hold, fade and repeat on a 13–21s cycle.
-  Tune `count`, the `--size` range and `--peak` opacity there. Hidden below 760px and
-  under `prefers-reduced-motion`.
+  four copies that draw, hold, fade and repeat on a 14–22s cycle. Tune `count`, the
+  `--size` range and `--peak` opacity there. Hidden below 760px and under
+  `prefers-reduced-motion`.
+
+  Keep them as **thin outlines** (stroke-width 10) at low opacity. A thick stroke at
+  even lower opacity renders as a dark-amber mass and lifts the whole page off black,
+  which is exactly what the pitch-black theme is trying to avoid.
 
 ### Simulation parameters
 The simulation page (`v4_continuous_vs_batch_animation.html`) exposes user-facing controls (chamber length, conveyor speed, takt time, minimum dwell). All other timing/visual tuning is in the inline `<script>` at the bottom of that file.

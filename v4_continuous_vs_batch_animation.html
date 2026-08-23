@@ -13,10 +13,11 @@
        declared in assets/css/styles.css. This is the instrument screen
        of the document set: dark stock, same inks, same faces. */
     :root{
-      --bg:#0d0c0b; --panel:#161514; --panel-2:#1d1b19;
-      --fg:#f0ece5; --muted:#a8a196; --subtle:#8d8579;
+      --bg:#000000; --panel:#0b0b0b; --panel-2:#141414;
+      --fg:#f2efe9; --muted:#a29b90; --subtle:#857e73;
       --accent:#e0742f; --accent-2:#4fc0ad; --accent-3:#7fa8e0;
-      --border:rgba(240,236,229,.13); --border-strong:rgba(240,236,229,.28);
+      --border:rgba(242,239,233,.12); --border-strong:rgba(242,239,233,.26);
+      --ease:cubic-bezier(.22,1,.36,1); --ease-in:cubic-bezier(.45,0,.75,.2);
       --display:"Fraunces","Iowan Old Style",Georgia,serif;
       --sans:"Archivo",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
       --belt-height:24px; --speed-pps:90; --processing-time:2.4;
@@ -51,7 +52,7 @@
       padding:7px 13px;background:transparent;color:var(--fg);
       border:1px solid var(--border-strong);border-radius:2px;cursor:pointer;
       font-family:var(--sans);font-size:14px;font-weight:500;
-      transition:border-color .12s ease,color .12s ease,background .12s ease;
+      transition:border-color .5s var(--ease),color .5s var(--ease),background .5s var(--ease),transform .5s var(--ease);
     }
     .scene .btn:hover{border-color:var(--accent);color:var(--accent)}
     .scene .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -80,8 +81,47 @@
     .score-labels .top{color:var(--accent)}
     .score-labels .bottom{color:var(--accent-2);margin-top:12px}
 
+    /* ---- vapour transition ----
+       Same idea as the shared pages: arriving, the deck condenses out
+       of the black; leaving, everything printed on it boils off. This
+       page is standalone, so it carries its own copy. */
+    @keyframes vapor-in{
+      from{opacity:0;filter:blur(11px);transform:translate3d(0,16px,0) scale(.994)}
+      to  {opacity:1;filter:blur(0);transform:none}
+    }
+    @keyframes vapor-out{
+      0%  {opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1) rotate(0deg)}
+      45% {opacity:.55;filter:blur(3px)}
+      100%{opacity:0;filter:blur(13px);
+           transform:translate3d(var(--vx,0px),-52px,0) scale(1.06) rotate(var(--vr,0deg))}
+    }
+    @keyframes soft-in{from{opacity:0}to{opacity:1}}
+    .wrap > *{animation:vapor-in 680ms var(--ease) backwards}
+    /* the scenes hold a live SVG animation: fade them, never filter
+       them, or every frame pays for a full-canvas blur pass */
+    .wrap > .scene{animation:soft-in 680ms var(--ease) backwards}
+    .wrap > *:nth-child(1){animation-delay:60ms}
+    .wrap > *:nth-child(2){animation-delay:140ms}
+    .wrap > *:nth-child(3){animation-delay:210ms}
+    .wrap > *:nth-child(n+4){animation-delay:275ms}
+
+    html.is-leaving *{pointer-events:none !important}
+    html.is-leaving .wrap > *{animation:none}
+    @keyframes soft-out{
+      from{opacity:1;transform:translate3d(0,0,0)}
+      to  {opacity:0;transform:translate3d(0,-38px,0)}
+    }
+    html.is-leaving [data-vapor-atom]{
+      animation:vapor-out 560ms var(--ease-in) var(--vd,0ms) both;
+      will-change:opacity,filter,transform;
+    }
+    html.is-leaving .scene[data-vapor-atom]{
+      animation:soft-out 560ms var(--ease-in) var(--vd,0ms) both;
+    }
+
     @media (prefers-reduced-motion: reduce){
-      *{transition-duration:.01ms !important}
+      *{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+        transition-duration:.01ms !important}
     }
   </style>
 </head>
@@ -650,5 +690,60 @@
     })();
   </script>
   <script src="assets/js/main.js"></script>
+  <script>
+    /* Vapour transition on the way out. Standalone copy of the logic in
+       assets/js/main.js, scoped to this page's own markup. */
+    (function(){
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var ATOMS = '.doc-head, .wrap h1, .standfirst, .scene, .scoreboard, .hud label';
+      var leaving = false;
+
+      function evaporate(done){
+        if (leaving) return;
+        leaving = true;
+        var atoms = Array.prototype.slice.call(document.querySelectorAll(ATOMS));
+        var last  = Math.max(atoms.length - 1, 1);
+        atoms.forEach(function(el, i){
+          el.setAttribute('data-vapor-atom','');
+          el.style.setProperty('--vd', Math.round((i/last)*220 + Math.random()*70) + 'ms');
+          el.style.setProperty('--vx', (Math.random()*26 - 13).toFixed(1) + 'px');
+          el.style.setProperty('--vr', (Math.random()*2.6 - 1.3).toFixed(2) + 'deg');
+        });
+        void document.body.offsetHeight;
+        document.documentElement.classList.add('is-leaving');
+        setTimeout(done, 720);
+      }
+
+      document.addEventListener('click', function(e){
+        var a = e.target.closest && e.target.closest('a');
+        if (!a) return;
+        if (leaving){ e.preventDefault(); return; }
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+        if (a.target && a.target !== '' && a.target !== '_self') return;
+        var href = a.getAttribute('href');
+        if (!href || href.charAt(0) === '#') return;
+        var url;
+        try { url = new URL(href, location.href); } catch (err) { return; }
+        if (url.origin !== location.origin) return;
+        if (url.pathname === location.pathname) return;
+
+        e.preventDefault();
+        if (reduced.matches){ location.href = a.href; return; }
+        var dest = a.href;
+        evaporate(function(){ location.href = dest; });
+      });
+
+      window.addEventListener('pageshow', function(e){
+        if (e.persisted){
+          document.documentElement.classList.remove('is-leaving');
+          Array.prototype.forEach.call(
+            document.querySelectorAll('[data-vapor-atom]'),
+            function(el){ el.removeAttribute('data-vapor-atom'); }
+          );
+          leaving = false;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

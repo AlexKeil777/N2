@@ -1,50 +1,54 @@
 /* ============================================================
-   N2 Team — minimalist dark theme
+   N2 Team — pitch black, minimalist
    ------------------------------------------------------------
-   Flat near-black stock, one warm accent, generous space, and
-   almost nothing else. The only decoration is the N2 mark:
-   drawn large and centred on the landing page, and drifting
-   faintly behind the content elsewhere.
+   True #000 stock, one burnt-amber accent, warm ink, hairlines,
+   and a lot of space. The only decoration is the N2 mark: drawn
+   large and central on the landing page, drifting faintly behind
+   everything else.
+
+   Every transition is soft and slow by design. Leaving a page
+   plays the vapour transition (see "Evaporation" below): content
+   rises, disperses and blurs out, which is the one piece of
+   motion on this site that is allowed to be theatrical.
 
    Rules of the house:
-     - no gradients, no glows, no coloured shadows, no blur
+     - no gradients, no glows, no coloured shadows, no backdrop blur
      - no monospaced type in the interface (see --mono below)
      - no section numbering, no badges above headings
-     - motion only on load-in or state change, and kept quiet
      - every text/background pair clears WCAG AA (4.5:1)
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap');
 
 :root{
-  /* Stock — warm near-black, never neutral #000 */
-  --bg:        #0d0c0b;
-  --bg-2:      #141312;
-  --panel:     #161514;
-  --panel-2:   #1d1b19;
+  /* Stock — pitch black */
+  --bg:        #000000;
+  --bg-2:      #060606;
+  --panel:     #0b0b0b;
+  --panel-2:   #141414;
 
-  /* Ink */
-  --text:      #f0ece5;   /* 16.60:1 */
-  --muted:     #a8a196;   /*  7.63:1 */
-  --subtle:    #8d8579;   /*  5.36:1 */
+  /* Ink — warm white, so pure black never reads as a dead screen */
+  --text:      #f2efe9;   /* 18.30:1 */
+  --muted:     #a29b90;   /*  7.63:1 */
+  --subtle:    #857e73;   /*  5.23:1 */
 
-  /* One accent carries the whole site. The second and third exist
-     only for the calculator's plotted series. */
-  --brand:      #e0742f;  /*  6.24:1 */
+  /* One accent carries the site. The second and third exist only
+     for the calculator's plotted series. */
+  --brand:      #e0742f;  /*  6.71:1 */
   --brand-deep: #f0995e;
   --brand-2:    #4fc0ad;
   --brand-3:    #7fa8e0;
   --warn:       #e5624a;
-  --on-brand:   #0d0c0b;  /* ink laid on a solid accent block */
-  --brand-tint: rgba(224,116,47,.13);
+  --on-brand:   #000000;
+  --brand-tint: rgba(224,116,47,.07);
 
   /* Chart ink — canvases read these so plots follow the theme */
-  --chart-axis: rgba(240,236,229,.38);
-  --chart-grid: rgba(240,236,229,.08);
+  --chart-axis: rgba(242,239,233,.36);
+  --chart-grid: rgba(242,239,233,.07);
 
   /* Rules */
-  --border:        rgba(240,236,229,.13);
-  --border-strong: rgba(240,236,229,.28);
+  --border:        rgba(242,239,233,.12);
+  --border-strong: rgba(242,239,233,.26);
   --shadow:        none;
   --shadow-lift:   none;
 
@@ -55,9 +59,9 @@
   --measure:   62ch;
 
   /* Type — two faces, no monospace in the interface.
-     --mono exists only for preformatted numeric output where
-     columns genuinely have to line up (the calculator's results
-     dump and its canvas tick labels). Never use it for chrome. */
+     --mono is a plain system stack kept only for preformatted
+     numeric output whose columns must line up (the calculator's
+     results dump and its canvas ticks). Never use it for chrome. */
   --display: "Fraunces", "Iowan Old Style", Georgia, "Times New Roman", serif;
   --sans:    "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
   --mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -66,16 +70,21 @@
   --s-1: 4px;  --s-2: 8px;  --s-3: 14px; --s-4: 22px;
   --s-5: 36px; --s-6: 58px; --s-7: 92px;
 
-  /* Motion */
-  --ease:   cubic-bezier(.22,.61,.36,1);
-  --t-fast: .13s var(--ease);
-  --t-med:  .18s var(--ease);
+  /* Motion — soft. Nothing snaps. */
+  --ease:      cubic-bezier(.22, 1, .36, 1);   /* long, gentle settle */
+  --ease-in:   cubic-bezier(.45, 0, .75, .2);  /* accelerates away  */
+  --t-fast:    .3s  var(--ease);
+  --t-med:     .5s  var(--ease);
+  --t-slow:    .8s  var(--ease);
+
+  /* Evaporation timings, shared by CSS and main.js */
+  --vapor-out: 640ms;
+  --vapor-in:  680ms;
 }
 
 /* ------------------------------------------------------------
-   Light variant — kept fully tuned and contrast-checked, but not
+   Light variant — the cream paper palette, kept tuned but not
    automatic. Switch a page with <html data-theme="light">.
-   Matches the cream stock the case-study documents use.
    ------------------------------------------------------------ */
 :root[data-theme="light"]{
   --bg:        #f2ede1;
@@ -93,7 +102,7 @@
   --brand-3:    #2f4a7a;
   --warn:       #a32d18;
   --on-brand:   #fbf8f0;
-  --brand-tint: rgba(156,66,33,.10);
+  --brand-tint: rgba(156,66,33,.08);
 
   --chart-axis: rgba(26,22,18,.45);
   --chart-grid: rgba(26,22,18,.10);
@@ -104,6 +113,11 @@
 
 *{ box-sizing: border-box; }
 html, body{ margin:0; padding:0; }
+
+html{ background: var(--bg); }
+@media (prefers-reduced-motion: no-preference){
+  html{ scroll-behavior: smooth; }
+}
 
 body{
   font-family: var(--sans);
@@ -138,6 +152,143 @@ a{ color: inherit; text-decoration: none; }
 .site-header, main, footer, .footer{ position: relative; z-index: 1; }
 
 /* ============================================================
+   EVAPORATION
+   ------------------------------------------------------------
+   Arriving, the page condenses out of the air: regions fade up
+   from a blur, staggered top to bottom.
+
+   Leaving, main.js marks every atom (headings, paragraphs, list
+   rows, buttons, nav links, the mark) with a randomised delay and
+   drift, splits display text into per-character spans, then adds
+   .is-leaving. Everything rises, spreads, blurs and thins out —
+   letters going at slightly different moments so the script looks
+   like it is boiling off rather than sliding away.
+
+   Randomised per element by JS:
+     --vd  delay        --vx  horizontal drift     --vr  rotation
+   Per character:
+     --cd  delay        --cx  drift x              --cy  rise
+   ============================================================ */
+
+@keyframes vapor-in{
+  from{
+    opacity: 0;
+    filter: blur(11px);
+    transform: translate3d(0, 16px, 0) scale(.994);
+  }
+  to{
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+
+@keyframes vapor-out{
+  0%{
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  45%{
+    opacity: .55;
+    filter: blur(3px);
+  }
+  100%{
+    opacity: 0;
+    filter: blur(13px);
+    transform:
+      translate3d(var(--vx, 0px), -52px, 0)
+      scale(1.06)
+      rotate(var(--vr, 0deg));
+  }
+}
+
+/* Characters break up further and travel further than their block */
+@keyframes vapor-char{
+  0%{
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  100%{
+    opacity: 0;
+    filter: blur(9px);
+    transform:
+      translate3d(var(--cx, 0px), var(--cy, -60px), 0)
+      scale(1.35)
+      rotate(var(--cr, 0deg));
+  }
+}
+
+/* ---------- arrival ---------- */
+.site-header,
+main,
+footer, .footer{
+  animation: vapor-in var(--vapor-in) var(--ease) backwards;
+}
+main{ animation-delay: 60ms; }
+footer, .footer{ animation-delay: 150ms; }
+
+/* inside main, blocks settle one after another */
+main .container > *{
+  animation: vapor-in var(--vapor-in) var(--ease) backwards;
+}
+main .container > *:nth-child(1){ animation-delay:  90ms; }
+main .container > *:nth-child(2){ animation-delay: 160ms; }
+main .container > *:nth-child(3){ animation-delay: 225ms; }
+main .container > *:nth-child(4){ animation-delay: 285ms; }
+main .container > *:nth-child(5){ animation-delay: 340ms; }
+main .container > *:nth-child(n+6){ animation-delay: 390ms; }
+
+/* ---------- departure ---------- */
+html.is-leaving,
+html.is-leaving body{
+  /* the stock stays; only what is printed on it boils off */
+  background: var(--bg);
+}
+html.is-leaving *{
+  /* nothing is clickable once it has started to go */
+  pointer-events: none !important;
+}
+/* Drop the arrival animation before departing. Atoms are excluded:
+   this selector is more specific than the [data-vapor-atom] rule
+   below, so without the :not() it would cancel their departure. */
+html.is-leaving .site-header,
+html.is-leaving main,
+html.is-leaving footer,
+html.is-leaving .footer,
+html.is-leaving main .container > :not([data-vapor-atom]){
+  animation: none;
+}
+
+html.is-leaving [data-vapor-atom]{
+  animation: vapor-out var(--vapor-out) var(--ease-in) var(--vd, 0ms) both;
+  will-change: opacity, filter, transform;
+}
+
+html.is-leaving .ch{
+  display: inline-block;
+  animation: vapor-char var(--vapor-out) var(--ease-in) var(--cd, 0ms) both;
+  will-change: opacity, filter, transform;
+}
+html.is-leaving .word{ display: inline-block; white-space: nowrap; }
+
+/* The marks thin out too, but only as a fade: blurring a
+   full-viewport fixed layer costs a lot and shows nothing. */
+@keyframes vapor-fade{ to{ opacity: 0; } }
+html.is-leaving .brand-watermark{
+  animation: vapor-fade calc(var(--vapor-out) + 120ms) var(--ease-in) both;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* ============================================================
    Skip link
    ============================================================ */
 .skip-link{
@@ -166,7 +317,7 @@ a{ color: inherit; text-decoration: none; }
 }
 .n2-mark{
   position: absolute;
-  width: var(--size, 380px);
+  width: var(--size, 260px);
 }
 .n2-mark svg{ width: 100%; height: auto; display: block; }
 .n2-mark path{
@@ -175,15 +326,15 @@ a{ color: inherit; text-decoration: none; }
   stroke-dashoffset: 1000;
   opacity: 0;
   will-change: stroke-dashoffset, opacity;
-  animation: n2-draw var(--dur, 15s) var(--ease) var(--delay, 0s) infinite;
+  animation: n2-draw var(--dur, 16s) var(--ease) var(--delay, 0s) infinite;
 }
 @keyframes n2-draw{
   0%   { stroke-dashoffset: 1000; opacity: 0; }
-  10%  { opacity: var(--peak, .07); }
-  45%  { stroke-dashoffset: 0; opacity: var(--peak, .07); }   /* drawn */
-  72%  { stroke-dashoffset: 0; opacity: var(--peak, .07); }   /* hold */
-  90%  { stroke-dashoffset: 0; opacity: 0; }                  /* fade */
-  100% { stroke-dashoffset: 1000; opacity: 0; }               /* loop */
+  12%  { opacity: var(--peak, .1); }
+  46%  { stroke-dashoffset: 0; opacity: var(--peak, .1); }   /* drawn */
+  72%  { stroke-dashoffset: 0; opacity: var(--peak, .1); }   /* hold  */
+  91%  { stroke-dashoffset: 0; opacity: 0; }                  /* fade  */
+  100% { stroke-dashoffset: 1000; opacity: 0; }               /* loop  */
 }
 @media (max-width: 760px){
   .brand-watermark{ display: none; }
@@ -192,7 +343,7 @@ a{ color: inherit; text-decoration: none; }
   .n2-mark path{
     animation: none;
     stroke-dashoffset: 0;
-    opacity: var(--peak, .06);
+    opacity: var(--peak, .08);
   }
 }
 
@@ -228,9 +379,9 @@ a{ color: inherit; text-decoration: none; }
   font-weight: 600;
   font-size: 15px;
   letter-spacing: -.005em;
-  transition: opacity var(--t-fast);
+  transition: opacity var(--t-med);
 }
-.brand:hover{ opacity: .78; }
+.brand:hover{ opacity: .7; }
 .brand span{ display:flex; flex-direction:column; line-height:1.15; }
 .brand small{
   font-weight: 400;
@@ -260,10 +411,10 @@ a{ color: inherit; text-decoration: none; }
   color: var(--muted);
   font-size: 15px;
   font-weight: 400;
-  transition: color var(--t-fast);
+  transition: color var(--t-med), transform var(--t-med), opacity var(--t-med);
 }
 .nav-links a:hover,
-.nav-links a:focus-visible{ color: var(--text); }
+.nav-links a:focus-visible{ color: var(--text); transform: translateX(5px); }
 .nav-links a.active{ color: var(--brand); }
 /* the only marker: a short rule bled into the rail margin */
 .nav-links a.active::after{
@@ -271,8 +422,11 @@ a{ color: inherit; text-decoration: none; }
   position:absolute; left:-30px; top:50%;
   width: 18px; height: 1px;
   background: var(--brand);
+  transition: width var(--t-med);
 }
 .nav-links a:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
+/* hovering one entry quiets the rest */
+.nav-links:hover a:not(:hover){ opacity: .5; }
 
 .nav-toggle{
   display: none;
@@ -284,7 +438,7 @@ a{ color: inherit; text-decoration: none; }
   font-family: inherit;
   font-size: 14px;
   cursor: pointer;
-  transition: border-color var(--t-fast), color var(--t-fast);
+  transition: border-color var(--t-med), color var(--t-med);
 }
 .nav-toggle:hover{ border-color: var(--brand); color: var(--brand); }
 .nav-toggle:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
@@ -329,6 +483,7 @@ a{ color: inherit; text-decoration: none; }
   }
   .nav-links.open{ display: flex; }
   .nav-links a{ padding: 12px 0; }
+  .nav-links a:hover{ transform: none; }
   .nav-links a.active::after{ left: -20px; width: 12px; }
 }
 
@@ -363,7 +518,6 @@ p{
 p:last-child{ margin-bottom: 0; }
 strong{ color: var(--text); font-weight: 600; }
 
-/* Opening paragraph */
 .lede{
   font-size: clamp(17px, 1.7vw, 19px);
   line-height: 1.6;
@@ -382,13 +536,12 @@ strong{ color: var(--text); font-weight: 600; }
   font-size: 13px;
   color: var(--subtle);
 }
-.tiny a{ color: var(--muted); transition: color var(--t-fast); }
+.tiny a{ color: var(--muted); transition: color var(--t-med); }
 .tiny a:hover{ color: var(--brand); }
 
 /* Aligned figures without resorting to a monospaced face */
 .fig{ font-variant-numeric: tabular-nums; }
 
-/* Plain hairline */
 .hr{
   height: 0;
   border: 0;
@@ -400,6 +553,9 @@ strong{ color: var(--text); font-weight: 600; }
    Section — a heading over a hairline, no numbering
    ============================================================ */
 .sec{
+  /* keep the rules close to the measure rather than running the
+     full container width and hanging in empty space */
+  max-width: 760px;
   border-top: 1px solid var(--border);
   padding-top: var(--s-4);
   margin-top: var(--s-6);
@@ -434,6 +590,98 @@ strong{ color: var(--text); font-weight: 600; }
 }
 
 /* ============================================================
+   Picker — the landing page's list of destinations
+   ============================================================ */
+.pick{
+  width: 100%;
+  max-width: 620px;
+  margin: var(--s-5) auto 0;
+  text-align: left;
+  border-top: 1px solid var(--border);
+}
+.pick-row{
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: 13px 4px 13px 0;
+  border-bottom: 1px solid var(--border);
+  /* own stacking context, so the ::after wash sits behind the row's
+     own content and nothing else */
+  isolation: isolate;
+  transition:
+    padding-left var(--t-med),
+    opacity var(--t-med),
+    border-color var(--t-med);
+}
+/* amber rule that unrolls up the left edge */
+.pick-row::before{
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: -1px;
+  width: 2px;
+  background: var(--brand);
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform var(--t-med);
+}
+/* flat wash, so the whole row lifts and not just the type */
+.pick-row::after{
+  content: "";
+  position: absolute;
+  inset: 0 -14px -1px -14px;
+  background: var(--brand-tint);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--t-med);
+}
+.pick-label{
+  font-family: var(--display);
+  font-size: clamp(21px, 2.4vw, 27px);
+  font-weight: 600;
+  letter-spacing: -.014em;
+  line-height: 1.15;
+  color: var(--text);
+  transition: color var(--t-med), transform var(--t-med);
+}
+.pick-hint{
+  font-size: 14.5px;
+  color: var(--subtle);
+  text-align: right;
+  transition: color var(--t-med), transform var(--t-med);
+}
+
+.pick-row:hover,
+.pick-row:focus-visible{ padding-left: 20px; }
+.pick-row:hover::before,
+.pick-row:focus-visible::before{ transform: scaleY(1); }
+.pick-row:hover::after,
+.pick-row:focus-visible::after{ opacity: 1; }
+.pick-row:hover .pick-label,
+.pick-row:focus-visible .pick-label{ color: var(--brand); }
+.pick-row:hover .pick-hint,
+.pick-row:focus-visible .pick-hint{ color: var(--muted); transform: translateX(-5px); }
+.pick-row:focus-visible{ outline: 2px solid var(--brand); outline-offset: 4px; }
+
+/* hovering one choice quiets the others */
+.pick:has(.pick-row:hover) .pick-row:not(:hover){ opacity: .32; }
+
+/* the current page stays in the list, marked rather than removed */
+.pick-row[aria-current="page"] .pick-label{ color: var(--muted); }
+.pick-row[aria-current="page"] .pick-hint{ color: var(--subtle); }
+
+@media (max-width: 560px){
+  .pick-row{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  .pick-hint{ text-align: left; }
+  .pick-row:hover .pick-hint{ transform: none; }
+}
+
+/* ============================================================
    Reference index — title, one line of context, one link
    ============================================================ */
 .docref{
@@ -449,7 +697,7 @@ strong{ color: var(--text); font-weight: 600; }
 .docref a.ref{
   color: var(--text);
   font-weight: 500;
-  transition: color var(--t-fast);
+  transition: color var(--t-med);
 }
 .docref a.ref:hover{ color: var(--brand); }
 .docref td:last-child a.ref{ color: var(--brand); font-weight: 400; font-size: 15px; }
@@ -478,8 +726,10 @@ strong{ color: var(--text); font-weight: 600; }
   gap: var(--s-3);
   padding: var(--s-4) 0;
   border-bottom: 1px solid var(--border);
+  transition: opacity var(--t-med);
 }
 .roster-row:first-child{ border-top: 1px solid var(--border); }
+.roster:hover .roster-row:not(:hover){ opacity: .45; }
 .roster-row .who{
   font-family: var(--display);
   font-size: 21px;
@@ -495,9 +745,9 @@ strong{ color: var(--text); font-weight: 600; }
 .roster-row .contact a{
   font-size: 15px;
   color: var(--brand);
-  transition: opacity var(--t-fast);
+  transition: opacity var(--t-med);
 }
-.roster-row .contact a:hover{ opacity: .75; }
+.roster-row .contact a:hover{ opacity: .7; }
 .roster-row .contact a:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
 .roster-row .contact .none{
   font-size: 15px;
@@ -526,9 +776,14 @@ strong{ color: var(--text); font-weight: 600; }
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+  transition:
+    border-color var(--t-med),
+    background var(--t-med),
+    color var(--t-med),
+    transform var(--t-med);
 }
-.btn:hover{ border-color: var(--brand); color: var(--brand); }
+.btn:hover{ border-color: var(--brand); color: var(--brand); transform: translateY(-2px); }
+.btn:active{ transform: translateY(0); }
 .btn:focus-visible{ outline: 2px solid var(--brand); outline-offset: 3px; }
 
 .btn.primary{
@@ -565,7 +820,7 @@ strong{ color: var(--text); font-weight: 600; }
   color: var(--brand);
   font-weight: 500;
   border-bottom: 1px solid transparent;
-  transition: border-color var(--t-fast);
+  transition: border-color var(--t-med), opacity var(--t-med);
 }
 .xref:hover{ border-bottom-color: var(--brand); }
 .xref:focus-visible{ outline: 2px solid var(--brand); outline-offset: 2px; }
@@ -591,6 +846,7 @@ strong{ color: var(--text); font-weight: 600; }
    Layout blocks
    ============================================================ */
 .hero{ padding: var(--s-6) 0 0; }
+.hero h1{ max-width: 20ch; }
 .section{ padding: var(--s-6) 0 var(--s-7); }
 
 /* ============================================================
@@ -617,9 +873,4 @@ strong{ color: var(--text); font-weight: 600; }
 .field-label{
   font-size: 14px;
   color: var(--muted);
-}
-
-@media (prefers-reduced-motion: reduce){
-  *{ animation-duration: .01ms !important; animation-iteration-count: 1 !important;
-     transition-duration: .01ms !important; }
 }
