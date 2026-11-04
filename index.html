@@ -91,7 +91,6 @@
           <button class="btn primary" type="submit" id="cf-submit">Send message</button>
           <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
         </div>
-        <p class="small-note">Prefer email? <a class="xref" href="mailto:keil.alex@outlook.com">keil.alex@outlook.com</a></p>
       </form>
     </div>
   </section>
@@ -141,7 +140,7 @@
           form.reset();
           setStatus('Sent. Thanks, we will come back to you.', 'ok');
         } else {
-          setStatus('Could not send. Please try again or email us directly.', 'err');
+          setStatus('Could not send. Please try again.', 'err');
         }
       } catch (err) {
         setStatus('Network error. Please try again.', 'err');

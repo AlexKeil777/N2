@@ -61,8 +61,13 @@
     let points = [], dust = [];
     const pointer = { x: -1000, y: -1000, active: false };
     const stop = () => { cancelAnimationFrame(frame); frame = previous = 0; };
+    const fallback = () => {
+      stop(); canvas.hidden = true; host.classList.remove('particle-ready');
+    };
     const resume = () => {
-      if (!frame && visible && !document.hidden && !reduced.matches && width) frame = requestAnimationFrame(draw);
+      if (!frame && visible && !document.hidden && !reduced.matches && width) {
+        canvas.hidden = false; host.classList.add('particle-ready'); frame = requestAnimationFrame(draw);
+      }
     };
     function resize() {
       const bounds = host.getBoundingClientRect();
@@ -120,13 +125,16 @@
     }
     function draw(timestamp) {
       frame = 0;
-      if (!visible || document.hidden || reduced.matches) return;
+      if (reduced.matches) { fallback(); return; }
+      if (!visible || document.hidden) return;
       const delta = previous ? clamp((timestamp - previous) / 16.67, 0.3, 2) : 1;
       previous = timestamp; time += delta * 16.67; paint(delta); frame = requestAnimationFrame(draw);
     }
     function pointAt(event) {
+      if (reduced.matches) { fallback(); return; }
       const bounds = host.getBoundingClientRect();
       pointer.x = event.clientX - bounds.left; pointer.y = event.clientY - bounds.top; pointer.active = true;
+      resume();
     }
     host.addEventListener('pointermove', pointAt, { passive: true });
     host.addEventListener('pointerleave', () => { pointer.active = false; }, { passive: true });
@@ -149,7 +157,7 @@
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else resume(); });
     addEventListener('pagehide', stop); addEventListener('pageshow', resume);
     motionListeners.push(() => {
-      if (reduced.matches) { stop(); canvas.hidden = true; host.classList.remove('particle-ready'); }
+      if (reduced.matches) fallback();
       else {
         canvas.hidden = false;
         if (points.length) { paint(1); host.classList.add('particle-ready'); resume(); }
@@ -340,6 +348,7 @@
     addEventListener('pageshow', restore); addEventListener('pagehide', restore);
   }
   function init() {
+    document.documentElement.classList.add('js');
     navigation(); document.querySelectorAll('[data-particle-logo]').forEach(particleLogo); wireInteractions(vapor());
     reduced.addEventListener('change', () => {
       motionListeners.forEach(listener => listener());

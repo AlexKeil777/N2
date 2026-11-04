@@ -77,15 +77,65 @@
           </ul>
           <div class="cta-row">
             <a class="btn primary" href="evaporation_calculator.html">Explore evaporation</a>
-            <a class="btn secondary" href="assets/images/video_30sec.mp4" target="_blank" rel="noopener">Watch the 30 s film</a>
           </div>
+          <div class="film-preview" data-film-preview>
+            <video controls playsinline preload="none" poster="assets/images/video_30sec_poster.jpg" aria-label="N2 decontamination experiment film" tabindex="0">
+              <source src="assets/images/video_30sec.mp4" type="video/mp4">
+              <a href="assets/images/video_30sec.mp4">Watch the decontamination film</a>
+            </video>
+            <button class="film-play" type="button" aria-label="Play the N2 decontamination film">
+              <span class="film-play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5v14l11-7z" fill="currentColor"/></svg></span>
+              <span class="film-play-caption">Watch the film <span class="film-duration">0:39</span></span>
+            </button>
+          </div>
+          <p class="film-status small-note" data-film-status role="status" aria-live="polite"></p>
         </article>
       </div>
 
       <section class="sec research-links">
         <h2>Follow the science.</h2>
+        <p>From peroxide on a surface to a better cycle.</p>
+        <h3 class="research-subheading">Published research</h3>
+        <table class="docref" aria-label="Published VHP research">
+          <tbody>
+            <tr>
+              <td>
+                <a class="ref" href="https://pubmed.ncbi.nlm.nih.gov/32504629/" target="_blank" rel="noopener noreferrer">Peroxide sorption and aeration time</a>
+                <span class="desc">Yabuta et al. (2020), Journal of Pharmaceutical Sciences.</span>
+                <span class="desc">How peroxide uptake and release in five polymers shape isolator aeration.</span>
+              </td>
+              <td><a class="ref" href="https://pubmed.ncbi.nlm.nih.gov/32504629/" target="_blank" rel="noopener noreferrer" aria-label="View the polymer sorption study on PubMed (opens in a new tab)">Abstract</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="ref" href="https://pubmed.ncbi.nlm.nih.gov/32353452/" target="_blank" rel="noopener noreferrer">What leaves peroxide behind?</a>
+                <span class="desc">Kushwah et al. (2020), Journal of Pharmaceutical Sciences.</span>
+                <span class="desc">How humidity and VHP concentration affect residues on glass vials and rubber stoppers.</span>
+              </td>
+              <td><a class="ref" href="https://pubmed.ncbi.nlm.nih.gov/32353452/" target="_blank" rel="noopener noreferrer" aria-label="View the VHP residue study on PubMed (opens in a new tab)">Abstract</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="ref" href="https://portal.fis.tum.de/en/publications/influencing-parameters-of-vaporized-hydrogen-peroxide-on-the-ster/" target="_blank" rel="noopener noreferrer">VHP meets PET packaging</a>
+                <span class="desc">Kempf et al. (2023), Food Packaging and Shelf Life.</span>
+                <span class="desc">Temperature, peroxide dose and preheating in PET bottle sterilization.</span>
+              </td>
+              <td><a class="ref" href="https://portal.fis.tum.de/en/publications/influencing-parameters-of-vaporized-hydrogen-peroxide-on-the-ster/" target="_blank" rel="noopener noreferrer" aria-label="View the PET bottle study at the Technical University of Munich (opens in a new tab)">Study</a></td>
+            </tr>
+            <tr>
+              <td>
+                <a class="ref" href="https://pubmed.ncbi.nlm.nih.gov/22476278/" target="_blank" rel="noopener noreferrer">Hydrogen peroxide vapor vs. UV-C</a>
+                <span class="desc">Havill et al. (2012), Infection Control &amp; Hospital Epidemiology.</span>
+                <span class="desc">A patient-room study comparing microbial reduction, spore inactivation and cycle time.</span>
+              </td>
+              <td><a class="ref" href="https://pubmed.ncbi.nlm.nih.gov/22476278/" target="_blank" rel="noopener noreferrer" aria-label="View the vapor versus UV-C study on PubMed (opens in a new tab)">Abstract</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="research-subheading">Our research tools</h3>
         <p>Our tiramisu case study explores how decontamination changes predicted shelf life.</p>
-        <table class="docref">
+        <table class="docref" aria-label="N2 research tools">
           <tbody>
             <tr>
               <td><a class="ref" href="Tiramisu_Calculator_v1_3.html">Spoilage calculator</a><span class="desc">Change the inputs. Trace the shelf life.</span></td>
@@ -132,5 +182,6 @@
 </footer>
 
 <script src="assets/js/main.js"></script>
+<script src="assets/js/film.js"></script>
 </body>
 </html>
