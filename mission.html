@@ -6,7 +6,9 @@
   <meta name="theme-color" content="#000000" />
   <title>Mission — N2 Team</title>
   <meta name="description" content="Two changes to the VHP cycle: modular batch chambers in place of a continuous tunnel, and an aeration phase rebuilt to reach low residual H2O2 faster." />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/styles.css?v=mission-embed-4" />
+  <link rel="stylesheet" href="assets/css/film.css?v=3" />
+  <link rel="stylesheet" href="assets/css/mission.css?v=1" />
 <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
 
@@ -55,6 +57,7 @@
     <div class="container">
       <div class="mission-grid">
         <article class="sec">
+          <div class="mission-copy">
           <h2>Let each chamber work.</h2>
           <p>A continuous tunnel ties the whole line together. Modular batch chambers give each cycle room to run.</p>
           <ul class="list">
@@ -62,12 +65,14 @@
             <li>Scale throughput by adding chambers.</li>
             <li>Control each cycle independently.</li>
           </ul>
-          <div class="cta-row">
-            <a class="btn primary" href="v4_continuous_vs_batch_animation.html">See batch in motion</a>
+          </div>
+          <div class="mission-media simulation-embed" id="batch-tool">
+            <iframe src="v4_continuous_vs_batch_animation.html?embed=1" title="Interactive continuous versus batch process simulation" loading="lazy" width="100%" height="640" data-simulation-frame></iframe>
           </div>
         </article>
 
         <article class="sec">
+          <div class="mission-copy">
           <h2>Make the vapor leave.</h2>
           <p>Aeration holds the cycle back. We tune airflow, heat and chamber geometry to clear peroxide faster, with the same release limit.</p>
           <ul class="list">
@@ -75,19 +80,22 @@
             <li>Design the chamber around aeration.</li>
             <li>Model evaporation from first principles.</li>
           </ul>
+          </div>
+          <div class="mission-media mission-film">
           <div class="film-preview" data-film-preview>
             <video controls playsinline preload="none" poster="assets/images/video_30sec_poster.jpg" aria-label="N2 decontamination experiment film" tabindex="0">
               <source src="assets/images/video_30sec.mp4" type="video/mp4">
               <a href="assets/images/video_30sec.mp4">Watch the decontamination film</a>
             </video>
             <button class="film-play" type="button" aria-label="Play the N2 decontamination film">
-              <span class="film-play-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5v14l11-7z" fill="currentColor"/></svg></span>
+              <span class="film-play-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="27" height="27"><path d="M9 5v14l11-7z" fill="currentColor"/></svg></span>
               <span class="film-play-caption">Watch the film <span class="film-duration">0:39</span></span>
             </button>
           </div>
           <p class="film-status small-note" data-film-status role="status" aria-live="polite"></p>
           <div class="film-actions">
-            <a class="xref" href="evaporation_calculator.html">Explore evaporation</a>
+            <a class="btn primary" href="evaporation_calculator.html">Explore evaporation</a>
+          </div>
           </div>
         </article>
       </div>
@@ -181,7 +189,8 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
-<script src="assets/js/film.js"></script>
+<script src="assets/js/main.js?v=mission-embed-4"></script>
+<script src="assets/js/film.js?v=3"></script>
+<script src="assets/js/mission.js?v=1"></script>
 </body>
 </html>

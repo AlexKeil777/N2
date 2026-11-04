@@ -6,6 +6,11 @@
   <title>Continuous vs. batch — N2 Team</title>
   <meta name="theme-color" content="#050505">
   <meta name="description" content="Put continuous and modular batch VHP processes side by side. Trigger a stop and watch how each line responds.">
+  <script>
+    if (new URLSearchParams(location.search).get('embed') === '1') {
+      document.documentElement.classList.add('is-embedded');
+    }
+  </script>
   <link rel="stylesheet" href="assets/css/styles.css">
   <style>
     .simulation-wrap{ display:grid; gap:24px; padding-block:clamp(30px,5vw,70px); }
@@ -42,6 +47,35 @@
       .scoreboard{ justify-content:space-around; gap:18px; }
       .score-reading{ gap:10px; }
       .diagram-scroll svg{ max-height:none; }
+    }
+    /* The same live tool, with its page chrome removed inside the mission. */
+    html.is-embedded, .is-embedded body{ min-height:0; height:auto; }
+    .is-embedded body{ display:block; background:var(--panel); }
+    .is-embedded .site-header, .is-embedded footer, .is-embedded .skip-link,
+    .is-embedded .simulation-intro > div:first-child{ display:none; }
+    .is-embedded .simulation-wrap{ width:100%; margin:0; padding:14px; gap:12px; flex:none; }
+    .is-embedded .simulation-intro{ display:block; padding:0; }
+    .is-embedded .simulation-actions{ gap:8px; }
+    .is-embedded .simulation-actions .btn{ padding:8px 12px; font-size:11px; }
+    .is-embedded .scene-heading{ align-items:center; padding:10px 12px 0; gap:8px; }
+    .is-embedded .scene-heading h2{ font-size:23px; }
+    .is-embedded .scene-heading span{ max-width:none; font-size:10px; }
+    .is-embedded .diagram-scroll svg{ min-width:0; max-height:none; }
+    .is-embedded .scoreboard{ justify-content:space-around; gap:14px; padding:0; }
+    .is-embedded .score-reading{ gap:8px; }
+    .is-embedded .score-label{ font-size:10px; line-height:1.35; }
+    .is-embedded .score{ font-size:28px; }
+    .is-embedded .hud{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; padding-top:12px; }
+    .is-embedded .hud label{ gap:5px; font-size:10px; }
+    .is-embedded .hud input{ padding:7px 8px; font-size:12px; }
+    .is-embedded .simulation-note{ font-size:10px; line-height:1.5; }
+    .is-embedded .scroll-hint{ display:none; }
+    @media (max-width:459px){
+      .is-embedded .simulation-wrap{ padding:12px; gap:10px; }
+      .is-embedded .hud{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .is-embedded .diagram-scroll svg{ min-width:520px; }
+      .is-embedded .scroll-hint{ display:block; font-size:10px; }
+      .is-embedded .scene-heading span{ max-width:16ch; }
     }
   </style>
 <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
@@ -635,7 +669,13 @@
       } catch(e){ console.warn('Self-tests error:', e); }
     })();
   </script>
-  <script src="assets/js/main.js"></script>
+  <script>
+    if (!document.documentElement.classList.contains('is-embedded')) {
+      const siteScript = document.createElement('script');
+      siteScript.src = 'assets/js/main.js';
+      document.body.appendChild(siteScript);
+    }
+  </script>
 
 </body>
 </html>
