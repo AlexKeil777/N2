@@ -330,7 +330,7 @@
         const bounds = control.getBoundingClientRect();
         atmosphere.burst(event.detail ? event.clientX : bounds.left + bounds.width / 2,
           event.detail ? event.clientY : bounds.top + bounds.height / 2, fine.matches ? 36 : 20, Math.min(bounds.width * 0.4, 65));
-        if (control.matches('button, summary') && typeof control.animate === 'function') control.animate([
+        if (control.matches('button, summary') && !control.matches('.film-play') && typeof control.animate === 'function') control.animate([
           { opacity: 1, filter: 'blur(0px)' }, { opacity: 0.35, filter: 'blur(3px)', offset: 0.35 },
           { opacity: 1, filter: 'blur(0px)' }
         ], { duration: 500, easing: 'ease-out' });
