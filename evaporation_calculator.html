@@ -199,7 +199,17 @@
       padding: 28px 26px;
       text-align: center;
     }
-    .pw-card h2{ margin: 0 0 6px; font-size: 20px; font-weight: 700; }
+    .pw-card h2{ margin: 0 0 10px; font-size: clamp(36px, 5vw, 52px); font-weight: 500; }
+    .pw-back{ display: inline-block; margin-top: 20px; font-size: 13px; }
+    .model-notes{ max-width: 65ch; margin-top: 20px; font-size: 14px; color: var(--muted); }
+    .model-notes summary{ cursor: pointer; width: fit-content; color: var(--text); padding: 6px 0; }
+    .model-notes p{ font-size: 14px; margin-top: 8px; }
+    .calc-grid > *{ min-width: 0; }
+    @media (max-width: 480px){
+      .row{ grid-template-columns: 1fr; }
+      .kpi-grid{ grid-template-columns: 1fr; }
+      .btn-row .btn{ flex: 1 1 auto; }
+    }
     .pw-card p{ margin: 0 0 18px; font-size: 13px; color: var(--muted); }
     .pw-card form{ display: flex; flex-direction: column; gap: 12px; }
     .pw-card input{
@@ -218,20 +228,22 @@
     }
     .pw-err{ min-height: 1.2em; margin: 0; font-size: 13px; color: var(--warn); }
   </style>
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
 
-<body class="locked">
+<body class="locked calculator-page">
 
   <div id="pw-gate" role="dialog" aria-modal="true" aria-labelledby="pw-title">
     <div class="pw-card">
-      <h2 id="pw-title">Protected tool</h2>
-      <p>Enter the password to open the evaporation calculator.</p>
+      <h2 id="pw-title">Follow the vapor.</h2>
+      <p>The evaporation lab. Enter your password to begin.</p>
       <form id="pw-form">
         <input id="pw-input" type="password" autocomplete="current-password"
                placeholder="Password" aria-label="Password" autofocus>
         <button class="btn primary" type="submit">Unlock</button>
         <p class="pw-err" id="pw-err" role="alert" aria-live="polite"></p>
       </form>
+      <a class="pw-back xref" href="mission.html">Back to the mission</a>
     </div>
   </div>
 
@@ -314,13 +326,12 @@
   <main id="main">
     <section class="hero">
       <div class="container">
-        <h1>H₂O₂ / H₂O evaporation rate</h1>
-        <p class="lede">
-          Free-film evaporation of a binary H₂O₂/H₂O liquid into a humid air boundary.
-          Pure-component vapour pressures come from Giguère and Maass (H₂O₂) and Tetens
-          (H₂O), with non-ideality handled by a Margules model. The flux kernel is either
-          Hertz-Knudsen, for a perfectly stirred gas, or one of three boundary-layer modes.
-        </p>
+        <h1>Follow the vapor.</h1>
+        <p class="lede">Model H₂O₂ / H₂O evaporation. Change the conditions. Watch the liquid evolve.</p>
+        <details class="model-notes">
+          <summary>About the model</summary>
+          <p>Free-film evaporation into humid air. Vapour pressures use Giguère–Maass (H₂O₂) and Tetens (H₂O), with Margules activity coefficients. Choose Hertz–Knudsen or one of three boundary-layer flux models below.</p>
+        </details>
       </div>
     </section>
 
@@ -331,7 +342,7 @@
           <!-- ============ LEFT: INPUTS ============ -->
           <div>
             <div class="calc-panel">
-              <h3>Calculation Mode</h3>
+              <h3>Flux model</h3>
               <div class="radio-list" role="radiogroup" aria-label="Calculation mode">
                 <label><input type="radio" name="mode" value="A" checked> A · Hertz-Knudsen</label>
                 <label><input type="radio" name="mode" value="B"> B · Stefan / Fick</label>
@@ -341,7 +352,7 @@
             </div>
 
             <div class="calc-panel">
-              <h3>Common Inputs</h3>
+              <h3>Starting conditions</h3>
               <div class="row">
                 <div class="field">
                   <label for="T_liq">Liquid temperature T<sub>liq</sub></label>
@@ -389,7 +400,7 @@
             </div>
 
             <div class="calc-panel">
-              <h3>N₂ Injection Method</h3>
+              <h3>N₂ injection</h3>
               <div class="radio-list" role="radiogroup" aria-label="N2 injection method">
                 <label><input type="radio" name="n2mode" value="I" checked> I · Isobaric replacement (P fixed)</label>
                 <label><input type="radio" name="n2mode" value="II"> II · Pressurisation (P rises)</label>
@@ -397,7 +408,7 @@
             </div>
 
             <div class="calc-panel">
-              <h3>Boundary Layer <small style="text-transform:none;color:var(--subtle);font-weight:500">(modes B/C/D)</small></h3>
+              <h3>Boundary layer <small style="text-transform:none;color:var(--subtle);font-weight:500">(modes B/C/D)</small></h3>
               <div class="row">
                 <div class="field">
                   <label for="U_air">Air velocity U</label>
@@ -444,7 +455,7 @@
                   <div class="sub" id="kpi-gmin2">— g/min</div>
                 </div>
               </div>
-              <div class="results-box" id="static-out" style="margin-top:12px">Awaiting inputs — click “Calculate t = 0”.</div>
+              <div class="results-box" id="static-out" style="margin-top:12px">Calculate the initial flux to see the results.</div>
             </div>
 
             <div class="calc-panel">

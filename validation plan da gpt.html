@@ -4,16 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tiramisù Spoilage Simulator — Peer-review Response & Validation Path</title>
+<link rel="stylesheet" href="assets/css/styles.css">
 <style>
-:root{
-  --bg:#faf6ed; --paper:#fffdf7; --ink:#1b1712; --muted:#6d6256;
-  --accent:#9c4221; --accent2:#c27a46; --border:#e4d6bf;
-  --green:#166534; --amber:#b45309; --red:#b91c1c; --blue:#1d4ed8;
-  --warn:#fff7ed; --good:#ecfdf5; --note:#eff6ff;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  --sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  --serif: Georgia, "Times New Roman", serif;
-}
+/* Theme tokens are shared with the main N2 site. */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.58;font-size:15px}
 .wrap{max-width:1180px;margin:0 auto;padding:42px 24px 86px}
@@ -45,8 +38,11 @@ ul,ol{padding-left:22px}li{margin:4px 0}
 .footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
 a{color:var(--accent)}
 </style>
+<link rel="stylesheet" href="assets/css/research.css">
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
-<body class="locked">
+<body class="locked research-page research-document">
 
 <style>
   /* ---- password gate (self-contained) ---- */
@@ -87,14 +83,15 @@ a{color:var(--accent)}
 
 <div id="pw-gate" role="dialog" aria-modal="true" aria-labelledby="pw-title">
   <div class="pw-card">
-    <h2 id="pw-title">Protected page</h2>
-    <p>Enter the password to view this page.</p>
+    <h2 id="pw-title">Research access</h2>
+    <p>Enter your password to open the research desk.</p>
     <form id="pw-form">
       <input id="pw-input" type="password" autocomplete="current-password"
              placeholder="Password" aria-label="Password" autofocus>
-      <button type="submit">Unlock</button>
+      <button type="submit">Open research</button>
       <p class="pw-err" id="pw-err" role="alert" aria-live="polite"></p>
     </form>
+    <a class="pw-return" href="mission.html">Back to the mission</a>
   </div>
 </div>
 
@@ -143,15 +140,23 @@ a{color:var(--accent)}
   })();
 </script>
 
-<div class="wrap">
+<a class="skip-link" href="#main">Skip to content</a>
+<nav class="research-nav" aria-label="Research navigation">
+  <a class="research-brand" href="index.html"><svg viewBox="0 0 400 240" aria-hidden="true"><path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200" fill="none" stroke="currentColor" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/></svg><span>N2 Research</span></a>
+  <div class="research-links"><a href="mission.html">The mission</a><a href="Tiramisu_Calculator_v1_3.html">Spoilage calculator</a><a href="user_guide.html">User guide</a></div>
+</nav>
+
+<div class="wrap" id="main" role="main">
 <header class="hero">
-<p class="eyebrow">Peer-review response · validation protocol · v0.1</p>
-<h1>Tiramisù Spoilage Simulator — <em>Revised Conclusions & Test Path</em></h1>
-<p class="subtitle">Response to an independent reviewer: porous biscuit air, temperature practicality, cocoa bioburden, natamycin legality, nutrient-factor calibration, packaging bioburden, and the meaning of “reported” shelf-life days.</p>
+  <h1>Question. Refine. Test.</h1>
+  <p class="subtitle">Research review and a proposed validation path for the tiramisù spoilage model.</p>
 </header>
 
 <section>
-<h2><span class="num">§ 01</span>Executive revision to the scientific conclusions</h2>
+<details class="research-disclosure">
+<summary><h2>Executive revision to the scientific conclusions</h2></summary>
+<div class="research-detail">
+
 <div class="grid two">
 <div class="card priority-high">
 <h3>Conclusion that should change most</h3>
@@ -167,11 +172,16 @@ a{color:var(--accent)}
 <strong>Bottom line after peer review</strong>
 The model remains useful, but the manuscript should pivot from “best alcohol-free path = 2 °C + natamycin + packaging” toward “best validated path = independent control of cocoa, packaging surfaces and airborne filling contamination; temperature and natamycin are high-impact but constrained levers.”
 </div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 02</span>Point-by-point response to reviewer</h2>
-<table>
+<details class="research-disclosure">
+<summary><h2>Point-by-point response to reviewer</h2></summary>
+<div class="research-detail">
+
+<div class="table-scroll" tabindex="0" role="region" aria-label="Data table"><table>
 <thead><tr><th>Reviewer issue</th><th>Does current work address it?</th><th>What it adds to conclusions</th><th>Required revision</th></tr></thead>
 <tbody>
 <tr>
@@ -211,12 +221,17 @@ The model remains useful, but the manuscript should pivot from “best alcohol-f
 <td>Rename to “conservative model output” or “screening recommendation after 0.7 factor”. Round to whole days or half-days.</td>
 </tr>
 </tbody>
-</table>
+</table></div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 03</span>Revised hierarchy of practical levers</h2>
-<table class="matrix">
+<details class="research-disclosure">
+<summary><h2>Revised hierarchy of practical levers</h2></summary>
+<div class="research-detail">
+
+<div class="table-scroll" tabindex="0" role="region" aria-label="Data table"><table class="matrix">
 <thead><tr><th>Rank</th><th>Lever</th><th>Practical status</th><th>Why it moves up or down</th><th>Validation priority</th></tr></thead>
 <tbody>
 <tr><td class="num">1</td><td>Cup/lid surface bioburden control</td><td><span class="badge good">legal & practical</span></td><td>Directly affects rim/lid limiters. Can be tested with VHP, UV, gamma-irradiated packaging, sterile bags, and swabs.</td><td><span class="badge stop">critical</span></td></tr>
@@ -227,11 +242,16 @@ The model remains useful, but the manuscript should pivot from “best alcohol-f
 <tr><td class="num">6</td><td>2 °C cold chain</td><td><span class="badge warn">high impact, constrained</span></td><td>Biologically powerful, but often difficult commercially; freezing/texture risk under normal oscillations.</td><td><span class="badge warn">high</span></td></tr>
 <tr><td class="num">7</td><td>Natamycin</td><td><span class="badge stop">possible showstopper</span></td><td>Technically strong antifungal, but food-additive authorisation may not cover tiramisù surfaces.</td><td><span class="badge note">optional</span></td></tr>
 </tbody>
-</table>
+</table></div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 04</span>Proposed validation path — feasible lab programme</h2>
+<details class="research-disclosure">
+<summary><h2>Proposed validation path — feasible lab programme</h2></summary>
+<div class="research-detail">
+
 <div class="flow">
 <div class="step"><span class="k">PHASE 0</span><b>Instrument the product</b><p>Measure aw, pH, O₂/CO₂, temperature, texture/freezing indicators, and initial bioburden.</p></div>
 <div class="step"><span class="k">PHASE 1</span><b>Calibrate components</b><p>Validate cocoa, packaging, fill-air, biscuit-pore and nutrient-factor submodels independently.</p></div>
@@ -240,7 +260,7 @@ The model remains useful, but the manuscript should pivot from “best alcohol-f
 </div>
 
 <h3>Phase 0 — baseline measurements before microbiology</h3>
-<table>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Data table"><table>
 <thead><tr><th>Measurement</th><th>Method</th><th>Reason</th><th>Decision threshold</th></tr></thead>
 <tbody>
 <tr><td>aw by compartment</td><td>aw meter on cocoa, top cream, biscuit, bottom cream at day 0 and after equilibration</td><td>Needed because cocoa aw is modelled via thin-layer coupling, not simply user input.</td><td>If cocoa aw differs by &gt;0.03 from model, refit cocoa <code>L0_mm</code>.</td></tr>
@@ -249,10 +269,10 @@ The model remains useful, but the manuscript should pivot from “best alcohol-f
 <tr><td>Temperature distribution</td><td>Data loggers inside dummy cups, lid surface, carton centre</td><td>Needed before treating 2 °C as realistic.</td><td>Any local sub-zero episodes require texture/freezing assessment.</td></tr>
 <tr><td>Texture/freezing</td><td>Visual ice check, syneresis, cream rheology, sensory screen</td><td>Low-temperature shelf-life gain is useless if quality fails.</td><td>Reject 2 °C scenario if oscillations damage cream or biscuit texture.</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Phase 1 — independent calibration experiments</h3>
-<table>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Data table"><table>
 <thead><tr><th>Test block</th><th>Experimental design</th><th>Controls</th><th>Primary endpoint</th><th>Model parameter tested</th></tr></thead>
 <tbody>
 <tr>
@@ -305,18 +325,23 @@ The model remains useful, but the manuscript should pivot from “best alcohol-f
 <td>Natamycin gamma; not a default recommendation.</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 
 <div class="callout note">
 <strong>Feasible minimum</strong>
 If resources are limited, prioritise blocks A–E. They directly address the reviewer’s criticisms and validate the strongest scientific claims. Block F is important for practical recommendations; block G is optional unless the regulatory path is confirmed.
 </div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 05</span>Suggested cup-level validation matrix</h2>
+<details class="research-disclosure">
+<summary><h2>Suggested cup-level validation matrix</h2></summary>
+<div class="research-detail">
+
 <p>This matrix keeps the experiment feasible by using a staged fractional design rather than every possible combination.</p>
-<table>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Data table"><table>
 <thead><tr><th>ID</th><th>Purpose</th><th>Cocoa</th><th>Packaging</th><th>Fill environment</th><th>Gas/lid</th><th>Temperature</th><th>Expected learning</th></tr></thead>
 <tbody>
 <tr><td>V1</td><td>Clean baseline</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Lowest practical no-preservative baseline.</td></tr>
@@ -332,7 +357,7 @@ If resources are limited, prioritise blocks A–E. They directly address the rev
 <tr><td>V11</td><td>Low-T realistic</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>0–4 °C oscillating</td><td>Freezing/quality risk and practical limit.</td></tr>
 <tr><td>V12</td><td>Technical natamycin control</td><td>Steam-treated</td><td>VHP/gamma sterile</td><td>Cleanroom</td><td>Air / PP</td><td>4 °C</td><td>Only if legally/ethically permitted; calibrates antifungal upper bound.</td></tr>
 </tbody>
-</table>
+</table></div>
 
 <h3>Replication and sampling</h3>
 <ul>
@@ -342,11 +367,16 @@ If resources are limited, prioritise blocks A–E. They directly address the rev
 <li><strong>Microbiology:</strong> yeast/mold counts by compartment, ingredient CFU/g, packaging swabs CFU/cm², settle plates/air sampler CFU during filling.</li>
 <li><strong>Instrumented subset:</strong> at least 3 cups per gas condition with O₂/CO₂ monitoring.</li>
 </ul>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 06</span>Model changes before re-running scenarios</h2>
-<table>
+<details class="research-disclosure">
+<summary><h2>Model changes before re-running scenarios</h2></summary>
+<div class="research-detail">
+
+<div class="table-scroll" tabindex="0" role="region" aria-label="Data table"><table>
 <thead><tr><th>Change</th><th>Why</th><th>Implementation</th><th>Effect on paper</th></tr></thead>
 <tbody>
 <tr><td>Rename “reported days”</td><td>Avoid implying real market or experimental data.</td><td>Use “conservative screening days = predicted × 0.7”, rounded to whole days.</td><td>Major credibility gain.</td></tr>
@@ -357,11 +387,16 @@ If resources are limited, prioritise blocks A–E. They directly address the rev
 <tr><td>Demote natamycin in strategy</td><td>Potential additive-law showstopper.</td><td>Move to appendix or “technical positive control”.</td><td>Avoids regulatory criticism.</td></tr>
 <tr><td>Relabel 2 °C</td><td>Cold chain usually not flexible and may freeze locally.</td><td>“High-impact constrained option”; add oscillation/freezing tests.</td><td>More industrially realistic.</td></tr>
 </tbody>
-</table>
+</table></div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 07</span>Analysis plan</h2>
+<details class="research-disclosure">
+<summary><h2>Analysis plan</h2></summary>
+<div class="research-detail">
+
 <div class="grid two">
 <div class="card">
 <h3>Primary endpoint</h3>
@@ -380,18 +415,28 @@ If resources are limited, prioritise blocks A–E. They directly address the rev
 <p>Run spoilage validation separately from pathogen safety. For commercial shelf life, a parallel Listeria/RTE safety justification is required; this model should not claim pathogen control.</p>
 </div>
 </div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 08</span>Recommended rewritten conclusion for the manuscript</h2>
+<details class="research-disclosure">
+<summary><h2>Recommended rewritten conclusion for the manuscript</h2></summary>
+<div class="research-detail">
+
 <div class="callout good">
 <strong>Proposed conclusion</strong>
 The simulator is best presented as a compartmental screening framework for identifying tiramisù spoilage bottlenecks, especially the relative contributions of cocoa, package surfaces, and fill-air deposition. The peer-review comments strengthen the manuscript by shifting emphasis from additive-based preservation toward experimentally testable, legally robust hygiene and ingredient-control levers. Temperature and natamycin remain biologically informative but should be treated as constrained or jurisdiction-dependent interventions rather than default commercial recommendations.
 </div>
+</div>
+</details>
 </section>
 
 <section>
-<h2><span class="num">§ 09</span>Key references and regulatory anchors</h2>
+<details class="research-disclosure">
+<summary><h2>Key references and regulatory anchors</h2></summary>
+<div class="research-detail">
+
 <ul>
 <li>European Commission Food Additives database — natamycin E235 authorised categories: <a href="https://ec.europa.eu/food/food-feed-portal/screen/food-additives/search/details/POL-FAD-IMPORT-3053">EC Food and Feed Information Portal</a>.</li>
 <li>EFSA Scientific Opinion on natamycin E235 — surface treatment of selected cheeses and dry cured sausages: <a href="https://efsa.onlinelibrary.wiley.com/doi/10.2903/j.efsa.2009.1412">EFSA Journal 2009;7(12):1412</a>.</li>
@@ -400,11 +445,43 @@ The simulator is best presented as a compartmental screening framework for ident
 <li>Iacumin et al. 2022, microbial characterization of cocoa powders and chocolate bars: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9497492/">Foods 2022;11:2753</a>.</li>
 <li>FDA regulatory report on irradiation of food packaging materials: <a href="https://www.fda.gov/food/ingredients-additives-gras-packaging-guidance-documents-regulatory-information/regulatory-report-irradiation-food-packaging-materials">FDA food packaging irradiation report</a>.</li>
 </ul>
+</div>
+</details>
 </section>
 
 <div class="footer">
 Prepared as a revision-oriented response to independent peer review. This document is a validation plan and manuscript-positioning aid; it is not a shelf-life certification protocol or food-safety approval.
 </div>
 </div>
+
+<script>
+// Keep reference links useful when their technical section is folded away.
+(() => {
+  function revealReference() {
+    if (!location.hash) return;
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    const target = document.getElementById(id);
+    if (!target) return;
+    for (let node = target; node; node = node.parentElement) {
+      if (node.tagName === 'DETAILS') node.open = true;
+    }
+    const disclosure = target.querySelector(':scope > .research-disclosure');
+    if (disclosure) disclosure.open = true;
+    requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+  }
+  addEventListener('hashchange', revealReference);
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (link && link.hash === location.hash) revealReference();
+  });
+  if (!document.body.classList.contains('locked')) revealReference();
+  new MutationObserver(() => {
+    if (!document.body.classList.contains('locked')) revealReference();
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
+
+<script src="assets/js/main.js"></script>
 </body>
 </html>

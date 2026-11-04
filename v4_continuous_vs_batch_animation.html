@@ -4,146 +4,96 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Continuous vs. batch — N2 Team</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="Put continuous and modular batch VHP processes side by side. Trigger a stop and watch how each line responds.">
+  <link rel="stylesheet" href="assets/css/styles.css">
   <style>
-    /* Self-contained page. It carries its own copy of the site's dark
-       variant so it stays standalone, but the values are the same ones
-       declared in assets/css/styles.css. This is the instrument screen
-       of the document set: dark stock, same inks, same faces. */
-    :root{
-      --bg:#000000; --panel:#0b0b0b; --panel-2:#141414;
-      --fg:#f2efe9; --muted:#a29b90; --subtle:#857e73;
-      --accent:#e0742f; --accent-2:#4fc0ad; --accent-3:#7fa8e0;
-      --border:rgba(242,239,233,.12); --border-strong:rgba(242,239,233,.26);
-      --ease:cubic-bezier(.22,1,.36,1); --ease-in:cubic-bezier(.45,0,.75,.2);
-      --display:"Fraunces","Iowan Old Style",Georgia,serif;
-      --sans:"Archivo",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
-      --belt-height:24px; --speed-pps:90; --processing-time:2.4;
-    }
-    *{box-sizing:border-box}
-    html,body{
-      height:100%;margin:0;
-      font-family:var(--sans);color:var(--fg);
-      background:var(--bg);
-    }
-    .wrap{min-height:100dvh;display:grid;grid-template-rows:auto auto 1fr auto;gap:14px;padding:22px 26px 26px;position:relative;z-index:1}
-
-    /* Running head, so the page is not a dead end */
-    .doc-head{
-      display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 22px;
-      padding-bottom:10px;border-bottom:1px solid var(--border);
-      font-size:14px;color:var(--subtle);
-    }
-    .doc-head b{color:var(--muted);font-weight:500}
-    .doc-head a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent}
-    .doc-head a:hover{border-bottom-color:var(--accent)}
-    .doc-head a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-
-    h1{font-family:var(--display);margin:0 0 4px;font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.012em;line-height:1.1}
-    .standfirst{margin:0;color:var(--muted);font-size:15px;max-width:70ch}
-
-    /* Flat instrument panel: hairline frame, no glass, no drop shadow */
-    .scene{position:relative;border:1px solid var(--border);background:var(--panel);overflow:hidden;display:grid;place-items:center;min-height:240px}
-
-    .scene .overlay-row{position:absolute;top:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
-    .scene .btn{
-      padding:7px 13px;background:transparent;color:var(--fg);
-      border:1px solid var(--border-strong);border-radius:2px;cursor:pointer;
-      font-family:var(--sans);font-size:14px;font-weight:500;
-      transition:border-color .5s var(--ease),color .5s var(--ease),background .5s var(--ease),transform .5s var(--ease);
-    }
-    .scene .btn:hover{border-color:var(--accent);color:var(--accent)}
-    .scene .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-    .scene .btn.active{background:var(--accent);border-color:var(--accent);color:var(--bg)}
-
-    .hud{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:13px;
-      padding-top:12px;border-top:1px solid var(--border)}
-    .hud label{display:inline-flex;align-items:center;gap:8px;
-      font-size:13.5px;color:var(--muted)}
-    .hud input{
-      width:88px;background:var(--panel);color:var(--fg);
-      border:1px solid var(--border-strong);border-radius:2px;padding:6px 8px;
-      font-family:var(--sans);font-size:14px;font-variant-numeric:tabular-nums;
-    }
-    .hud input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-
-    /* Scoreboard: a read-out, so it is ruled and set in the data face */
-    .scoreboard{display:flex;justify-content:center;align-items:center;margin:4px 0}
-    .score-panel{background:var(--panel);border:1px solid var(--border-strong);border-radius:2px;padding:10px 20px;text-align:center}
-    .score{font-variant-numeric:tabular-nums;letter-spacing:3px;font-weight:600;line-height:1.15}
-    .score.top{color:var(--accent);font-size:26px}
-    .score.bottom{color:var(--accent-2);font-size:26px;margin-top:4px}
-
-    .score-labels{margin-right:16px;text-align:right}
-    .score-labels .lbl{font-size:14px;font-weight:500;line-height:1.15}
-    .score-labels .top{color:var(--accent)}
-    .score-labels .bottom{color:var(--accent-2);margin-top:12px}
-
-    /* ---- vapour transition ----
-       Same idea as the shared pages: arriving, the deck condenses out
-       of the black; leaving, everything printed on it boils off. This
-       page is standalone, so it carries its own copy. */
-    @keyframes vapor-in{
-      from{opacity:0;filter:blur(11px);transform:translate3d(0,16px,0) scale(.994)}
-      to  {opacity:1;filter:blur(0);transform:none}
-    }
-    @keyframes vapor-out{
-      0%  {opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1) rotate(0deg)}
-      45% {opacity:.55;filter:blur(3px)}
-      100%{opacity:0;filter:blur(13px);
-           transform:translate3d(var(--vx,0px),-52px,0) scale(1.06) rotate(var(--vr,0deg))}
-    }
-    @keyframes soft-in{from{opacity:0}to{opacity:1}}
-    .wrap > *{animation:vapor-in 680ms var(--ease) backwards}
-    /* the scenes hold a live SVG animation: fade them, never filter
-       them, or every frame pays for a full-canvas blur pass */
-    .wrap > .scene{animation:soft-in 680ms var(--ease) backwards}
-    .wrap > *:nth-child(1){animation-delay:60ms}
-    .wrap > *:nth-child(2){animation-delay:140ms}
-    .wrap > *:nth-child(3){animation-delay:210ms}
-    .wrap > *:nth-child(n+4){animation-delay:275ms}
-
-    html.is-leaving *{pointer-events:none !important}
-    html.is-leaving .wrap > *{animation:none}
-    @keyframes soft-out{
-      from{opacity:1;transform:translate3d(0,0,0)}
-      to  {opacity:0;transform:translate3d(0,-38px,0)}
-    }
-    html.is-leaving [data-vapor-atom]{
-      animation:vapor-out 560ms var(--ease-in) var(--vd,0ms) both;
-      will-change:opacity,filter,transform;
-    }
-    html.is-leaving .scene[data-vapor-atom]{
-      animation:soft-out 560ms var(--ease-in) var(--vd,0ms) both;
-    }
-
-    @media (prefers-reduced-motion: reduce){
-      *{animation-duration:.01ms !important;animation-iteration-count:1 !important;
-        transition-duration:.01ms !important}
+    .simulation-wrap{ display:grid; gap:24px; padding-block:clamp(30px,5vw,70px); }
+    .simulation-intro{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:24px; padding-bottom:8px; }
+    .simulation-intro h1{ font-size:clamp(48px,6vw,92px); margin-bottom:12px; }
+    .simulation-intro .standfirst{ max-width:55ch; margin:0; }
+    .simulation-actions{ display:flex; flex-wrap:wrap; gap:10px; }
+    .simulation-actions .btn.active{ background:var(--text); color:var(--bg); }
+    .simulation-wrap .scene{ min-width:0; border:1px solid var(--border); background:var(--panel); overflow:hidden; border-radius:var(--radius); }
+    .scene-heading{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:18px 24px 0; }
+    .scene-heading h2{ font-size:clamp(28px,3vw,38px); margin:0; }
+    .scene-heading span{ font-size:13px; color:var(--muted); }
+    .diagram-scroll{ overflow-x:auto; overscroll-behavior-x:contain; scrollbar-color:var(--border-strong) var(--panel); }
+    .diagram-scroll svg{ display:block; width:100%; min-width:740px; height:auto; max-height:340px; }
+    .scene svg text{ font-family:var(--sans); }
+    .scoreboard{ display:flex; justify-content:center; flex-wrap:wrap; gap:clamp(28px,7vw,100px); padding:4px 0; }
+    .score-reading{ display:flex; align-items:center; gap:16px; }
+    .score-label{ color:var(--muted); font-size:13px; line-height:1.5; }
+    .score{ font:500 clamp(34px,4vw,52px)/1 var(--display); font-variant-numeric:tabular-nums; color:var(--text); }
+    .score.bottom{ color:var(--brand-2); }
+    .hud{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding-top:20px; border-top:1px solid var(--border); }
+    .hud label{ display:flex; flex-direction:column; gap:8px; font-size:13px; color:var(--muted); }
+    .hud input{ width:100%; min-width:0; background:var(--panel); color:var(--text); border:1px solid var(--border-strong); border-radius:var(--radius); padding:12px; font:inherit; font-variant-numeric:tabular-nums; }
+    .simulation-note{ font-size:13px; color:var(--subtle); margin:0; }
+    .scroll-hint{ display:none; font-size:12px; color:var(--muted); margin:0; }
+    /* Keep live diagrams out of blur-based page entrances. */
+    .simulation-wrap, .simulation-wrap > .scene{ animation:none; }
+    @media (max-width:760px){
+      .simulation-wrap{ gap:20px; }
+      .hud{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .scene-heading{ padding:16px 16px 4px; }
+      .scene-heading span{ max-width:18ch; text-align:right; }
+      .scroll-hint{ display:block; }
+      .scoreboard{ justify-content:space-around; gap:18px; }
+      .score-reading{ gap:10px; }
+      .diagram-scroll svg{ max-height:none; }
     }
   </style>
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
-<body>
-  <div class="wrap">
-    <div class="doc-head">
-      <span><b>N2 Team</b> &middot; VHP decontamination</span>
-      <span><a href="mission.html">&larr; Back to the mission</a></span>
-    </div>
+<body class="simulation-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Main">
+      <a class="brand" href="index.html">
+        <svg class="nav-logo" viewBox="0 0 400 240" aria-hidden="true">
+          <path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
+                fill="none" stroke="currentColor" stroke-width="36"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>
+          N2 Team
+          <small>VHP decontamination</small>
+        </span>
+      </a>
 
-    <div>
-      <h1>Continuous tunnel against modular batch</h1>
-      <p class="standfirst">
-        Both lines run the same process at the same speed. Use the controls to change
-        chamber length, conveyor speed, takt time and minimum stay, then trigger a
-        failure and watch what each architecture does with it. The counters show units
-        released.
-      </p>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">
+        Menu
+      </button>
+
+      <div class="nav-links" id="navLinks" data-nav-links>
+        <a href="index.html">Home</a>
+        <a href="mission.html">Mission</a>
+        <a href="team.html">Team</a>
+        <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
+        <a href="evaporation_calculator.html">Calculator</a>
+      </div>
+    </nav>
+  </div>
+</header>
+  <main id="main" class="simulation-wrap container">
+    <div class="simulation-intro">
+      <div>
+        <h1>Same process. Different resilience.</h1>
+        <p class="standfirst">Continuous meets batch. Change the pace, trigger a fault and watch each line respond.</p>
+      </div>
+      <div class="simulation-actions">
+        <button id="pauseBtn" class="btn" type="button" aria-pressed="false">Downstream stop</button>
+        <button id="failBtn" class="btn" type="button" aria-pressed="false">Station failure</button>
+      </div>
     </div>
+    <p class="scroll-hint">Swipe each diagram to follow the full line.</p>
 
     <!-- ===== Top: Continuous process ===== -->
-    <div class="scene">
+    <section class="scene" aria-labelledby="continuous-title">
+      <div class="scene-heading"><h2 id="continuous-title">Continuous</h2><span>One connected line</span></div>
+      <div class="diagram-scroll" tabindex="0" role="region" aria-label="Continuous process diagram">
       <svg id="vizCont" viewBox="0 0 1000 240" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="glowCont" x="-50%" y="-50%" width="200%" height="200%">
@@ -154,50 +104,43 @@
             </feMerge>
           </filter>
           <marker id="arrowHeadCont" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f2ece0"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f2f2f0"/>
           </marker>
         </defs>
         <!-- Process phase 1 (purely visual) -->
         <g id="stationP">
-          <rect id="stationPGlass" x="16" y="60" width="160" height="110" rx="2" ry="2" fill="rgba(242,236,224,.05)" stroke="#e0742f" stroke-width="2" filter="url(#glowCont)" />
-          <rect id="stationPInner" x="26" y="70" width="140" height="90" rx="2" ry="2" fill="transparent" stroke="#e0742f" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
-          <text id="stationPLabel" x="16" y="56" fill="#f2ece0" opacity="0.75" font-size="12" font-weight="600">Process phase 1</text>
+          <rect id="stationPGlass" x="16" y="60" width="160" height="110" rx="2" ry="2" fill="rgba(242,242,240,.04)" stroke="#e5e7eb" stroke-width="2" filter="url(#glowCont)" />
+          <rect id="stationPInner" x="26" y="70" width="140" height="90" rx="2" ry="2" fill="transparent" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+          <text id="stationPLabel" x="16" y="56" fill="#f2f2f0" opacity="0.75" font-size="12" font-weight="600">Process phase 1</text>
         </g>
         <!-- Process phase 2 (A) -->
         <g id="stationA">
-          <rect id="stationAGlass" x="210" y="60" width="220" height="110" rx="2" ry="2" fill="rgba(242,236,224,.05)" stroke="#4fc0ad" stroke-width="2" filter="url(#glowCont)" />
-          <rect id="stationAInner" x="220" y="70" width="200" height="90" rx="2" ry="2" fill="transparent" stroke="#4fc0ad" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
-          <text id="stationALabel" x="216" y="56" fill="#f2ece0" opacity="0.75" font-size="12" font-weight="600">Process phase 2</text>
+          <rect id="stationAGlass" x="210" y="60" width="220" height="110" rx="2" ry="2" fill="rgba(242,242,240,.04)" stroke="#91b7b1" stroke-width="2" filter="url(#glowCont)" />
+          <rect id="stationAInner" x="220" y="70" width="200" height="90" rx="2" ry="2" fill="transparent" stroke="#91b7b1" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+          <text id="stationALabel" x="216" y="56" fill="#f2f2f0" opacity="0.75" font-size="12" font-weight="600">Process phase 2</text>
         </g>
         <!-- Process phase 3 (B) -->
         <g id="stationB">
-          <rect id="stationBGlass" x="510" y="60" width="220" height="110" rx="2" ry="2" fill="rgba(242,236,224,.05)" stroke="#7fa8e0" stroke-width="2" filter="url(#glowCont)" />
-          <rect id="stationBInner" x="520" y="70" width="200" height="90" rx="2" ry="2" fill="transparent" stroke="#7fa8e0" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
-          <text id="stationBLabel" x="516" y="56" fill="#f2ece0" opacity="0.75" font-size="12" font-weight="600">Process phase 3</text>
+          <rect id="stationBGlass" x="510" y="60" width="220" height="110" rx="2" ry="2" fill="rgba(242,242,240,.04)" stroke="#a5b3d1" stroke-width="2" filter="url(#glowCont)" />
+          <rect id="stationBInner" x="520" y="70" width="200" height="90" rx="2" ry="2" fill="transparent" stroke="#a5b3d1" stroke-width="1" stroke-dasharray="6 6" opacity="0.5"/>
+          <text id="stationBLabel" x="516" y="56" fill="#f2f2f0" opacity="0.75" font-size="12" font-weight="600">Process phase 3</text>
         </g>
         <g id="packagesCont"></g>
-        <text id="discardLabel" x="750" y="28" fill="#f2ece0" opacity="0.85" font-size="12" font-weight="700">Rejects</text>
+        <text id="discardLabel" x="750" y="28" fill="#f2f2f0" opacity="0.85" font-size="12" font-weight="700">Rejects</text>
       </svg>
-      <div class="overlay-row">
-        <button id="pauseBtn" class="btn">Downstream stop</button>
-        <button id="failBtn" class="btn">Section/Station failure</button>
       </div>
-    </div>
+    </section>
 
     <!-- Scoreboard (centered between canvases) -->
-    <div class="scoreboard">
-      <div class="score-labels">
-        <div class="lbl top">continuous process</div>
-        <div class="lbl bottom">batch process</div>
-      </div>
-      <div class="score-panel">
-        <div id="scoreCont" class="score top">000</div>
-        <div id="scoreBatch" class="score bottom">000</div>
-      </div>
+    <div class="scoreboard" aria-label="Released units">
+      <div class="score-reading"><span class="score-label">Continuous<br>units released</span><output id="scoreCont" class="score top" aria-live="off">000</output></div>
+      <div class="score-reading"><span class="score-label">Batch<br>units released</span><output id="scoreBatch" class="score bottom" aria-live="off">000</output></div>
     </div>
 
     <!-- ===== Bottom: Batch (horizontal) ===== -->
-    <div class="scene">
+    <section class="scene" aria-labelledby="batch-title">
+      <div class="scene-heading"><h2 id="batch-title">Modular batch</h2><span>Independent chambers</span></div>
+      <div class="diagram-scroll" tabindex="0" role="region" aria-label="Batch process diagram">
       <svg id="vizBatchH" viewBox="0 0 1000 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
         <defs>
           <filter id="glowBatchH" x="-50%" y="-50%" width="200%" height="200%">
@@ -208,22 +151,25 @@
             </feMerge>
           </filter>
           <marker id="arrowHeadBatch" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f2ece0"/>
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#f2f2f0"/>
           </marker>
         </defs>
         <g id="batchStationsH"></g>
         <g id="batchPackagesH"></g>
       </svg>
-    </div>
+      </div>
+    </section>
 
     <!-- Controls -->
     <div class="hud">
-      <label>Chambers length <input id="ptimeInput" type="number" step="0.1" min="0.3" max="10" value="2.4" /></label>
+      <label>Chamber length <input id="ptimeInput" type="number" step="0.1" min="0.3" max="10" value="2.4" /></label>
       <label>Speed (px/s) <input id="speedInput" type="number" step="10" min="20" max="600" value="45" /></label>
       <label>Takt time (s) <input id="taktInput" type="number" step="0.1" min="0.2" max="10" value="2.0" /></label>
-      <label>Min stay (s) <input id="minStayInput" type="number" step="0.1" min="0" max="60" value="8" /></label>
+      <label>Minimum dwell (s) <input id="minStayInput" type="number" step="0.1" min="0" max="60" value="8" /></label>
     </div>
-  </div>
+    <p class="simulation-note">Illustrative process model. The counters track units released.</p>
+  </main>
+  <footer><div class="container"><div class="tiny">N2 Team &middot; <span data-year></span></div><a class="xref" href="mission.html">Explore the mission</a></div></footer>
 
   <script>
     // -------------------------
@@ -277,9 +223,9 @@
       const stationBounds = glass => { const x=+glass.getAttribute('x'); const w=+glass.getAttribute('width'); return {left:x,right:x+w,width:w}; };
 
       // Visuals for Decontamination (A) during failure
-      const A_BLUE = '#4fc0ad', A_GRAY = '#8a8172';
-      const A_FILL_NORMAL = 'rgba(242,236,224,.05)';
-      const A_FILL_FAIL   = 'rgba(148,138,120,0.30)';
+      const A_BLUE = '#91b7b1', A_GRAY = '#888b90';
+      const A_FILL_NORMAL = 'rgba(242,242,240,.04)';
+      const A_FILL_FAIL   = 'rgba(136,139,144,0.30)';
       function setFailedVisual(on){
         stationAGlass.setAttribute('stroke', on? A_GRAY : A_BLUE);
         stationAInner.setAttribute('stroke', on? A_GRAY : A_BLUE);
@@ -311,7 +257,7 @@
           if(!upArrow){
             upArrow = document.createElementNS('http://www.w3.org/2000/svg','line');
             upArrow.setAttribute('id','discardArrowUp');
-            upArrow.setAttribute('stroke','#f2ece0');
+            upArrow.setAttribute('stroke','#f2f2f0');
             upArrow.setAttribute('stroke-width','2');
             upArrow.setAttribute('marker-end','url(#arrowHeadCont)');
             svgCont.appendChild(upArrow);
@@ -324,7 +270,7 @@
         if(!deconArrow){
           deconArrow = document.createElementNS('http://www.w3.org/2000/svg','line');
           deconArrow.setAttribute('id','deconArrowRight');
-          deconArrow.setAttribute('stroke','#f2ece0');
+          deconArrow.setAttribute('stroke','#f2f2f0');
           deconArrow.setAttribute('stroke-width','2');
           deconArrow.setAttribute('marker-end','url(#arrowHeadCont)');
           svgCont.appendChild(deconArrow);
@@ -337,7 +283,7 @@
         if(!deconLab){
           deconLab = document.createElementNS('http://www.w3.org/2000/svg','text');
           deconLab.setAttribute('id','deconLabelCont');
-          deconLab.setAttribute('fill','#f2ece0'); deconLab.setAttribute('opacity','0.85');
+          deconLab.setAttribute('fill','#f2f2f0'); deconLab.setAttribute('opacity','0.85');
           deconLab.setAttribute('font-size','12'); deconLab.setAttribute('font-weight','700');
           deconLab.setAttribute('text-anchor','start'); svgCont.appendChild(deconLab);
         }
@@ -447,7 +393,7 @@
       function onSpeed(){ speed = Math.max(20, Math.min(600, Number(speedInput.value)||speed)); }
       ptimeInput.addEventListener('input', onTime);
       speedInput.addEventListener('input', onSpeed);
-      pauseBtn.addEventListener('click', ()=>{ paused = !paused; pauseBtn.classList.toggle('active', paused); pauseBtn.textContent = paused? 'Resume':'Downstream stop'; });
+      pauseBtn.addEventListener('click', ()=>{ paused = !paused; pauseBtn.classList.toggle('active', paused); pauseBtn.setAttribute('aria-pressed', String(paused)); pauseBtn.textContent = paused? 'Resume':'Downstream stop'; });
 
       // expose continuous failure visual control
       window.contCtrl = { setFailedVisual };
@@ -476,10 +422,10 @@
       for(let i=0;i<NUM;i++){
         const gx = rowLeft + i*(GLASS_W + GAP_X); const gy = centerY - GLASS_H/2;
         const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-        const glass = document.createElementNS('http://www.w3.org/2000/svg','rect'); glass.setAttribute('x', gx); glass.setAttribute('y', gy); glass.setAttribute('width', GLASS_W); glass.setAttribute('height', GLASS_H); glass.setAttribute('rx',2); glass.setAttribute('ry',2); glass.setAttribute('fill','rgba(242,236,224,.05)'); glass.setAttribute('stroke','#f2ece0'); glass.setAttribute('stroke-width','2'); glass.setAttribute('filter','url(#glowBatchH)'); g.appendChild(glass);
-        const inner = document.createElementNS('http://www.w3.org/2000/svg','rect'); inner.setAttribute('x', gx+GLASS_PAD); inner.setAttribute('y', gy+10); inner.setAttribute('width', INNER_W); inner.setAttribute('height', 90); inner.setAttribute('rx',2); inner.setAttribute('ry',2); inner.setAttribute('fill','transparent'); inner.setAttribute('stroke','#f2ece0'); inner.setAttribute('stroke-width','1'); inner.setAttribute('stroke-dasharray','6 6'); inner.setAttribute('opacity','0.5'); g.appendChild(inner);
-        const overlay = document.createElementNS('http://www.w3.org/2000/svg','rect'); overlay.setAttribute('x', gx); overlay.setAttribute('y', gy); overlay.setAttribute('width', GLASS_W); overlay.setAttribute('height', GLASS_H); overlay.setAttribute('rx',2); overlay.setAttribute('ry',2); overlay.setAttribute('fill','rgba(18,16,14,0.72)'); overlay.setAttribute('opacity','0'); overlay.setAttribute('pointer-events','none'); g.appendChild(overlay);
-        const label = document.createElementNS('http://www.w3.org/2000/svg','text'); label.setAttribute('x', gx + 6); label.setAttribute('y', gy - 6); label.setAttribute('fill','#f2ece0'); label.setAttribute('opacity','0.75'); label.setAttribute('font-size','12'); label.setAttribute('font-weight','600'); label.textContent = `Station ${i+1}`; g.appendChild(label);
+        const glass = document.createElementNS('http://www.w3.org/2000/svg','rect'); glass.setAttribute('x', gx); glass.setAttribute('y', gy); glass.setAttribute('width', GLASS_W); glass.setAttribute('height', GLASS_H); glass.setAttribute('rx',2); glass.setAttribute('ry',2); glass.setAttribute('fill','rgba(242,242,240,.04)'); glass.setAttribute('stroke','#f2f2f0'); glass.setAttribute('stroke-width','2'); glass.setAttribute('filter','url(#glowBatchH)'); g.appendChild(glass);
+        const inner = document.createElementNS('http://www.w3.org/2000/svg','rect'); inner.setAttribute('x', gx+GLASS_PAD); inner.setAttribute('y', gy+10); inner.setAttribute('width', INNER_W); inner.setAttribute('height', 90); inner.setAttribute('rx',2); inner.setAttribute('ry',2); inner.setAttribute('fill','transparent'); inner.setAttribute('stroke','#f2f2f0'); inner.setAttribute('stroke-width','1'); inner.setAttribute('stroke-dasharray','6 6'); inner.setAttribute('opacity','0.5'); g.appendChild(inner);
+        const overlay = document.createElementNS('http://www.w3.org/2000/svg','rect'); overlay.setAttribute('x', gx); overlay.setAttribute('y', gy); overlay.setAttribute('width', GLASS_W); overlay.setAttribute('height', GLASS_H); overlay.setAttribute('rx',2); overlay.setAttribute('ry',2); overlay.setAttribute('fill','rgba(14,15,16,0.72)'); overlay.setAttribute('opacity','0'); overlay.setAttribute('pointer-events','none'); g.appendChild(overlay);
+        const label = document.createElementNS('http://www.w3.org/2000/svg','text'); label.setAttribute('x', gx + 6); label.setAttribute('y', gy - 6); label.setAttribute('fill','#f2f2f0'); label.setAttribute('opacity','0.75'); label.setAttribute('font-size','12'); label.setAttribute('font-weight','600'); label.textContent = `Station ${i+1}`; g.appendChild(label);
         stationsG.appendChild(g);
         stations.push({index:i, gx, gy, slotX: gx+GLASS_PAD + (INNER_W - PKG_W)/2, slotY, glass, inner, failOverlay: overlay, failed:false, occupant:null, reserved:false});
       }
@@ -495,20 +441,20 @@
         glass.setAttribute('x', x); glass.setAttribute('y', y);
         glass.setAttribute('width', PT_W); glass.setAttribute('height', PT_H);
         glass.setAttribute('rx', 14); glass.setAttribute('ry', 14);
-        glass.setAttribute('fill', 'rgba(242,236,224,.05)');
-        glass.setAttribute('stroke', '#e0742f'); glass.setAttribute('stroke-width','2');
+        glass.setAttribute('fill', 'rgba(242,242,240,.04)');
+        glass.setAttribute('stroke', '#e5e7eb'); glass.setAttribute('stroke-width','2');
         glass.setAttribute('filter','url(#glowBatchH)');
         g.appendChild(glass);
         const inner = document.createElementNS('http://www.w3.org/2000/svg','rect');
         inner.setAttribute('x', x + 10); inner.setAttribute('y', y + 10);
         inner.setAttribute('width', PT_W - 20); inner.setAttribute('height', PT_H - 20);
         inner.setAttribute('rx', 10); inner.setAttribute('ry', 10);
-        inner.setAttribute('fill', 'transparent'); inner.setAttribute('stroke', '#e0742f');
+        inner.setAttribute('fill', 'transparent'); inner.setAttribute('stroke', '#e5e7eb');
         inner.setAttribute('stroke-width','1'); inner.setAttribute('stroke-dasharray','6 6'); inner.setAttribute('opacity','0.5');
         g.appendChild(inner);
         const label = document.createElementNS('http://www.w3.org/2000/svg','text');
         label.setAttribute('x', x); label.setAttribute('y', y - 6);
-        label.setAttribute('fill','#f2ece0'); label.setAttribute('opacity','0.75');
+        label.setAttribute('fill','#f2f2f0'); label.setAttribute('opacity','0.75');
         label.setAttribute('font-size','12'); label.setAttribute('font-weight','600');
         label.textContent = 'Process phase 1';
         svg.appendChild(g); svg.appendChild(label);
@@ -524,7 +470,7 @@
         // Discard label (to the RIGHT of the arrow) + down arrow
         const t = document.createElementNS('http://www.w3.org/2000/svg','text');
         t.setAttribute('id','batchDiscardLabel');
-        t.setAttribute('fill','#f2ece0'); t.setAttribute('opacity','0.85');
+        t.setAttribute('fill','#f2f2f0'); t.setAttribute('opacity','0.85');
         t.setAttribute('font-size','12'); t.setAttribute('font-weight','700');
         t.setAttribute('text-anchor','start'); // left aligned
         svg.appendChild(t);
@@ -533,7 +479,7 @@
         line.setAttribute('id','batchDiscardArrowDown');
         line.setAttribute('x1', String(arrowLeftX)); line.setAttribute('y1', String(discardY - 18));
         line.setAttribute('x2', String(arrowLeftX)); line.setAttribute('y2', String(discardY + 8));
-        line.setAttribute('stroke','#f2ece0'); line.setAttribute('stroke-width','2');
+        line.setAttribute('stroke','#f2f2f0'); line.setAttribute('stroke-width','2');
         line.setAttribute('marker-end','url(#arrowHeadBatch)');
         svg.appendChild(line);
 
@@ -548,13 +494,13 @@
         const x1 = rowRight + 10; const x2 = rowRight + GLASS_W - 10;
         ar.setAttribute('x1', String(x1)); ar.setAttribute('y1', String(centerY));
         ar.setAttribute('x2', String(x2)); ar.setAttribute('y2', String(centerY));
-        ar.setAttribute('stroke','#f2ece0'); ar.setAttribute('stroke-width','2'); ar.setAttribute('marker-end','url(#arrowHeadBatch)');
+        ar.setAttribute('stroke','#f2f2f0'); ar.setAttribute('stroke-width','2'); ar.setAttribute('marker-end','url(#arrowHeadBatch)');
         svg.appendChild(ar);
 
         const lab = document.createElementNS('http://www.w3.org/2000/svg','text');
         lab.setAttribute('id','batchDeconLabel');
         lab.setAttribute('x', String(x1)); lab.setAttribute('y', String(centerY - 4));
-        lab.setAttribute('fill','#f2ece0'); lab.setAttribute('opacity','0.85');
+        lab.setAttribute('fill','#f2f2f0'); lab.setAttribute('opacity','0.85');
         lab.setAttribute('font-size','12'); lab.setAttribute('font-weight','700'); lab.setAttribute('text-anchor','start');
         // multiline: 'good' / 'items', left aligned with arrow start
         const tsp1 = document.createElementNS('http://www.w3.org/2000/svg','tspan'); tsp1.setAttribute('x', String(x1)); tsp1.setAttribute('y', String(centerY - 4)); tsp1.textContent='good';
@@ -588,7 +534,7 @@
       function tryExit(){ if(sinceExit < takt) return false; for(const st of stations){ const occ=st.occupant; if(occ && !st.failed && occ.state==='processing' && occ.timeIn>minStay){ occ.state='exit_up'; occ.t=0; occ.startX=occ.x; occ.startY=occ.y; sinceExit=0; return true; } } return false; }
 
       function updateStationOutlines(){
-        const blue = '#4fc0ad'; const green = '#7fa8e0'; const white = '#f2ece0'; const gray = '#8a8172';
+        const blue = '#91b7b1'; const green = '#a5b3d1'; const white = '#f2f2f0'; const gray = '#888b90';
         for(const st of stations){
           let col = white;
           if(st.failed){ col = gray; }
@@ -601,7 +547,7 @@
       function setFailureMode(on){
         const st2 = stations[1]; if(!st2) return;
         st2.failed = !!on; st2.failOverlay.setAttribute('opacity', on? '0.8' : '0');
-        if(on && st2.occupant && st2.occupant.state==='processing'){ const p = st2.occupant; p.failedGrey = true; p.rect.setAttribute('fill','#8a8172'); }
+        if(on && st2.occupant && st2.occupant.state==='processing'){ const p = st2.occupant; p.failedGrey = true; p.rect.setAttribute('fill','#888b90'); }
         if(!on && st2.occupant && st2.occupant.failedGrey && st2.occupant.state==='processing'){
           const p = st2.occupant; p.state='exit_down'; p.t=0; p.startX=p.x; p.startY=p.y;
         }
@@ -640,7 +586,7 @@
             p.timeIn  += (p.station.failed ? 0 : logicDt);
             p.timeReal+= (p.station.failed ? 0 : realDt);
             p.textReal.textContent = String(Math.floor(p.timeReal));
-            if((p.station.failed && p.station.index===1) || p.failedGrey){ p.rect.setAttribute('fill','#8a8172'); }
+            if((p.station.failed && p.station.index===1) || p.failedGrey){ p.rect.setAttribute('fill','#888b90'); }
             else { applyColor(p); }
           } else if(p.state==='exit_up'){
             p.t+=exitDt; const f=Math.min(1,p.t/p.V_DUR); p.x = p.startX; p.y = p.startY + (exitUpY - p.startY)*f; p.g.setAttribute('transform',`translate(${p.x},${p.y})`);
@@ -667,7 +613,7 @@
     // -------------------------
     // TOP-LEVEL BUTTONS
     // -------------------------
-    failBtn.addEventListener('click', ()=>{ failed = !failed; failBtn.classList.toggle('active', failed); if(window.batchCtrl && window.batchCtrl.setFailed) window.batchCtrl.setFailed(failed); if(window.contCtrl && window.contCtrl.setFailedVisual) window.contCtrl.setFailedVisual(failed); });
+    failBtn.addEventListener('click', ()=>{ failed = !failed; failBtn.classList.toggle('active', failed); failBtn.setAttribute('aria-pressed', String(failed)); if(window.batchCtrl && window.batchCtrl.setFailed) window.batchCtrl.setFailed(failed); if(window.contCtrl && window.contCtrl.setFailedVisual) window.contCtrl.setFailedVisual(failed); });
 
     // -------------------------
     // MINIMAL SELF-TESTS (console)
@@ -690,60 +636,6 @@
     })();
   </script>
   <script src="assets/js/main.js"></script>
-  <script>
-    /* Vapour transition on the way out. Standalone copy of the logic in
-       assets/js/main.js, scoped to this page's own markup. */
-    (function(){
-      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-      var ATOMS = '.doc-head, .wrap h1, .standfirst, .scene, .scoreboard, .hud label';
-      var leaving = false;
 
-      function evaporate(done){
-        if (leaving) return;
-        leaving = true;
-        var atoms = Array.prototype.slice.call(document.querySelectorAll(ATOMS));
-        var last  = Math.max(atoms.length - 1, 1);
-        atoms.forEach(function(el, i){
-          el.setAttribute('data-vapor-atom','');
-          el.style.setProperty('--vd', Math.round((i/last)*220 + Math.random()*70) + 'ms');
-          el.style.setProperty('--vx', (Math.random()*26 - 13).toFixed(1) + 'px');
-          el.style.setProperty('--vr', (Math.random()*2.6 - 1.3).toFixed(2) + 'deg');
-        });
-        void document.body.offsetHeight;
-        document.documentElement.classList.add('is-leaving');
-        setTimeout(done, 720);
-      }
-
-      document.addEventListener('click', function(e){
-        var a = e.target.closest && e.target.closest('a');
-        if (!a) return;
-        if (leaving){ e.preventDefault(); return; }
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-        if (a.target && a.target !== '' && a.target !== '_self') return;
-        var href = a.getAttribute('href');
-        if (!href || href.charAt(0) === '#') return;
-        var url;
-        try { url = new URL(href, location.href); } catch (err) { return; }
-        if (url.origin !== location.origin) return;
-        if (url.pathname === location.pathname) return;
-
-        e.preventDefault();
-        if (reduced.matches){ location.href = a.href; return; }
-        var dest = a.href;
-        evaporate(function(){ location.href = dest; });
-      });
-
-      window.addEventListener('pageshow', function(e){
-        if (e.persisted){
-          document.documentElement.classList.remove('is-leaving');
-          Array.prototype.forEach.call(
-            document.querySelectorAll('[data-vapor-atom]'),
-            function(el){ el.removeAttribute('data-vapor-atom'); }
-          );
-          leaving = false;
-        }
-      });
-    })();
-  </script>
 </body>
 </html>

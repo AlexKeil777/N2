@@ -1,179 +1,63 @@
-# N2 Team — VHP Decontamination
+# N2 Team
 
-A static project website for the **N2 Team**, presenting a research effort on **Vaporized Hydrogen Peroxide (VHP) decontamination**. The site introduces the team's mission, the people behind it, an interactive simulation comparing continuous vs. batch process architectures, and an in-browser H₂O₂/H₂O evaporation rate calculator.
+A static site for the N2 VHP decontamination research project. Plain HTML, CSS and JavaScript; no build step or runtime packages.
 
----
+## Run locally
 
-## ✦ About the project
+From the repository root:
 
-The N2 Team works on improving VHP-based tub decontamination through two complementary angles:
-
-1. **Process architecture** — moving from large continuous tunnels to a modular, decoupled **batch** approach for better robustness, scalability and graceful handling of interruptions.
-2. **Aeration optimization** — accelerating H₂O₂ desorption via aerodynamic and thermodynamic tuning of the chamber design.
-
-The interactive simulation included in the site visualizes both architectures side by side, with controls to inject downstream stops and station failures and observe how each approach copes.
-
----
-
-## ✦ Repository structure
-
-```
-.
-├── index.html                              # Landing page
-├── mission.html                            # Project mission & focus areas
-├── team.html                               # Team members
-├── v4_continuous_vs_batch_animation.html   # Interactive process simulation
-├── evaporation_calculator.html             # H₂O₂/H₂O evaporation calculator
-├── README.md
-└── assets/
-    ├── css/
-    │   └── styles.css                      # Minimalist dark theme (+ light variant)
-    ├── js/
-    │   └── main.js                         # Nav, current page, drifting N2 mark layer
-    ├── py/
-    │   └── EvapCalculatorAp_v15.py         # Reference Tkinter desktop app
-    └── images/
-        ├── N2.jpg                          # Hero / brand image
-        ├── N2_icon.jpg                     # Nav logo
-        ├── h2o2.svg                        # Static H₂O₂ molecule asset
-        └── video_30sec.mp4                 # 30-second concept video
-```
-
----
-
-## ✦ Tech stack
-
-- Plain **HTML / CSS / JavaScript** — no build step, no framework
-- **Fraunces** (headings) and **Archivo** (body/UI) via Google Fonts. No monospaced type in the interface
-- Inline **SVG** for the brand mark, the drifting background marks, and the process simulation
-- Responsive design with a collapsing nav rail, `prefers-reduced-motion` support, and `:focus-visible` accessibility
-- Every text/background pair in the shared theme clears WCAG AA (4.5:1)
-
----
-
-## ✦ Running locally
-
-The site is fully static — open it in any browser.
-
-**Quick option** (just double-click `index.html`):
-> Some browsers restrict relative asset loading from `file://`. If images or fonts don't load, use one of the options below.
-
-**Recommended** — serve it with a local web server. From the project root:
-
-```bash
-# Python 3
+```sh
 python -m http.server 8080
-
-# Or Node.js (npx)
-npx serve .
-
-# Or PHP
-php -S localhost:8080
 ```
 
-Then open <http://localhost:8080> in your browser.
+Open <http://localhost:8080>. A local server is recommended for the password gates, assets and downloads.
 
----
+## Pages
 
-## ✦ Pages
+| File | Purpose |
+| --- | --- |
+| `index.html` | Particle N2 mark, project introduction, contact form |
+| `mission.html` | Independent chambers, faster aeration, research resources |
+| `team.html` | Team and contact links |
+| `v4_continuous_vs_batch_animation.html` | Continuous versus batch simulation |
+| `evaporation_calculator.html` | Evaporation flux, time simulation, charts and CSV |
+| `Tiramisu_Calculator_v1_3.html` | Spoilage and shelf-life research model |
+| `user_guide.html` | Calculator reference, with expandable sections |
+| `validation_plan.html` | Experimental validation plan |
+| `validation plan da gpt.html` | Research review and proposed validation path |
 
-| Page | Purpose |
-|---|---|
-| `index.html` | Landing page with the team brand and entry points to mission / team |
-| `mission.html` | The two focus areas (architecture & aeration) and overall direction |
-| `team.html` | Team member profiles and contact entry points |
-| `v4_continuous_vs_batch_animation.html` | Interactive side-by-side simulation of continuous vs. batch processes |
-| `evaporation_calculator.html` | Interactive H₂O₂/H₂O evaporation rate calculator (static flux + 1 h RK4 simulation, CSV export) |
+## Design
 
----
+The noir theme uses black surfaces, silver type, Barlow Condensed headings and Manrope UI text. Google Fonts is the only font dependency; system fallbacks are provided. Semantic chart colors remain distinct.
 
-## ✦ Customization
+- `assets/css/styles.css`: shared tokens, fluid layouts, horizontal navigation, home page and contact form.
+- `assets/css/research.css`: research tools, reference disclosures, tables and access screens.
+- `assets/js/main.js`: navigation, particle logo, cursor wisps, click effects and page transitions.
 
-### Theme & colors
-Pitch black, one amber accent, a lot of space. All design tokens live as CSS
-custom properties at the top of `assets/css/styles.css`:
+The home page expands with the window using a two-column stage. Below 760 px it stacks, with a collapsible menu. Dense diagrams and tables scroll within their own regions.
 
-```css
-:root{
-  --bg:      #000000;   /* pitch black */
-  --panel:   #0b0b0b;
-  --text:    #f2efe9;   /* 18.30:1 — warm white, so black never reads dead */
-  --muted:   #a29b90;   /*  7.63:1 */
-  --subtle:  #857e73;   /*  5.23:1 */
-  --brand:   #e0742f;   /*  6.71:1 — the one accent */
-  --radius:  2px;
-  /* …etc */
-}
+### Motion
+
+`[data-particle-logo]` turns the existing SVG mark into a canvas swarm. Pointer movement repels particles; a press scatters them before they return. The SVG remains as the fallback. Particle counts and display resolution are capped, and the loop pauses when the mark is offscreen or the tab is hidden.
+
+Links, buttons and disclosure controls release a brief vapor effect. Internal page navigation dissolves visible content over approximately 740 ms. Heading copies disperse letter by letter; real text, IDs and form values stay intact. History restoration clears animation state. Modified clicks, downloads, external links and same-page anchors keep their native behavior.
+
+`prefers-reduced-motion` disables decorative motion and makes navigation immediate. Keyboard focus remains visible; the mobile menu supports Escape. Reference anchors open the section they point to.
+
+## Tools and data
+
+The evaporation calculator retains the original flux kernels and RK4 simulation. The Python reference remains at `assets/py/EvapCalculatorAp_v15.py`. The tiramisu model and validation documents retain their scientific data and limitations. Presentation changes do not alter their models.
+
+Existing client-side password gates are retained. They are a convenience gate for static files, not server-side authorization.
+
+The contact form uses FormSubmit with native validation, a honeypot and in-place success/error messages. Its endpoint is configured in `index.html`.
+
+## Checks
+
+Browser checks cover responsive layouts, particle interaction, reduced motion, navigation and history, simulation controls, calculator outputs and CSV export. There is no build step. For script syntax:
+
+```sh
+node --check assets/js/main.js
 ```
-
-Tweak these to retheme the entire site without touching individual rules. Contrast
-ratios are noted next to the tokens; keep any replacement at 4.5:1 or better.
-
-**Light variant.** The cream/sienna paper palette is kept under
-`:root[data-theme="light"]` in the same file. It is not automatic — switch a page
-by putting the attribute on the root element:
-
-```html
-<html lang="en" data-theme="light">
-```
-
-**House rules** (documented in the stylesheet header): no gradients, glows, coloured
-shadows or backdrop blur; no monospaced type in the interface; no section numbering
-or badges above headings; every transition soft (300–500ms on a long ease).
-
-### The vapour transition
-Leaving a page, everything printed on the black boils off — headings come apart into
-individual letters that rise, spread, tilt and blur away, while paragraphs, buttons,
-list rows and nav entries lift and thin out on their own randomised delays. Arriving,
-the page condenses back out of the black.
-
-Arrival is pure CSS (`vapor-in`). Departure is driven by `assets/js/main.js`: see
-`ATOM_SELECTOR`, `SPLIT_SELECTOR` and the `SPREAD` / `NAV_AT` timings at the top of
-the vapour section. It is skipped entirely under `prefers-reduced-motion`.
-
-### The N2 mark
-Two places, both driven by the same path with `pathLength="1000"` and a
-`stroke-dashoffset` draw:
-
-- **Landing page** — `.hero-mark` in `index.html`. Large and centred, draws itself
-  once over 2.6s on load, then holds.
-- **Every other page** — `.brand-watermark` injected by `assets/js/main.js`. Three or
-  four copies that draw, hold, fade and repeat on a 14–22s cycle. Tune `count`, the
-  `--size` range and `--peak` opacity there. Hidden below 760px and under
-  `prefers-reduced-motion`.
-
-  Keep them as **thin outlines** (stroke-width 10) at low opacity. A thick stroke at
-  even lower opacity renders as a dark-amber mass and lifts the whole page off black,
-  which is exactly what the pitch-black theme is trying to avoid.
-
-### Simulation parameters
-The simulation page (`v4_continuous_vs_batch_animation.html`) exposes user-facing controls (chamber length, conveyor speed, takt time, minimum dwell). All other timing/visual tuning is in the inline `<script>` at the bottom of that file.
-
-### Evaporation calculator
-`evaporation_calculator.html` is self-contained (inline CSS + JS). It is a JavaScript port of the reference Tkinter app at `assets/py/EvapCalculatorAp_v15.py` — same physics (Giguère–Maass H₂O₂ vapor pressure, Tetens H₂O, Margules activity coefficients, Hertz-Knudsen or boundary-layer flux). The dynamic simulation uses an explicit RK4 integrator (300 steps over 3600 s) in place of SciPy's `solve_ivp`. Charts are drawn directly on `<canvas>` — no plotting library. Physical constants and flux kernels are at the top of the inline `<script>` block; edit there to retune.
-
-The original Tkinter app remains usable as a standalone desktop tool:
-
-```bash
-python assets/py/EvapCalculatorAp_v15.py
-```
-
----
-
-## ✦ Accessibility notes
-
-- Skip link to main content on every page
-- Mobile nav with proper `aria-expanded` state
-- Focus-visible outlines on all buttons
-- `prefers-reduced-motion` disables animation and collapses transitions site-wide
-- Decorative SVG (the brand mark) carries `aria-hidden="true"`
-- The current nav entry is marked with `aria-current="page"`
-- Escape closes the mobile nav and returns focus to the control
-
----
-
-## ✦ License & credits
 
 Project © N2 Team. All rights reserved unless stated otherwise.
-
-For collaboration or partnership inquiries, see the contact details on the **Team** page.

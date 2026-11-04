@@ -6,19 +6,9 @@
 <title>Tiramisù Spoilage Calculator · v1.3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter+Tight:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
 <style>
-:root{
-  --bg:#faf6ed; --paper:#fffdf7; --text:#1a1612; --muted:#6b5d4f;
-  --accent:#9c4221; --accent-soft:#fdebd6; --border:#e5d9c4; --code-bg:#f1e9d6;
-  --warn-bg:#fef4e6; --warn-bd:#d97706;
-  --tip-bg:#ecfdf5;  --tip-bd:#047857;
-  --pin-bg:#eff6ff;  --pin-bd:#1e40af;
-  --red:#c1272d; --amber:#d97706; --green:#15803d;
-  --serif:'Fraunces',Georgia,serif;
-  --sans:'Inter Tight',-apple-system,system-ui,sans-serif;
-  --mono:'IBM Plex Mono',ui-monospace,monospace;
-}
+/* Theme tokens are shared with the main N2 site. */
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14.5px;line-height:1.55}
@@ -251,8 +241,11 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
 .anim-legend{font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.5}
 .anim-legend .sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin-right:4px}
 </style>
+<link rel="stylesheet" href="assets/css/research.css">
+<meta name="theme-color" content="#050505">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
-<body class="locked">
+<body class="locked research-page research-calculator">
 
 <style>
   /* ---- password gate (self-contained) ---- */
@@ -293,14 +286,15 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
 
 <div id="pw-gate" role="dialog" aria-modal="true" aria-labelledby="pw-title">
   <div class="pw-card">
-    <h2 id="pw-title">Protected page</h2>
-    <p>Enter the password to view this page.</p>
+    <h2 id="pw-title">Research access</h2>
+    <p>Enter your password to open the research desk.</p>
     <form id="pw-form">
       <input id="pw-input" type="password" autocomplete="current-password"
              placeholder="Password" aria-label="Password" autofocus>
-      <button type="submit">Unlock</button>
+      <button type="submit">Open research</button>
       <p class="pw-err" id="pw-err" role="alert" aria-live="polite"></p>
     </form>
+    <a class="pw-return" href="mission.html">Back to the mission</a>
   </div>
 </div>
 
@@ -349,12 +343,17 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
   })();
 </script>
 
-<div class="wrap">
+<a class="skip-link" href="#main">Skip to content</a>
+<nav class="research-nav" aria-label="Research navigation">
+  <a class="research-brand" href="index.html"><svg viewBox="0 0 400 240" aria-hidden="true"><path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200" fill="none" stroke="currentColor" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/></svg><span>N2 Research</span></a>
+  <div class="research-links"><a href="mission.html">The mission</a><a href="Tiramisu_Calculator_v1_3.html" aria-current="page">Spoilage calculator</a><a href="user_guide.html">User guide</a></div>
+</nav>
+
+<div class="wrap" id="main" role="main">
 
 <header class="hero">
-  <p class="eyebrow">Tiramisù Spoilage Calculator · v1.3.3</p>
-  <h1>Tiramisù <em>Spoilage</em> Calculator</h1>
-  <p class="subtitle">Predictive screening for refrigerated tiramisù shelf life — yeast (<em>Z. bailii</em>) &amp; mold (<em>P. roqueforti</em>) worst-case model.</p>
+  <h1>Spoilage, in focus.</h1>
+  <p class="subtitle">Explore how ingredients, packaging and storage shape tiramisù spoilage. A research screening model for yeast and mold.</p>
 </header>
 
 <div id="banner" class="banner">
@@ -377,8 +376,8 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
     </label>
   </div>
   <div class="right" style="display:flex;gap:8px;flex-wrap:wrap">
-    <button class="iconbtn" id="save-btn" title="Download scenario as JSON">↓ Save</button>
-    <button class="iconbtn" id="load-btn" title="Load scenario from JSON">↑ Load</button>
+    <button class="iconbtn" id="save-btn" title="Download scenario as JSON">Save scenario</button>
+    <button class="iconbtn" id="load-btn" title="Load scenario from JSON">Load scenario</button>
     <input type="file" id="load-input" accept="application/json,.json" style="display:none">
     <button class="btn btn-secondary" id="reset-btn">Reset defaults</button>
     <button class="btn btn-primary" id="compute-btn">Compute</button>
@@ -387,14 +386,14 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
 
 <!-- ================== ANIMATION PANEL ================== -->
 <div id="anim-panel">
-  <h2><span class="num">§ 00</span>Animation <button class="info-btn" data-popup="animation">?</button></h2>
+  <h2>Spoilage over time <button class="info-btn" data-popup="animation">?</button></h2>
   <div id="anim-grid">
     <div>
       <svg id="anim-cup" class="anim-cup" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
       <div class="anim-legend">
-        <span><span class="sw" style="background:#2d5016"></span>mold colonies — rendered on the compartment where they grow (lid underside, cup rim, cocoa surface, cup wall) — independent populations, no transfer</span>
+        <span><span class="sw" style="background:#2d5016"></span>Mold colonies by surface. Independent populations; no transfer.</span>
         <br>
-        <span>cream layer tint = yeast log<sub>10</sub> N / N<sub>max</sub> · headspace tint = pCO₂</span>
+        <span>Cream tint: yeast log<sub>10</sub> N / N<sub>max</sub>. Headspace tint: pCO₂.</span>
       </div>
     </div>
     <div class="anim-controls">
@@ -402,10 +401,10 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
         <span class="speed"><label>Speed</label><input type="number" id="anim-speed" step="0.5" min="0.1" max="60" value="5"><span style="font-family:var(--mono);font-size:11px;color:var(--muted)">days / sec</span></span>
       </div>
       <div class="row">
-        <button class="anim-btn primary" id="anim-run" disabled>▶ Run</button>
-        <button class="anim-btn" id="anim-pause" disabled>❚❚ Pause</button>
-        <button class="anim-btn" id="anim-stop" disabled>■ Stop</button>
-        <button class="anim-btn" id="anim-reset" disabled>↺ Reset</button>
+        <button class="anim-btn primary" id="anim-run" disabled>Run</button>
+        <button class="anim-btn" id="anim-pause" disabled>Pause</button>
+        <button class="anim-btn" id="anim-stop" disabled>Stop</button>
+        <button class="anim-btn" id="anim-reset" disabled>Reset</button>
       </div>
       <div class="anim-timeline">
         <div><span id="anim-t">t = 0.00 d</span> &nbsp;/&nbsp; <span id="anim-max">— d</span> &nbsp;·&nbsp; <span id="anim-state">idle</span></div>
@@ -566,9 +565,11 @@ body.computing .main-grid,body.computing #anim-panel{opacity:.5;pointer-events:n
 </div>
 
 <footer>
-Tiramisù Spoilage Calculator v1.3.3 · Worst-case / realistic / best-estimate predictive model · For internal R&amp;D screening only · Not a substitute for challenge testing or shelf-life validation.<br>
+Tiramisù Spoilage Calculator v1.3.3 · Worst-case / realistic / best-estimate predictive model · For internal R&amp;D screening only · Not a substitute for challenge testing or shelf-life validation.
+<details class="research-disclosure"><summary>Version notes</summary><div class="research-detail">
 v1.3.3 additions: tri-state bias mode (worst-case / realistic / best-estimate). The new "realistic" middle-ground is calibrated to be consistent with industry-reported chilled-dairy shelf life ranges.<br>
 v1.3 additions: inter-compartment transport (water, ethanol, sorbate, benzoate) · ethanol vapour partition to headspace · cocoa nutrient factor · cocoa thin-layer a<sub>w</sub> coupling · Dantigny mold ethanol model · cup_rim compartment + airborne split + rim → cocoa drip-flux.
+</div></details>
 </footer>
 
 </div>
@@ -1896,7 +1897,7 @@ function renderMatrix(r) {
 
 // SVG plot
 const PLOT_W = 440, PLOT_H = 200, PAD_L = 36, PAD_R = 8, PAD_T = 10, PAD_B = 22;
-const COLORS = ['#9c4221','#2563eb','#15803d','#7c3aed','#d97706','#0891b2','#be185d','#4d7c0f'];
+const COLORS = ['#e5e7eb','#a5b3d1','#91b7b1','#b8a5d1','#d9b483','#90c2cc','#d19fb8','#b1c49b'];
 
 function renderPlot(r) {
   document.getElementById('plot-block').style.display = 'block';
@@ -2528,5 +2529,6 @@ document.getElementById('anim-reset').addEventListener('click', animReset);
 renderAll();
 compute();
 </script>
+<script src="assets/js/main.js"></script>
 </body>
 </html>

@@ -3,281 +3,106 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#000000">
-  <title>N2 Team — VHP decontamination</title>
-  <meta name="description" content="N2 Team. Vaporised hydrogen peroxide decontamination, rebuilt around modular batch chambers and a much shorter aeration phase.">
+  <meta name="theme-color" content="#050505">
+  <title>N2 Team — Clear the air.</title>
+  <meta name="description" content="VHP decontamination, rethought. Meet N2: independent batch chambers, faster aeration, and the research behind them.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
 </head>
-
-<!-- no-rail: this page carries no left rail. The .pick list below is
-     the navigation, so the rail and the footer menu were the same
-     five choices offered three times over. -->
-<body class="no-rail">
+<body class="home-page">
 <a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" aria-label="Main">
+      <a class="brand" href="index.html" aria-label="N2 Team home">
+        <svg class="nav-logo" viewBox="0 0 400 240" aria-hidden="true">
+          <path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200" fill="none" stroke="currentColor" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>N2 Team<small>VHP decontamination</small></span>
+      </a>
+      <button class="nav-toggle" data-nav-toggle aria-expanded="false" aria-controls="navLinks">Menu</button>
+      <div class="nav-links" id="navLinks" data-nav-links>
+        <a href="index.html">Home</a>
+        <a href="mission.html">Mission</a>
+        <a href="team.html">Team</a>
+        <a href="v4_continuous_vs_batch_animation.html">Simulation</a>
+        <a href="evaporation_calculator.html">Calculator</a>
+      </div>
+    </nav>
+  </div>
+</header>
 
 <main id="main">
-
-  <section class="splash">
-    <div class="container">
-
-      <!-- Draws itself in on load, then holds. Decorative: the name is
-           carried by the page title and the footer. -->
-      <div class="hero-mark" aria-hidden="true">
-        <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
-          <path pathLength="1000"
-                d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200"
-                fill="none" stroke-width="36"
-                stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+  <section class="splash" aria-labelledby="splash-title">
+    <div class="container splash-grid">
+      <div class="splash-copy">
+        <h1 class="splash-title" id="splash-title"><span>Clear</span><span>the air.</span></h1>
+        <p class="splash-line">VHP decontamination, rethought.<br>Independent chambers. Faster aeration.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="mission.html">Explore the mission</a>
+          <a class="btn" href="v4_continuous_vs_batch_animation.html">Run the simulation</a>
+        </div>
       </div>
-
-      <h1 class="splash-title">
-        Decontaminate up to <span class="fig">10&times;</span> faster
-        than legacy VHP systems.
-      </h1>
-
-      <p class="splash-line">
-        Vaporised hydrogen peroxide decontamination, rebuilt around modular
-        batch chambers and a much shorter aeration phase.
-      </p>
-
-      <nav class="pick" aria-label="Site">
-        <span class="pick-row" aria-current="page">
-          <span class="pick-label">Home</span>
-          <span class="pick-hint">You are here</span>
-        </span>
-
-        <a class="pick-row" href="mission.html">
-          <span class="pick-label">Mission</span>
-          <span class="pick-hint">How the cycle is rebuilt</span>
-        </a>
-
-        <a class="pick-row" href="team.html">
-          <span class="pick-label">Team</span>
-          <span class="pick-hint">Who is working on it</span>
-        </a>
-
-        <a class="pick-row" href="v4_continuous_vs_batch_animation.html">
-          <span class="pick-label">Simulation</span>
-          <span class="pick-hint">Continuous against batch</span>
-        </a>
-
-        <a class="pick-row" href="evaporation_calculator.html">
-          <span class="pick-label">Calculator</span>
-          <span class="pick-hint">H&#8322;O&#8322; evaporation rate</span>
-        </a>
-      </nav>
-
-      <p class="splash-contact">
-        <a class="xref" href="#contact">Or get in touch</a>
-      </p>
-
+      <div class="particle-stage">
+        <div class="hero-mark" data-particle-logo aria-hidden="true">
+          <svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 50 200 L 50 50 L 175 200 L 175 50 C 175 15 320 15 320 85 L 190 200 L 345 200" fill="none" stroke-width="29" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="particle-caption" aria-hidden="true"><span class="pointer-caption">Move through the vapor</span><span class="touch-caption">Touch the vapor</span></p>
+      </div>
     </div>
+    <nav class="container destination-strip" aria-label="Explore N2">
+      <a class="destination" href="mission.html"><span class="destination-title">Mission</span><span class="destination-note">Rethink the cycle.</span></a>
+      <a class="destination" href="team.html"><span class="destination-title">People</span><span class="destination-note">Meet the minds behind it.</span></a>
+      <a class="destination" href="v4_continuous_vs_batch_animation.html"><span class="destination-title">Simulation</span><span class="destination-note">Put the process to the test.</span></a>
+      <a class="destination" href="evaporation_calculator.html"><span class="destination-title">Calculator</span><span class="destination-note">Follow the vapor.</span></a>
+    </nav>
   </section>
 
-  <section class="section" id="contact">
-    <div class="container">
-      <div class="contact-block">
-        <h2>Get in touch</h2>
-        <p>Questions, collaboration or partnership. We normally reply within a few working days.</p>
-
-        <form id="contact-form"
-              class="contact-form"
-              action="https://formsubmit.co/keil.alex@outlook.com"
-              method="POST">
-          <input type="hidden" name="_subject" value="New contact via N2 website">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha" value="false">
-          <!-- Honeypot: bots fill this, people never see it. -->
-          <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
-
-          <div class="contact-row">
-            <div class="contact-field">
-              <label class="field-label" for="cf-name">Name</label>
-              <input id="cf-name" name="name" type="text" required autocomplete="name">
-            </div>
-            <div class="contact-field">
-              <label class="field-label" for="cf-email">Email</label>
-              <input id="cf-email" name="email" type="email" required autocomplete="email">
-            </div>
-          </div>
-
-          <div class="contact-field">
-            <label class="field-label" for="cf-message">Message</label>
-            <textarea id="cf-message" name="message" rows="5" required></textarea>
-          </div>
-
-          <div class="contact-actions">
-            <button class="btn primary" type="submit" id="cf-submit">Send message</button>
-            <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
-          </div>
-        </form>
+  <section class="contact-section" id="contact" aria-labelledby="contact-title">
+    <div class="container contact-block">
+      <div class="contact-intro">
+        <h2 id="contact-title">Something<br>in the air?</h2>
+        <p>A question. An idea. A collaboration.<br>Let's talk.</p>
       </div>
+      <form id="contact-form" class="contact-form" action="https://formsubmit.co/keil.alex@outlook.com" method="POST">
+        <input type="hidden" name="_subject" value="New contact via N2 website">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+        <div class="contact-row">
+          <div class="contact-field">
+            <label class="field-label" for="cf-name">Your name</label>
+            <input id="cf-name" name="name" type="text" required autocomplete="name">
+          </div>
+          <div class="contact-field">
+            <label class="field-label" for="cf-email">Email address</label>
+            <input id="cf-email" name="email" type="email" required autocomplete="email">
+          </div>
+        </div>
+        <div class="contact-field">
+          <label class="field-label" for="cf-message">What's on your mind?</label>
+          <textarea id="cf-message" name="message" rows="3" required></textarea>
+        </div>
+        <div class="contact-actions">
+          <button class="btn primary" type="submit" id="cf-submit">Send message</button>
+          <p class="contact-status" id="cf-status" role="status" aria-live="polite"></p>
+        </div>
+        <p class="small-note">Prefer email? <a class="xref" href="mailto:keil.alex@outlook.com">keil.alex@outlook.com</a></p>
+      </form>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="container">
-    <div class="tiny">N2 Team &middot; <span data-year></span></div>
+    <div class="tiny">N2 Team &copy; <span data-year></span></div>
+    <div class="tiny">A fresh approach to VHP decontamination.</div>
   </div>
 </footer>
-
-<style>
-  /* ---------- landing splash ---------- */
-  .splash{
-    display: flex;
-    align-items: center;
-    min-height: min(calc(100vh - 120px), 900px);
-    padding: var(--s-5) 0 var(--s-6);
-  }
-  .splash > .container{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  /* The mark draws itself once, then stays. */
-  .hero-mark{
-    width: min(230px, 34vw);
-    margin-bottom: var(--s-4);
-  }
-  .hero-mark svg{ width: 100%; height: auto; display: block; overflow: visible; }
-  .hero-mark path{
-    stroke: var(--brand);
-    stroke-dasharray: 1000;      /* the path carries pathLength="1000" */
-    stroke-dashoffset: 1000;
-    opacity: 0;
-    animation: hero-draw 2.8s var(--ease) .3s forwards;
-  }
-  @keyframes hero-draw{
-    0%  { stroke-dashoffset: 1000; opacity: 0; }
-    10% { opacity: 1; }
-    100%{ stroke-dashoffset: 0;    opacity: 1; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .hero-mark path{ animation: none; stroke-dashoffset: 0; opacity: 1; }
-  }
-
-  .splash-title{
-    max-width: 18ch;
-    font-size: clamp(31px, 3.5vw, 46px);
-    margin: 0 0 var(--s-3);
-  }
-  /* A measured figure, not a highlighted marketing word. */
-  .splash-title .fig{ color: var(--brand); }
-
-  .splash-line{
-    max-width: 52ch;
-    font-size: clamp(16px, 1.6vw, 18px);
-    color: var(--muted);
-    margin: 0;
-  }
-
-  .splash-contact{
-    margin: var(--s-4) 0 0;
-    font-size: 15px;
-  }
-
-  @media (max-width: 760px){
-    .splash{ min-height: 0; padding-top: var(--s-6); }
-    .hero-mark{ width: min(200px, 52vw); }
-  }
-
-  /* ---------- contact ---------- */
-  /* Same column as the .pick list above, so the form's left edge lands
-     exactly under “Home” instead of drifting out to the container. */
-  .contact-block{
-    width: 100%;
-    max-width: var(--col);
-    margin-inline: auto;
-  }
-  .contact-form{
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-3);
-    margin-top: var(--s-4);
-  }
-  .contact-row{
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--s-3);
-  }
-  @media (max-width: 640px){
-    .contact-row{ grid-template-columns: 1fr; }
-  }
-  .contact-field{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    min-width: 0;
-  }
-  .contact-field input,
-  .contact-field textarea{
-    width: 100%;
-    min-width: 0;
-    background: var(--panel);
-    border: 1px solid var(--border-strong);
-    color: var(--text);
-    border-radius: var(--radius);
-    padding: 10px 12px;
-    font-family: inherit;
-    font-size: 15px;
-    line-height: 1.45;
-    transition: border-color var(--t-med), background var(--t-med);
-  }
-  .contact-field textarea{ resize: vertical; min-height: 118px; }
-  .contact-field input:hover,
-  .contact-field textarea:hover{ border-color: var(--muted); }
-  .contact-field input:focus-visible,
-  .contact-field textarea:focus-visible{
-    outline: 2px solid var(--brand);
-    outline-offset: 1px;
-    border-color: var(--brand);
-    background: var(--panel-2);
-  }
-  .contact-field input:invalid:not(:placeholder-shown),
-  .contact-field textarea:invalid:not(:placeholder-shown){
-    border-color: var(--warn);
-  }
-
-  .contact-actions{
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--s-3);
-    margin-top: var(--s-1);
-  }
-  /* Status is reported in place, next to the control that caused it. */
-  .contact-status{
-    margin: 0;
-    font-size: 14px;
-    color: var(--muted);
-    transition: color var(--t-med);
-  }
-  .contact-status.ok  { color: var(--brand-2); }
-  .contact-status.err { color: var(--warn); }
-
-  /* The footer line sits in the same column too. */
-  .no-rail footer > .container{
-    width: min(var(--col), calc(100% - 56px));
-  }
-  @media (max-width: 760px){
-    .no-rail footer > .container{ width: calc(100% - 40px); }
-  }
-
-  /* honeypot */
-  .hp{
-    position: absolute !important;
-    left: -10000px !important;
-    width: 1px !important;
-    height: 1px !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-  }
-</style>
-
 <script src="assets/js/main.js"></script>
 <script>
   /* Contact form: AJAX submit via FormSubmit, native fallback if JS fails. */
